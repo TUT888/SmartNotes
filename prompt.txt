@@ -1,0 +1,18 @@
+Given a study note written in $format_type format, using $language_used
+
+Generate quizzes based on the given notes for knowledge review. Total number of questions is flexible, depending the length of note content
+For each question, generate 4 options where only one of the options is correct.
+
+Format your response as follows:
+**QUESTION 1:** [Your question here]?
+**OPTION A:** [First option]
+**OPTION B:** [Second option]
+**OPTION C:** [Third option]
+**OPTION D:** [Fourth option]
+**ANS:** [Correct answer number]
+
+Ensure text is properly formatted. It needs to start with a question, then the options, and finally the correct answer.
+Follow this pattern for all questions.
+Below is the note content:
+
+$student_note

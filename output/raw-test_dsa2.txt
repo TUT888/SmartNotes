@@ -1,0 +1,50 @@
+**QUESTION 1:** What data structure does an ArrayList in Java utilize?
+**OPTION A:** A stack
+**OPTION B:** A linked list
+**OPTION C:** A hash map
+**OPTION D:** A binary tree
+
+**ANS:** B
+
+**QUESTION 2:**  Which of the following is a characteristic of ArrayList?
+**OPTION A:**  Fast insertion/removal at arbitrary positions
+**OPTION B:**  Efficient random access
+**OPTION C:**  Optimized for frequent random access
+**OPTION D:**  All of the above
+
+**ANS:** D
+
+**QUESTION 3:**  How does the LinkedList differ from ArrayList in terms of memory allocation?
+**OPTION A:**  LinkedList uses a contiguous memory block, while ArrayList uses a non-contiguous block
+**OPTION B:**  LinkedList uses a non-contiguous memory block, while ArrayList uses a contiguous block
+**OPTION C:**  Both use contiguous memory blocks
+**OPTION D:**  Both use non-contiguous memory blocks
+
+**ANS:** A
+
+**QUESTION 4:** What is the time complexity of removing an element at a specific index in an ArrayList?
+**OPTION A:** O(1)
+**OPTION B:** O(n)
+**OPTION C:** O(n log n)
+**OPTION D:** O(n^2)
+
+**ANS:** B
+
+**QUESTION 5:** Which statement best describes the performance of ArrayList when it comes to insertions/removals at the beginning and end?
+**OPTION A:**  Fast and efficient
+**OPTION B:**  Slow and inefficient
+**OPTION C:**  Fast and amortized
+**OPTION D:**  Slow and non-amortized
+
+**ANS:** C 
+
+
+**QUESTION 6:**  When would you choose a LinkedList over an ArrayList?
+**OPTION A:**  When you need random access.
+**OPTION B:**  When you need to frequently insert or delete elements at the beginning or end.
+**OPTION C:**  When you need to store elements in a predictable order.
+**OPTION D:**  When you need to frequently access elements in the middle.
+
+**ANS:** B 
+
+

@@ -1,0 +1,43 @@
+**QUESTION 1:** What does Time Complexity measure?
+**OPTION A:** The amount of memory used by an algorithm
+**OPTION B:** The runtime of an algorithm as input size increases
+**OPTION C:** The efficiency of an algorithm in terms of data structures
+**OPTION D:** The number of iterations performed by an algorithm
+
+**ANS:** B
+
+**QUESTION 2:** Which of the following is an example of O(log n) time complexity?
+**OPTION A:**  Sorting an array using Bubble Sort
+**OPTION B:**  Searching for an element in a sorted array using binary search
+**OPTION C:**  Traversing a linked list
+**OPTION D:**  Finding the maximum element in an unsorted array
+
+**ANS:** B
+
+**QUESTION 3:**  Which of the following is a characteristic of O(n log n) time complexity?
+**OPTION A:**  The algorithm has a constant runtime regardless of input size
+**OPTION B:**  The algorithm has a linear runtime for small input sizes
+**OPTION C:**  The algorithm has a logarithmic runtime for large input sizes
+**OPTION D:**  The algorithm has a quadratic runtime for all input sizes
+
+**ANS:** C
+
+**QUESTION 4:** What does the Space Complexity of an algorithm consider?
+**OPTION A:**  The amount of memory required for storing data
+**OPTION B:**  The number of steps taken by the algorithm
+**OPTION C:**  The efficiency of the algorithm's code
+**OPTION D:**  The time taken for the algorithm to run
+
+**ANS:** A
+
+**QUESTION 5:**  What is the difference between Best, Average, and Worst Case Time Complexity?
+**OPTION A:**  Best Case, Average Case, and Worst Case represent the different outcomes of the algorithm on different inputs.
+**OPTION B:**  Best Case, Average Case, and Worst Case represent the best, average, and worst-case performance of the algorithm.
+**OPTION C:**  Best Case, Average Case, and Worst Case represent the time complexity of the algorithm for different input sizes.
+**OPTION D:**  Best Case, Average Case, and Worst Case represent the efficiency of the algorithm for different data structures.
+
+**ANS:** B
+
+**QUESTION 6:**  What is the time complexity of the `sum` function in the given example?
+**OPTION A:**  O(1)
+**OPTION B:**  O(
