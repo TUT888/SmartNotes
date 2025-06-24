@@ -1,43 +1,48 @@
-**QUESTION 1:** What does Time Complexity measure?
-**OPTION A:** The amount of memory used by an algorithm
-**OPTION B:** The runtime of an algorithm as input size increases
-**OPTION C:** The efficiency of an algorithm in terms of data structures
-**OPTION D:** The number of iterations performed by an algorithm
-
-**ANS:** B
-
-**QUESTION 2:** Which of the following is an example of O(log n) time complexity?
-**OPTION A:**  Sorting an array using Bubble Sort
-**OPTION B:**  Searching for an element in a sorted array using binary search
-**OPTION C:**  Traversing a linked list
-**OPTION D:**  Finding the maximum element in an unsorted array
-
-**ANS:** B
-
-**QUESTION 3:**  Which of the following is a characteristic of O(n log n) time complexity?
-**OPTION A:**  The algorithm has a constant runtime regardless of input size
-**OPTION B:**  The algorithm has a linear runtime for small input sizes
-**OPTION C:**  The algorithm has a logarithmic runtime for large input sizes
-**OPTION D:**  The algorithm has a quadratic runtime for all input sizes
-
-**ANS:** C
-
-**QUESTION 4:** What does the Space Complexity of an algorithm consider?
-**OPTION A:**  The amount of memory required for storing data
-**OPTION B:**  The number of steps taken by the algorithm
-**OPTION C:**  The efficiency of the algorithm's code
-**OPTION D:**  The time taken for the algorithm to run
+**QUESTION 1:** What does the term "Time Complexity" refer to?
+**OPTION A:** The amount of time it takes to run an algorithm.
+**OPTION B:** The amount of memory an algorithm uses as input size increases.
+**OPTION C:** The number of times an algorithm repeats its execution.
+**OPTION D:** The number of data structures used by an algorithm.
 
 **ANS:** A
 
-**QUESTION 5:**  What is the difference between Best, Average, and Worst Case Time Complexity?
-**OPTION A:**  Best Case, Average Case, and Worst Case represent the different outcomes of the algorithm on different inputs.
-**OPTION B:**  Best Case, Average Case, and Worst Case represent the best, average, and worst-case performance of the algorithm.
-**OPTION C:**  Best Case, Average Case, and Worst Case represent the time complexity of the algorithm for different input sizes.
-**OPTION D:**  Best Case, Average Case, and Worst Case represent the efficiency of the algorithm for different data structures.
+
+**QUESTION 2:** Which of the following is an example of a Linear Time Complexity?
+**OPTION A:** O(n log n)
+**OPTION B:** O(n²)
+**OPTION C:** O(n!)
+**OPTION D:** O(1)
+
+**ANS:** D
+
+**QUESTION 3:** What is the primary focus when analyzing an algorithm's Time Complexity?
+**OPTION A:** Optimizing the code for better readability.
+**OPTION B:** Determining the algorithm's efficiency as input size increases.
+**OPTION C:**  Comparing the execution time of different algorithms.
+**OPTION D:** Understanding the specific data structures used in the algorithm.
 
 **ANS:** B
 
-**QUESTION 6:**  What is the time complexity of the `sum` function in the given example?
-**OPTION A:**  O(1)
-**OPTION B:**  O(
+**QUESTION 4:** What does "Space Complexity" refer to in the context of an algorithm?
+**OPTION A:** The amount of memory an algorithm uses for storing input data.
+**OPTION B:** The amount of memory an algorithm uses for storing intermediate results.
+**OPTION C:** The amount of memory an algorithm uses for storing the output.
+**OPTION D:** The amount of memory an algorithm uses for storing the variables used in the algorithm.
+
+**ANS:** B
+
+**QUESTION 5:** In the context of the example provided, which of the following describes the Time Complexity of the `sum` function?
+**OPTION A:** O(n)
+**OPTION B:** O(1)
+**OPTION C:** O(n log n)
+**OPTION D:** O(2ⁿ)
+
+**ANS:** A 
+
+**QUESTION 6:** Which of the following best describes the "Worst Case" scenario in terms of Time Complexity?
+**OPTION A:** The minimum steps an algorithm can take to solve a problem.
+**OPTION B:** The expected number of steps an algorithm will take on average.
+**OPTION C:** The maximum steps an algorithm will take on any given input.
+**OPTION D:** The number of times an algorithm repeats its execution.
+
+**ANS:** C 

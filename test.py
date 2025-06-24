@@ -23,7 +23,7 @@ def create_prompt_for_note(format_type, language_used, note_file_path):
     with open(note_file_path, 'r', encoding='utf-8') as file:
       note_content = file.read()
 
-    # Read prompt format
+    # Read prompt format, and replace the variables with input content
     with open(PROMPT_FILE_PATH, "r", encoding="utf-8") as f:
       src = Template(f.read())
       prompt = src.substitute({
@@ -33,7 +33,6 @@ def create_prompt_for_note(format_type, language_used, note_file_path):
       })
   except Exception as e:
     print(f"An error occurred: {e}")
-        
   return prompt
 
 def fetchQuizFromLlama(prompt):
@@ -48,7 +47,7 @@ def fetchQuizFromLlama(prompt):
         }
       ],
       "model": MODEL,
-      "max_tokens": 500,
+      "max_tokens": 1000,
       "temperature": 0.7,
       "top_p": 0.9
     })
@@ -56,7 +55,7 @@ def fetchQuizFromLlama(prompt):
     result = response.json()["choices"][0]["message"]["content"]
     return result
   else:
-      raise Exception(f"API request failed: {response.status_code} - {response.text}")
+    raise Exception(f"API request failed: {response.status_code} - {response.text}")
 
 def process_quiz(quiz_text):
   questions = []

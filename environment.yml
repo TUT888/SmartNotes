@@ -1,0 +1,14 @@
+name: smart-notes
+channels:
+  - defaults
+dependencies:
+  - python=3.13.5
+  - pip
+  - pip:
+      - certifi==2025.6.15
+      - charset-normalizer==3.4.2
+      - dotenv==0.9.9
+      - idna==3.10
+      - python-dotenv==1.1.0
+      - requests==2.32.4
+      - urllib3==2.5.0

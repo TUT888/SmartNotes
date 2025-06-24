@@ -1,50 +1,47 @@
-**QUESTION 1:** What data structure does an ArrayList in Java utilize?
-**OPTION A:** A stack
-**OPTION B:** A linked list
-**OPTION C:** A hash map
-**OPTION D:** A binary tree
-
-**ANS:** B
-
-**QUESTION 2:**  Which of the following is a characteristic of ArrayList?
-**OPTION A:**  Fast insertion/removal at arbitrary positions
-**OPTION B:**  Efficient random access
-**OPTION C:**  Optimized for frequent random access
-**OPTION D:**  All of the above
-
-**ANS:** D
-
-**QUESTION 3:**  How does the LinkedList differ from ArrayList in terms of memory allocation?
-**OPTION A:**  LinkedList uses a contiguous memory block, while ArrayList uses a non-contiguous block
-**OPTION B:**  LinkedList uses a non-contiguous memory block, while ArrayList uses a contiguous block
-**OPTION C:**  Both use contiguous memory blocks
-**OPTION D:**  Both use non-contiguous memory blocks
+**QUESTION 1:** What is the primary difference between an ArrayList and a LinkedList in terms of memory usage?
+**OPTION A:** ArrayList uses a contiguous memory allocation, while LinkedList uses a non-contiguous memory allocation.
+**OPTION B:** ArrayList uses a non-contiguous memory allocation, while LinkedList uses a contiguous memory allocation.
+**OPTION C:** ArrayList uses a dynamic array, while LinkedList uses a fixed size array.
+**OPTION D:** Both ArrayList and LinkedList use the same type of memory allocation.
 
 **ANS:** A
 
-**QUESTION 4:** What is the time complexity of removing an element at a specific index in an ArrayList?
-**OPTION A:** O(1)
-**OPTION B:** O(n)
-**OPTION C:** O(n log n)
-**OPTION D:** O(n^2)
+**QUESTION 2:** Which operation on an ArrayList is considered to be the fastest?
+**OPTION A:** Accessing an element by its index.
+**OPTION B:** Inserting an element at the beginning of the list.
+**OPTION C:** Removing an element at the end of the list.
+**OPTION D:** Inserting an element at a specific index.
+
+**ANS:** A
+
+**QUESTION 3:**  What is a key advantage of a LinkedList over an ArrayList in terms of insertion/deletion operations?
+**OPTION A:** LinkedList is faster for random access operations.
+**OPTION B:** LinkedList is faster for accessing elements at the beginning and end.
+**OPTION C:** LinkedList is faster for insertion/deletion operations at the beginning and end.
+**OPTION D:** LinkedList is faster for insertion/deletion operations at arbitrary positions.
 
 **ANS:** B
 
-**QUESTION 5:** Which statement best describes the performance of ArrayList when it comes to insertions/removals at the beginning and end?
-**OPTION A:**  Fast and efficient
-**OPTION B:**  Slow and inefficient
-**OPTION C:**  Fast and amortized
-**OPTION D:**  Slow and non-amortized
+**QUESTION 4:** Which of the following operations on a LinkedList would be the most time-consuming?
+**OPTION A:** Accessing an element by its index.
+**OPTION B:** Removing an element from the beginning of the list.
+**OPTION C:** Inserting an element at the end of the list.
+**OPTION D:** Searching for an element within the list.
 
-**ANS:** C 
+**ANS:** D
 
+**QUESTION 5:** When is it recommended to use ArrayList?
+**OPTION A:** When frequent insertions and deletions are required at the beginning and end.
+**OPTION B:** When random access is a primary concern.
+**OPTION C:** When memory efficiency is a priority.
+**OPTION D:** When performance in insertion/deletion operations is not critical.
 
-**QUESTION 6:**  When would you choose a LinkedList over an ArrayList?
-**OPTION A:**  When you need random access.
-**OPTION B:**  When you need to frequently insert or delete elements at the beginning or end.
-**OPTION C:**  When you need to store elements in a predictable order.
-**OPTION D:**  When you need to frequently access elements in the middle.
+**ANS:** B
+
+**QUESTION 6:** What is the time complexity of removing an element at a specific index in an ArrayList?
+**OPTION A:** O(1)
+**OPTION B:** O(n)
+**OPTION C:** O(log n)
+**OPTION D:** O(n log n)
 
 **ANS:** B 
-
-
