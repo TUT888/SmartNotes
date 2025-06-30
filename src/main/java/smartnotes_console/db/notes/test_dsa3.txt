@@ -1,0 +1,37 @@
+Another Time and Space Complexity Notes
+
+Big O notation describes how an algorithm's performance changes as input size grows. We focus on the worst case scenario and ignore constants and smaller terms. For example, 3n^2 + 5n + 2 becomes O(n^2).
+
+Common time complexities from fastest to slowest:
+
+O(1) takes the same time regardless of input size. Examples are array access by index and hash table lookups.
+
+O(log n) increases logarithmically with input size. Binary search is a good example since we eliminate half the search space each step.
+
+O(n) increases proportionally with input size. Linear search through an array or finding the maximum element are examples.
+
+O(n log n) is common in efficient sorting like merge sort and heap sort. We divide the problem and combine results.
+
+O(n^2) increases with the square of input size. Nested loops like in bubble sort or checking all pairs in an array.
+
+O(2^n) is extremely slow for large inputs. Recursive algorithms that explore all possibilities like naive Fibonacci calculations.
+
+Space complexity measures memory usage relative to input size. This includes extra space the algorithm needs plus the input space.
+
+In-place algorithms use constant extra space beyond the input. Bubble sort is an example since we only swap elements. Out-of-place algorithms need space proportional to input size like merge sort which needs extra arrays for merging.
+
+Some examples:
+
+Binary search uses O(1) space if implemented iteratively since we only need a few variables. The recursive version uses O(log n) space because of the call stack.
+
+Merge sort has O(n log n) time complexity because we divide the array log n times and merging takes O(n) time at each level. Space complexity is O(n) for the temporary arrays.
+
+Dynamic programming often trades space for time. We can compute Fibonacci in O(1) space with iteration or use O(n) space with memoization to get O(n) time instead of O(2^n).
+
+When solving problems, consider both time and space complexity. Sometimes a slower algorithm is better if it uses less memory. Hash tables have O(1) average lookup but O(n) worst case if everything hashes to the same spot.
+
+For interviews and real development, aim for efficient solutions that are still readable. An O(n log n) solution that's clear often beats an O(n) solution that's complex and error-prone.
+
+Important questions: How does data structure choice affect complexity? When might we choose a slower algorithm? How does recursion depth relate to space complexity?
+
+Next lecture covers advanced sorting algorithms and their complexity analysis.
