@@ -1,18 +1,15 @@
 package smartnotes_console.dto.ai_api_request;
 
-import java.util.ArrayList;
-
 public class InferenceRequest {
 	public String model;
 	public double temperature;
 	public double top_p;
-	public ArrayList<InferenceRequestMessage> messages;
+	public InferenceRequestMessage[] messages;
 	
 	public InferenceRequest(String model, double temperature, double top_p, String role, String promptForAI) {
 		this.model = model;
 		this.temperature = temperature;
 		this.top_p = top_p;
-		this.messages = new ArrayList<InferenceRequestMessage>();
-		this.messages.add(new InferenceRequestMessage(role, promptForAI));
+		this.messages = new InferenceRequestMessage[] {new InferenceRequestMessage(role, promptForAI)};
 	}
 }

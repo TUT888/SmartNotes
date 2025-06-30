@@ -12,6 +12,8 @@ public class Storage {
 	
 	// AI API config
 	public static String AI_API_ROLE = "user";
+	public static double AI_API_TEMPERATURE = 0.7;
+	public static double AI_API_TOP_P = 0.9;
 	public static String AI_API_TOKEN;
 	public static String AI_API_URL;
 	public static String AI_API_MODEL;
