@@ -17,7 +17,7 @@ import com.google.gson.JsonObject;
 
 import smartnotes_console.common.Storage;
 import smartnotes_console.dto.Note;
-import smartnotes_console.dto.ai_api_request.AIRequestJSON;
+import smartnotes_console.dto.ai_api_request.InferenceRequest;
 
 public class QuizGenerationService {
 	public String generateSampleQuiz() {
@@ -86,7 +86,7 @@ public class QuizGenerationService {
 	
 	public String fetchResponseFromInferenceProvider(String promptForAI) {
 		Gson gson = new Gson();
-		AIRequestJSON info = new AIRequestJSON(Storage.AI_API_MODEL, 0.7, 0.9, Storage.AI_API_ROLE, promptForAI);
+		InferenceRequest info = new InferenceRequest(Storage.AI_API_MODEL, 0.7, 0.9, Storage.AI_API_ROLE, promptForAI);
 		String chatJSON = gson.toJson(info);
 		
 		String response = "";
