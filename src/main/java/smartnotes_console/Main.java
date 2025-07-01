@@ -13,6 +13,7 @@ import java.util.Scanner;
 import smartnotes_console.common.Storage;
 import smartnotes_console.dto.Note;
 import smartnotes_console.dto.Quiz;
+import smartnotes_console.dto.ai_api_response.QuizResponse;
 import smartnotes_console.service.NoteService;
 import smartnotes_console.service.QuizService;
 import smartnotes_console.service.ai.QuizGenerationService;
@@ -73,36 +74,33 @@ public class Main {
 					return true;
 				}
 				
-				System.out.println("Generating quizzes...");
-				String rawQuiz = quizGenerationService.generateQuizFromNote(selectedNote);
-				if (rawQuiz.isEmpty()) {
-					System.out.println("There is an error when retrieving raw quizzes, content is empty.");
+				System.out.println("Generating quizzes... please wait...");
+				QuizResponse quizResponse = quizGenerationService.generateQuizFromNote(selectedNote);
+				if (quizResponse == null) {
+					System.out.println("There is an error when processing quizzes.");
 					return true;
 				}
-
-				System.out.println("Processing quizzes...");
-				ArrayList<Quiz> quizzes = quizService.processQuizFromRawString(rawQuiz);
-				if (quizzes.isEmpty()) {
-					System.out.println("There is an error when processing raw quizzes.");
+				if (quizResponse.quizzes == null || quizResponse.quizzes.isEmpty()) {
+					System.out.println("There is an error when loading data, quizzes not found.");
 					return true;
 				}
+				System.out.println("Done.");
 				
 				System.out.println("\n------ Quizzes start ------");
-				int result = doQuizzes(quizzes);
+				int result = doQuizzes(quizResponse.quizzes);
 				System.out.println("\n------- Quizzes end -------");
-				System.out.println("Your result: " + result + " / " + quizzes.size());
+				System.out.println("Your result: " + result + " / " + quizResponse.quizzes.size());
 				break;
 			case OPT_GENERATE_SAMPLE_QUIZ:
-				String rawSampleQuiz = quizGenerationService.generateSampleQuiz();
-				ArrayList<Quiz> sampleQuizzes = quizService.processQuizFromRawString(rawSampleQuiz);
-				if (sampleQuizzes.isEmpty()) {
+				QuizResponse sampleQuizResponse = quizGenerationService.generateSampleQuiz();
+				if (sampleQuizResponse.quizzes.isEmpty()) {
 					System.out.println("There is an error when processing raw quizzes.");
 					return true;
 				}
 				System.out.println("\n------ Quizzes start ------");
-				int sampleQuizResult = doQuizzes(sampleQuizzes);
+				int sampleQuizResult = doQuizzes(sampleQuizResponse.quizzes);
 				System.out.println("\n------- Quizzes end -------");
-				System.out.println("Your result: " + sampleQuizResult + " / " + sampleQuizzes.size());
+				System.out.println("Your result: " + sampleQuizResult + " / " + sampleQuizResponse.quizzes.size());
 				break;
 			default:
 				System.out.println("Invalid option, please try again.");

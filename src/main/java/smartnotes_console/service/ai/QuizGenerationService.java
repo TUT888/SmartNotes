@@ -1,119 +1,86 @@
 package smartnotes_console.service.ai;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Scanner;
 
 import com.google.gson.Gson;
 
 import smartnotes_console.common.Storage;
 import smartnotes_console.dto.Note;
+import smartnotes_console.dto.ai_api_request.GuidedInferenceRequest;
 import smartnotes_console.dto.ai_api_request.InferenceRequest;
+import smartnotes_console.dto.ai_api_request.InferenceRequestMessage;
+import smartnotes_console.dto.ai_api_response.QuizResponse;
 import smartnotes_console.dto.ai_api_response.InferenceResponse;
 
-public class QuizGenerationService {
-	public String generateSampleQuiz() {
-		// Below is sample response got from fetchResponseFromInferenceProvider()
-		String responseAsJSONString = "{\"id\":\"chat-sample-id\",\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"logprobs\":null,\"message\":{\"content\":\"**QUESTION** 1: What does Time Complexity measure? **END QUESTION**\\r\\n**OPTION** 1:  The memory used by an algorithm. **END OPTION**\\r\\n**OPTION** 2: How the runtime of an algorithm increases with input size. **END OPTION**\\r\\n**OPTION** 3: The type of data structure used by an algorithm. **END OPTION**\\r\\n**OPTION** 4: The number of iterations performed by an algorithm. **END OPTION**\\r\\n**ANS**: 2 **END ANS**\\r\\n\\r\\n**QUESTION** 2: What is the time complexity of a Binary Search? **END QUESTION**\\r\\n**OPTION** 1: O(1) **END OPTION**\\r\\n**OPTION** 2: O(log n) **END OPTION**\\r\\n**OPTION** 3: O(n) **END OPTION**\\r\\n**OPTION** 4: O(n log n) **END OPTION**\\r\\n**ANS**: 2 **END ANS**\\r\\n\\r\\n**QUESTION** 3: Which of the following is NOT a common time complexity? **END QUESTION**\\r\\n**OPTION** 1: O(1) **END OPTION**\\r\\n**OPTION** 2: O(n) **END OPTION**\\r\\n**OPTION** 3: O(n^2) **END OPTION**\\r\\n**OPTION** 4: O(2^n) **END OPTION**\\r\\n**ANS**: 4 **END ANS**\\r\\n\",\"refusal\":null,\"role\":\"assistant\",\"audio\":null,\"function_call\":null,\"tool_calls\":[],\"reasoning_content\":null},\"stop_reason\":107}],\"created\":1234567890,\"model\":\"google/gemma-2-2b-it\",\"object\":\"chat.completion\",\"service_tier\":null,\"system_fingerprint\":null,\"usage\":{\"completion_tokens\":858,\"prompt_tokens\":891,\"total_tokens\":1749,\"completion_tokens_details\":null,\"prompt_tokens_details\":null},\"prompt_logprobs\":null}\r\n";
+public class QuizGenerationService extends AIService {
+	public QuizResponse generateSampleQuiz() {
+		// Below is sample response
+		String responseAsJSONString = "{\"id\":\"chatcmpl-5e257ec09e5e4bfe834684f6b4799140\",\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"logprobs\":null,\"message\":{\"content\":\"{\\\"topic\\\": \\\"Time and Space Complexity\\\", \\\"quizzes\\\": [\\n    {\\n        \\\"question\\\": \\\"What does Time Complexity measure?\\\",\\n        \\\"options\\\": [\\n            \\\"The amount of memory an algorithm uses\\\",\\n            \\\"How the runtime of an algorithm increases with input size\\\",\\n            \\\"The number of times an algorithm repeats\\\",\\n            \\\"The type of data an algorithm processes\\\"\\n        ],\\n        \\\"correctIndex\\\": 1\\n    },\\n    {\\n        \\\"question\\\": \\\"Which of the following time complexities represents a linear algorithm?\\\",\\n        \\\"options\\\": [\\n            \\\"O(n log n)\\\",\\n            \\\"O(n^2)\\\",\\n            \\\"O(1)\\\",\\n            \\\"O(2^n)\\\"\\n        ],\\n        \\\"correctIndex\\\": 2\\n    },\\n    {\\n        \\\"question\\\": \\\"Which of the following is an example of a constant time complexity?\\\",\\n        \\\"options\\\": [\\n            \\\"Accessing an array element by its index\\\",\\n            \\\"Binary Search\\\",\\n            \\\"Finding a number in a sorted array\\\",\\n            \\\"Sorting an array using bubble sort\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"What is the primary purpose of analyzing Space Complexity?\\\",\\n        \\\"options\\\": [\\n            \\\"Determining the efficiency of a recursive function\\\",\\n            \\\"Evaluating the performance of a data structure\\\",\\n            \\\"Understanding how much memory an algorithm consumes as input size grows\\\",\\n            \\\"Identifying the optimal data structures for a given problem\\\"\\n        ],\\n        \\\"correctIndex\\\": 3\\n    }\\n]}\",\"refusal\":null,\"role\":\"assistant\",\"audio\":null,\"function_call\":null,\"tool_calls\":[],\"reasoning_content\":null},\"stop_reason\":null}],\"created\":1234567890,\"model\":\"google/gemma-2-2b-it\",\"object\":\"chat.completion\",\"service_tier\":null,\"system_fingerprint\":null,\"usage\":{\"completion_tokens\":548,\"prompt_tokens\":916,\"total_tokens\":1464,\"completion_tokens_details\":null,\"prompt_tokens_details\":null},\"prompt_logprobs\":null}\r\n";
 		
 		// Extract raw message content from response string
-		String chatMessageContent = "";
+		Gson gson = new Gson();
+		QuizResponse quizResponse = null;
 		try {
-			Gson gson = new Gson();
+			// Extract raw message content from response string
 			InferenceResponse inferenceResponse = gson.fromJson(responseAsJSONString, InferenceResponse.class);
-			chatMessageContent = inferenceResponse.choices[0].message.content;
+			String chatMessageContent = inferenceResponse.choices[0].message.content;
+			
+			// Parse to object
+			quizResponse = gson.fromJson(chatMessageContent, QuizResponse.class);
 		} catch (Exception e) {
-			System.out.println("An error occurred.");
+			System.out.println(e.toString());
 			e.printStackTrace();
 		}
-
-		System.out.println("chatMessageContent: " + chatMessageContent);
-		return chatMessageContent;
+		
+		return quizResponse;
 	}
 	
-	public String generateQuizFromNote(Note selectedNote) {
-		// Check permission
-		if (Storage.AI_API_TOKEN == null || Storage.AI_API_URL == null || Storage.AI_API_MODEL == null) {
-			System.out.println("Missing AI_API_TOKEN or AI_API_URL or AI_API_MODEL.");
-			System.out.println("Please check your .env file and try again.");
-			return "";
-		}
-		
-		// Create prompt based on template from text file
+	public QuizResponse generateQuizFromNote(Note selectedNote) {
+		checkPermission();
+
+		// Prepare JSON Body
 		String promptForAI = "";
+		String guidedSchema = "";
 		try {
 			String noteContent = Files.readString(Path.of(selectedNote.storeFilePath), StandardCharsets.UTF_8);
-			String template = Files.readString(Path.of(Storage.PROMPT_TEMPLATE_PATH), StandardCharsets.UTF_8);
-			
+			String template = Files.readString(Path.of(Storage.PROMPT_TEMPLATE_PATH), StandardCharsets.UTF_8);	
 			promptForAI = String.format(template, noteContent);
+			
+			guidedSchema = Files.readString(Path.of(Storage.QUIZ_RESPONSE_SCHEMA_PATH), StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
-		if (promptForAI.isEmpty()) return "";
+		if (promptForAI.isEmpty() || guidedSchema.isEmpty()) return null;
+
+		// Create inference request
+		Gson gson = new Gson();
+		InferenceRequestMessage inferenceRequestMessage = new InferenceRequestMessage(Storage.AI_API_ROLE, promptForAI);
+		InferenceRequest info = new GuidedInferenceRequest(
+				Storage.AI_API_MODEL, new InferenceRequestMessage[] {inferenceRequestMessage},
+				Storage.AI_API_TEMPERATURE, Storage.AI_API_TOP_P, guidedSchema);
+		String chatJSON = gson.toJson(info);
 		
 		// Fetch response from AI API
-		String responseAsJSONString = fetchResponseFromInferenceProvider(promptForAI);
-		if (responseAsJSONString.isEmpty()) return "";
+		String responseAsJSONString = fetchResponseFromInferenceProvider(chatJSON);
+		if (responseAsJSONString.isEmpty()) return null;
 
-		// Extract raw message content from response string
-		String chatMessageContent = "";
+		QuizResponse quizResponse = null;
 		try {
-			Gson gson = new Gson();
+			// Extract raw message content from response string
 			InferenceResponse inferenceResponse = gson.fromJson(responseAsJSONString, InferenceResponse.class);
-			chatMessageContent = inferenceResponse.choices[0].message.content;
+			String chatMessageContent = inferenceResponse.choices[0].message.content;
+			
+			// Parse to object
+			quizResponse = gson.fromJson(chatMessageContent, QuizResponse.class);
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			e.printStackTrace();
 		}
-
-		return chatMessageContent;
-	}
-	
-	public String fetchResponseFromInferenceProvider(String promptForAI) {
-		Gson gson = new Gson();
-		InferenceRequest info = new InferenceRequest(Storage.AI_API_MODEL, Storage.AI_API_TEMPERATURE, Storage.AI_API_TOP_P, Storage.AI_API_ROLE, promptForAI);
-		String chatJSON = gson.toJson(info);
 		
-		String response = "";
-		try {
-			// Send request
-			URL url = new URI(Storage.AI_API_URL).toURL();
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setRequestProperty ("Authorization", "Bearer " + Storage.AI_API_TOKEN);
-			connection.setDoOutput(true);
-			
-			OutputStream os = connection.getOutputStream();
-			os.write(chatJSON.getBytes());
-			os.flush();
-			
-			// Handle response
-			int responseCode = connection.getResponseCode();
-			if (responseCode == HttpURLConnection.HTTP_OK) {
-				Scanner scanner = new Scanner(connection.getInputStream(), StandardCharsets.UTF_8);
-				while (scanner.hasNextLine()) {
-					response += scanner.nextLine() + "\n";
-				}
-				scanner.close();
-			} else {
-				System.out.println("Error: HTTP Response code - " + responseCode);
-			}
-			
-			connection.disconnect();
-		} catch (IOException | URISyntaxException e) {
-			System.out.println(e.toString());
-			e.printStackTrace();
-		}
-		return response;
+		return quizResponse;
 	}
 }

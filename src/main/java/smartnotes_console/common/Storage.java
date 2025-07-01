@@ -8,6 +8,7 @@ public class Storage {
 	
 	// Template & sample text
 	public static final String PROMPT_TEMPLATE_PATH = SOURCE_PATH + "/common/text/prompt.txt";
+	public static final String QUIZ_RESPONSE_SCHEMA_PATH = SOURCE_PATH + "/common/text/quiz_response_schema.json";
 	public static final String SAMPLE_JSON_RESPONSE_PATH = SOURCE_PATH + "/common/text/sample_response.json";
 	
 	// AI API config
