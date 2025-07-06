@@ -17,8 +17,8 @@ import smartnotes_console.dto.ai_api_response.InferenceResponse;
 
 public class QuizGenerationService extends AIService {
 	public QuizResponse generateSampleQuiz() {
-		// Below is sample response
-		String responseAsJSONString = "{\"id\":\"chatcmpl-5e257ec09e5e4bfe834684f6b4799140\",\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"logprobs\":null,\"message\":{\"content\":\"{\\\"topic\\\": \\\"Time and Space Complexity\\\", \\\"quizzes\\\": [\\n    {\\n        \\\"question\\\": \\\"What does Time Complexity measure?\\\",\\n        \\\"options\\\": [\\n            \\\"The amount of memory an algorithm uses\\\",\\n            \\\"How the runtime of an algorithm increases with input size\\\",\\n            \\\"The number of times an algorithm repeats\\\",\\n            \\\"The type of data an algorithm processes\\\"\\n        ],\\n        \\\"correctIndex\\\": 1\\n    },\\n    {\\n        \\\"question\\\": \\\"Which of the following time complexities represents a linear algorithm?\\\",\\n        \\\"options\\\": [\\n            \\\"O(n log n)\\\",\\n            \\\"O(n^2)\\\",\\n            \\\"O(1)\\\",\\n            \\\"O(2^n)\\\"\\n        ],\\n        \\\"correctIndex\\\": 2\\n    },\\n    {\\n        \\\"question\\\": \\\"Which of the following is an example of a constant time complexity?\\\",\\n        \\\"options\\\": [\\n            \\\"Accessing an array element by its index\\\",\\n            \\\"Binary Search\\\",\\n            \\\"Finding a number in a sorted array\\\",\\n            \\\"Sorting an array using bubble sort\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"What is the primary purpose of analyzing Space Complexity?\\\",\\n        \\\"options\\\": [\\n            \\\"Determining the efficiency of a recursive function\\\",\\n            \\\"Evaluating the performance of a data structure\\\",\\n            \\\"Understanding how much memory an algorithm consumes as input size grows\\\",\\n            \\\"Identifying the optimal data structures for a given problem\\\"\\n        ],\\n        \\\"correctIndex\\\": 3\\n    }\\n]}\",\"refusal\":null,\"role\":\"assistant\",\"audio\":null,\"function_call\":null,\"tool_calls\":[],\"reasoning_content\":null},\"stop_reason\":null}],\"created\":1234567890,\"model\":\"google/gemma-2-2b-it\",\"object\":\"chat.completion\",\"service_tier\":null,\"system_fingerprint\":null,\"usage\":{\"completion_tokens\":548,\"prompt_tokens\":916,\"total_tokens\":1464,\"completion_tokens_details\":null,\"prompt_tokens_details\":null},\"prompt_logprobs\":null}\r\n";
+		// Below is sample response of fetchResponseFromInferenceProvider()
+		String responseAsJSONString = "{\"id\":\"chatcmpl-123456\",\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"logprobs\":null,\"message\":{\"content\":\"{\\\"topic\\\": \\\"Object-Oriented Programming Concepts\\\", \\\"quizzes\\\": [\\n    {\\n        \\\"question\\\": \\\"What is the primary focus of Object-Oriented Programming?\\\",\\n        \\\"options\\\": [\\n            \\\"Writing code for specific tasks\\\",\\n            \\\"Organizing code around objects\\\",\\n            \\\"Implementing algorithms for complex problems\\\",\\n            \\\"Using pre-defined functions\\\"\\n        ],\\n        \\\"correctIndex\\\": 1\\n    },\\n    {\\n        \\\"question\\\": \\\"What is the primary benefit of encapsulation?\\\",\\n        \\\"options\\\": [\\n            \\\"Hiding internal details of an object\\\",\\n            \\\"Allowing easy modification of an object\\\",\\n            \\\"Promoting code reusability through inheritance\\\",\\n            \\\"Making code more efficient and faster\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"Which of the following is an example of inheritance?\\\",\\n        \\\"options\\\": [\\n            \\\"Creating a class called 'Dog' that inherits from 'Animal'\\\",\\n            \\\"Defining a method called 'calculateArea' within a class\\\",\\n            \\\"Using a constructor to initialize an object's properties\\\",\\n            \\\"Writing code to display a message on the screen\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"What does polymorphism allow?\\\",\\n        \\\"options\\\": [\\n            \\\"The same method to behave differently in different classes\\\",\\n            \\\"A single method to handle different data types\\\",\\n            \\\"Classes to inherit common functionalities from their parent classes\\\",\\n            \\\"Objects to access data and methods in a controlled manner\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"What is a constructor in OOP?\\\",\\n        \\\"options\\\": [\\n            \\\"A method that runs when an object is created\\\",\\n            \\\"A method that defines the behavior of an object\\\",\\n            \\\"A method that is called repeatedly for a specific task\\\",\\n            \\\"A method that handles exceptions and errors\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"What is the role of an interface in OOP?\\\",\\n        \\\"options\\\": [\\n            \\\"A contract that defines a set of methods that classes must implement\\\",\\n            \\\"A blueprint for creating a specific type of object\\\",\\n            \\\"A way to communicate between different objects\\\",\\n            \\\"A way to store and manage data\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    }\\n]}\",\"refusal\":null,\"role\":\"assistant\",\"audio\":null,\"function_call\":null,\"tool_calls\":[],\"reasoning_content\":null},\"stop_reason\":null}],\"created\":1751445406,\"model\":\"google/gemma-2-2b-it\",\"object\":\"chat.completion\",\"service_tier\":null,\"system_fingerprint\":null,\"usage\":{\"completion_tokens\":531,\"prompt_tokens\":953,\"total_tokens\":1484,\"completion_tokens_details\":null,\"prompt_tokens_details\":null},\"prompt_logprobs\":null}\r\n";
 		
 		// Extract raw message content from response string
 		Gson gson = new Gson();
@@ -42,25 +42,29 @@ public class QuizGenerationService extends AIService {
 		checkPermission();
 
 		// Prepare JSON Body
-		String promptForAI = "";
+		String systemPrompt = "";
+		String noteContent = "";
 		String guidedSchema = "";
 		try {
-			String noteContent = Files.readString(Path.of(selectedNote.storeFilePath), StandardCharsets.UTF_8);
-			String template = Files.readString(Path.of(Storage.PROMPT_TEMPLATE_PATH), StandardCharsets.UTF_8);	
-			promptForAI = String.format(template, noteContent);
+			systemPrompt = Files.readString(Path.of(Storage.SYSTEM_PROMPT_TEMPLATE_PATH), StandardCharsets.UTF_8);
+			
+			noteContent = Files.readString(Path.of(selectedNote.storeFilePath), StandardCharsets.UTF_8);
 			
 			guidedSchema = Files.readString(Path.of(Storage.QUIZ_RESPONSE_SCHEMA_PATH), StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
-		if (promptForAI.isEmpty() || guidedSchema.isEmpty()) return null;
+		if (systemPrompt.isEmpty() || noteContent.isEmpty() || guidedSchema.isEmpty()) return null;
 
+		System.out.println("systemMessage: " + systemPrompt);
+		System.out.println("noteContent: " + noteContent);
 		// Create inference request
 		Gson gson = new Gson();
-		InferenceRequestMessage inferenceRequestMessage = new InferenceRequestMessage(Storage.AI_API_ROLE, promptForAI);
+		InferenceRequestMessage systemMessage = new InferenceRequestMessage(Storage.AI_API_SYSTEM_ROLE, systemPrompt);
+		InferenceRequestMessage userMessage = new InferenceRequestMessage(Storage.AI_API_USER_ROLE, noteContent);
 		InferenceRequest info = new GuidedInferenceRequest(
-				Storage.AI_API_MODEL, new InferenceRequestMessage[] {inferenceRequestMessage},
+				Storage.AI_API_MODEL, new InferenceRequestMessage[] {systemMessage, userMessage},
 				Storage.AI_API_TEMPERATURE, Storage.AI_API_TOP_P, guidedSchema);
 		String chatJSON = gson.toJson(info);
 		
@@ -68,6 +72,7 @@ public class QuizGenerationService extends AIService {
 		String responseAsJSONString = fetchResponseFromInferenceProvider(chatJSON);
 		if (responseAsJSONString.isEmpty()) return null;
 
+		System.out.println("responseAsJSONString: " + responseAsJSONString);
 		QuizResponse quizResponse = null;
 		try {
 			// Extract raw message content from response string
