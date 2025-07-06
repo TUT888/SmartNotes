@@ -12,11 +12,17 @@ The sample console app currently support below features
 
 ## Project Setup
 ### HuggingFace API
-- Create a HuggingFace account and accept the conditions to use the model: [HuggingFace - Google/Gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)
-- Create Access Token by clicking on your profile -> Access Token -> Follow the instruction and check all permission
+- Create a HuggingFace account
+- Create Access Token:
+  - Click on your profile icon and select Access Token
+  - Click Create New Token
+  - Enable the Make calls to inference provider permission
+- Accept Model Usage Conditions:
+  - Navigate to the model's page: [HuggingFace - Google/Gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)
+  - Review and accept the conditions to use the model
 
 ### Environment variables
-In project root directory, create `.env` file with your generated token
+In project root directory, create `.env` file and paste your **ACCESS TOKEN** here
 ```
 API_TOKEN=<YOUR-TOKEN-HERE>
 API_URL=https://router.huggingface.co/nebius/v1/chat/completions
