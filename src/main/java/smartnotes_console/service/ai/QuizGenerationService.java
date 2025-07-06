@@ -57,8 +57,6 @@ public class QuizGenerationService extends AIService {
 		}
 		if (systemPrompt.isEmpty() || noteContent.isEmpty() || guidedSchema.isEmpty()) return null;
 
-		System.out.println("systemMessage: " + systemPrompt);
-		System.out.println("noteContent: " + noteContent);
 		// Create inference request
 		Gson gson = new Gson();
 		InferenceRequestMessage systemMessage = new InferenceRequestMessage(Storage.AI_API_SYSTEM_ROLE, systemPrompt);
@@ -72,7 +70,6 @@ public class QuizGenerationService extends AIService {
 		String responseAsJSONString = fetchResponseFromInferenceProvider(chatJSON);
 		if (responseAsJSONString.isEmpty()) return null;
 
-		System.out.println("responseAsJSONString: " + responseAsJSONString);
 		QuizResponse quizResponse = null;
 		try {
 			// Extract raw message content from response string

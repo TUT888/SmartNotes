@@ -2,6 +2,14 @@
 
 Personal project for smart note taking application
 
+## Supported Features
+The sample console app currently support below features
+| Feature    | Description |
+| -------- | ------- |
+| View my note   | Choose a note to view its content  |
+| Generate quiz from note | Choose a note to automatically generate relevant quizzes, this feature **requires HuggingFace API TOKEN** to run |
+| Try sample quiz from sample response    | Try a sample quiz from sample response, this feature does not require API TOKEN  |
+
 ## Project Setup
 ### HuggingFace API
 - Create a HuggingFace account and accept the conditions to use the model: [HuggingFace - Google/Gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)
