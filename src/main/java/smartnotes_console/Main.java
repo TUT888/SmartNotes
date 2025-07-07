@@ -48,8 +48,8 @@ public class Main {
 		
 		// Get user input
 		System.out.print("Enter your option: ");
-		String input = sc.nextLine();
-		int opt = Integer.parseInt(input);
+		int opt = getUserNumberInput();
+		if (opt < 0) return true;
 		
 		Note selectedNote;
 		switch (opt) {
@@ -108,12 +108,22 @@ public class Main {
 		return true;
 	}
 	
+	private static int getUserNumberInput() {
+		try {
+			String input = sc.nextLine();
+			int opt = Integer.parseInt(input);
+			
+			return opt;
+		} catch (Exception e) {
+			System.out.println("ERROR: Invalid input received, input must be a valid number in valid range.");
+		}
+		return -1;
+	}
+	
 	private static Note selectNote() {
 		// Get all notes
 		ArrayList<Note> noteList = noteService.getAllNotes();
-		if (noteList.isEmpty()) {
-			return null;
-		}
+		if (noteList.isEmpty()) return null;
 
 		// Print all notes
 		System.out.println("Your notes include:");
@@ -123,11 +133,14 @@ public class Main {
 		}
 
 		// Get user input
-		System.out.print("Please select a note: ");
-		String input = sc.nextLine();
-		int opt = Integer.parseInt(input);
+		System.out.println("Please select a note in a valid range.");
+		int selectedOpt = -1;
+		do {
+			System.out.print("> Your selection: ");
+			selectedOpt = getUserNumberInput();
+		} while (selectedOpt <= 0 || selectedOpt > noteList.size());
 		
-		Note selectedNote = noteList.get(opt-1);	
+		Note selectedNote = noteList.get(selectedOpt-1);	
 		return selectedNote;
 	}
 	
@@ -144,9 +157,14 @@ public class Main {
 			}
 			
 			// Get user input
-			System.out.print("> Your selection: ");
-			String input = sc.nextLine();
-			int selectedOpt = Integer.parseInt(input);
+			System.out.println("Provide your answer from 1-4, or type 0 to exit the quiz.");
+			int selectedOpt = -1;
+			do {
+				System.out.print("> Your selection (0-4): ");
+				selectedOpt = getUserNumberInput();
+			} while (selectedOpt < 0 || selectedOpt > 4);
+			
+			if (selectedOpt == 0) return totalCorrect;
 			
 			// Check user input
 			if ((selectedOpt - 1) == quiz.correctIndex) {
@@ -162,14 +180,14 @@ public class Main {
 
 	private static boolean loadEnv() {
 		Properties props = new Properties();
-		Path envFile = Paths.get(".env");
 		
 		try {
+			Path envFile = Paths.get(".env");
 			InputStream inputStream = Files.newInputStream(envFile);
 			props.load(inputStream);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println("An error occurred when reading .env file");
-			e.printStackTrace();
+			System.out.println("Please check your .env file and try again.");
 			return false;
 		}
 		
