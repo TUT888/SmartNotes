@@ -119,3 +119,8 @@ CREATE TABLE attempt_details (
     PRIMARY KEY (id),
     CONSTRAINT fk_attempt_details_attempt_id FOREIGN KEY (attempt_id) REFERENCES attempts (id)
 );
+
+
+INSERT INTO users(email, password, name) VALUES
+('john@gmail.com', 'john', 'John'),
+('mary@gmail.com', 'mary', 'Mary');

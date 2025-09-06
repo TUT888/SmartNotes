@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
 
+import smartnotes_console.common.Database;
 import smartnotes_console.common.Storage;
 import smartnotes_console.dto.Note;
 import smartnotes_console.dto.Quiz;
@@ -38,6 +39,8 @@ public class Main {
 	
 	private static boolean displayOption() {
 		// Display option
+		Database.testUser();
+		
 		System.out.println("\nWELCOME TO SMART NOTES");
 		System.out.println(" ________________________________________________");
 		System.out.println("| 0. Quit                                        |");
@@ -194,6 +197,12 @@ public class Main {
 		Storage.AI_API_TOKEN = (String) props.get("API_TOKEN");
 		Storage.AI_API_URL = (String) props.get("API_URL");
 		Storage.AI_API_MODEL = (String) props.get("MODEL");
+
+		Storage.DB_PORT = (String) props.get("DB_PORT");
+		Storage.DB_NAME = (String) props.get("DB_NAME");
+		Storage.DB_USERNAME = (String) props.get("DB_USERNAME");
+		Storage.DB_PASSWORD = (String) props.get("DB_PASSWORD");
+		Storage.DB_CONNECTION_URL = Storage.DB_SERVER + Storage.DB_NAME;
 		
 		return true;
 	}

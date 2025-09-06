@@ -5,6 +5,13 @@ public class Storage {
 
 	// Database
 	public static final String DB_PATH = SOURCE_PATH + "/db";
+	public static String DB_PORT = "";
+	public static String DB_NAME = "";
+	public static String DB_USERNAME = "";
+	public static String DB_PASSWORD = "";
+	public static String DB_SERVER = "jdbc:mysql://localhost:3306/";
+	public static String DB_CONNECTION_URL = "";
+//	public static String DB_CONNECTION_URL =  + DB_NAME + "?serverTimezone=UTC";
 	
 	// Template & sample text
 	public static final String SYSTEM_PROMPT_TEMPLATE_PATH = SOURCE_PATH + "/common/text/system_prompt.txt";
