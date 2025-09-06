@@ -1,3 +1,0 @@
-id,title,store_file_name
-1,Time and Space Complexity,test_dsa1.txt
-2,Object-Oriented Programming Concepts,test_dsa2.txt
