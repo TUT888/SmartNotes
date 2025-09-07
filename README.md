@@ -18,13 +18,13 @@ The sample console app currently support below features
   - Click Create New Token
   - Enable the Make calls to inference provider permission
 - Accept Model Usage Conditions:
-  - Navigate to the model's page: [HuggingFace - Google/Gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)
+  - Navigate to the model's page, select a model you wish to use
   - Review and accept the conditions to use the model
 
 ### Environment variables
 In project root directory, create `.env` file and paste your **ACCESS TOKEN** here
 ```
 API_TOKEN=<YOUR-TOKEN-HERE>
-API_URL=https://router.huggingface.co/nebius/v1/chat/completions
-MODEL=google/gemma-2-2b-it
+API_URL=<YOUR-INFERENCE-PROVIDER>
+MODEL=<YOUR-SELECTED-MODEL>
 ```
