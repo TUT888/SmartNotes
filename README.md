@@ -10,13 +10,13 @@ Personal project for smart note taking application
 
 ## How to run 
 1. HuggingFace setup
-    - Create a HuggingFace account and accept the conditions to use the model: [HuggingFace - Google/Gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)
+    - Create a HuggingFace account and accept the conditions to use the model, select a model you wish to use
     - Create Access Token by clicking on your profile -> Access Token
 2. Create `.env` file with your generated token
     ```
     API_TOKEN=<YOUR-TOKEN-HERE>
-    API_URL=https://router.huggingface.co/nebius/v1/chat/completions
-    MODEL=google/gemma-2-2b-it
+    API_URL=<YOUR-INFERENCE-PROVIDER>
+    MODEL=<YOUR-SELECTED-MODEL>
     ```
 3. Clone this repo branch (or clone repo and checkout branch later)
     ```bash
