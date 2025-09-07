@@ -128,7 +128,3 @@ INSERT INTO users(email, password, name, created_at) VALUES
 INSERT INTO documents(user_id, title, type, created_at) VALUES
 (1, 'Time and Space Complexity', 'note', '2025-10-13 18:00:00'),
 (2, 'Object-Oriented Programming Concepts', 'note', '2025-10-14 22:12:25');
-
--- INSERT INTO notes(id, content) VALUES
--- (1, ''),
--- (2, '');

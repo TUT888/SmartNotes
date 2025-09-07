@@ -1,14 +1,15 @@
-# SmartNotes - Note Taking Application
+# SmartNotes Backend
 
 Personal project for smart note taking application
 
 ## Supported Features
-The sample console app currently support below features
-| Feature    | Description |
-| -------- | ------- |
-| View my note   | Choose a note to view its content  |
-| Generate quiz from note | Choose a note to automatically generate relevant quizzes, this feature **requires HuggingFace API TOKEN** to run |
-| Try sample quiz from sample response    | Try a sample quiz from sample response, this feature does not require API TOKEN  |
+| Module | Method | API | Description |
+| -------- | -------- | -------- | ------- |
+| Document | GET | `/api/document/all` | List all available documents  |
+| Note | GET | `/api/note/{id}` | Get note content using its id |
+| | POST | `/api/note/create` | Create new note |
+| AI | GET | `/api/ai/generateQuiz/sample` | Get a sample quiz from sample response, this API does not require API TOKEN |
+| | GET | `/api/ai/generateQuiz/{noteId}` | Generate relevant quizzes based on 1 note, this feature **requires HuggingFace API TOKEN** to run |
 
 ## Project Setup
 ### HuggingFace API
@@ -18,13 +19,24 @@ The sample console app currently support below features
   - Click Create New Token
   - Enable the Make calls to inference provider permission
 - Accept Model Usage Conditions:
-  - Navigate to the model's page: [HuggingFace - Google/Gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)
+  - Navigate to the model's page, select a model you wish to use
   - Review and accept the conditions to use the model
 
 ### Environment variables
 In project root directory, create `.env` file and paste your **ACCESS TOKEN** here
 ```
 API_TOKEN=<YOUR-TOKEN-HERE>
-API_URL=https://router.huggingface.co/nebius/v1/chat/completions
-MODEL=google/gemma-2-2b-it
+API_URL=<YOUR-INFERENCE-PROVIDER>
+MODEL=<YOUR-SELECTED-MODEL>
+
+AI_API_USER_ROLE=user
+AI_API_SYSTEM_ROLE=system
+AI_API_TEMPERATURE=<YOUR-CUSTOM-VALUE>
+AI_API_TOP_P=<YOUR-CUSTOM-VALUE>
+  
+# Database
+DB_PORT=<YOUR-DATABASE-PORT>
+DB_NAME=<YOUR-DATABASE-NAME>
+DB_USERNAME=<YOUR-DATABASE-DB_USERNAME>
+DB_PASSWORD=<YOUR-DATABASE-DB_PASSWORD>
 ```
