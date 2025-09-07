@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
-
-import com.be08.smart_notes.common.Storage;
+import com.be08.smart_notes.common.AppConstants;
 import com.be08.smart_notes.entity.NoteEntity;
 import com.be08.smart_notes.service.NoteService;
 import com.be08.smart_notes.dto.ai.GuidedInferenceRequest;
@@ -22,7 +21,7 @@ import com.be08.smart_notes.dto.ai.QuizResponse;
 @Service
 public class QuizGenerationService extends AIService {
 	@Autowired
-	private NoteService noteService;
+	private NoteService noteService; 
 	
 	public QuizResponse generateSampleQuiz() {
 		// Below is sample response of fetchResponseFromInferenceProvider()
@@ -53,27 +52,26 @@ public class QuizGenerationService extends AIService {
 		if (selectedNote == null) return null;
 		
 		// Prepare JSON Body
-		String systemPrompt = "";
-		String noteContent = "";
-		String guidedSchema = "";
+		String systemPrompt = null;
+		String noteContent = null;
+		String guidedSchema = null;
 		try {
 			noteContent = selectedNote.getContent();
-			noteContent = "Just generate some random quizzes";
-			systemPrompt = Files.readString(Path.of(Storage.SYSTEM_PROMPT_TEMPLATE_PATH), StandardCharsets.UTF_8);
-			guidedSchema = Files.readString(Path.of(Storage.QUIZ_RESPONSE_SCHEMA_PATH), StandardCharsets.UTF_8);
+			systemPrompt = Files.readString(Path.of(AppConstants.SYSTEM_PROMPT_TEMPLATE_PATH), StandardCharsets.UTF_8);
+			guidedSchema = Files.readString(Path.of(AppConstants.QUIZ_RESPONSE_SCHEMA_PATH), StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
-		if (systemPrompt.isEmpty() || noteContent.isEmpty() || guidedSchema.isEmpty()) return null;
+		if (systemPrompt == null || noteContent == null || guidedSchema == null) return null;
 
 		// Create inference request
 		Gson gson = new Gson();
-		InferenceRequestMessage systemMessage = new InferenceRequestMessage(Storage.AI_API_SYSTEM_ROLE, systemPrompt);
-		InferenceRequestMessage userMessage = new InferenceRequestMessage(Storage.AI_API_USER_ROLE, noteContent);
+		InferenceRequestMessage systemMessage = new InferenceRequestMessage(AI_API_SYSTEM_ROLE, systemPrompt);
+		InferenceRequestMessage userMessage = new InferenceRequestMessage(AI_API_USER_ROLE, noteContent);
 		InferenceRequest info = new GuidedInferenceRequest(
-				Storage.AI_API_MODEL, new InferenceRequestMessage[] {systemMessage, userMessage},
-				Storage.AI_API_TEMPERATURE, Storage.AI_API_TOP_P, guidedSchema);
+				AI_API_MODEL, new InferenceRequestMessage[] {systemMessage, userMessage},
+				AI_API_TEMPERATURE, AI_API_TOP_P, guidedSchema);
 		String chatJSON = gson.toJson(info);
 		
 		// Fetch response from AI API

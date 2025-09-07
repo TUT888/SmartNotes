@@ -13,13 +13,25 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class AIService {
 	@Value("${API_TOKEN}")
-	private String AI_API_TOKEN;
+	protected String AI_API_TOKEN;
 	
 	@Value("${API_URL}")
-	private String AI_API_URL;
+	protected String AI_API_URL;
 	
 	@Value("${MODEL}")
-	private String AI_API_MODEL;
+	protected String AI_API_MODEL;
+	
+	@Value("${AI_API_USER_ROLE}")
+	protected String AI_API_USER_ROLE;
+	
+	@Value("${AI_API_SYSTEM_ROLE}")
+	protected String AI_API_SYSTEM_ROLE;
+	
+	@Value("${AI_API_TEMPERATURE}")
+	protected double AI_API_TEMPERATURE;
+	
+	@Value("${AI_API_TOP_P}")
+	protected double AI_API_TOP_P;
 	
 	public boolean checkPermission() {
 		if (AI_API_TOKEN == null || AI_API_URL == null || AI_API_MODEL == null) {
@@ -31,9 +43,6 @@ public class AIService {
 	}
 	
 	public String fetchResponseFromInferenceProvider(String JSONBody) {
-		System.out.println(AI_API_TOKEN);
-		System.out.println(AI_API_URL);
-		System.out.println(AI_API_MODEL);
 		String response = "";
 		try {
 			// Send request
