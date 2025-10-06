@@ -8,7 +8,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "users")
 public class UserEntity {
@@ -33,16 +41,4 @@ public class UserEntity {
 
 	@Column(nullable = true, name = "updated_at")
 	private LocalDateTime updatedAt;
-
-	public UserEntity() {
-	}
-
-	public UserEntity(Long id, String email, String password, String name, LocalDateTime createdAt) {
-		super();
-		this.id = id;
-		this.email = email;
-		this.password = password;
-		this.name = name;
-		this.createdAt = createdAt;
-	}
 }
