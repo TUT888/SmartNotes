@@ -18,14 +18,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "documents")
+@Table(name = "document")
 public class DocumentEntity {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private int id;
 
 	@Column(nullable = false, name = "user_id")
-	private Long userId;
+	private int userId;
 
 	@Column(nullable = false)
 	private String title;

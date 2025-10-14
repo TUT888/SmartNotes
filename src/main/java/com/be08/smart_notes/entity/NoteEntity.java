@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "notes")
+@Table(name = "note")
 public class NoteEntity {
 	@Id
-	private Long id;
+	private int id;
 
 	@Column(nullable = false)
 	private String content;

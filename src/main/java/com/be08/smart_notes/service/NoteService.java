@@ -11,13 +11,13 @@ public class NoteService {
 	@Autowired
 	private NoteRepository noteRepository;
 	
-	public NoteEntity getNote(long id) {
-		NoteEntity note = noteRepository.findById(id).orElse(null);;
+	public NoteEntity getNote(int id) {
+		NoteEntity note = noteRepository.findById(id).orElse(null);
 		return note;
 	}
 	
-	public NoteEntity createNewNote(NoteEntity newNote) {
-		NoteEntity note = noteRepository.save(newNote);
-		return note;
+	public NoteEntity createOrUpdateNote(NoteEntity newNote) {
+		NoteEntity createdNote = noteRepository.save(newNote);
+		return createdNote;
 	}
 }

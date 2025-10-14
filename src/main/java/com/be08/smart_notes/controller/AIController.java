@@ -24,7 +24,7 @@ public class AIController {
 	}
 	
 	@GetMapping("/generateQuiz/{noteId}")
-	public ResponseEntity<Object> generateQuiz(@PathVariable Long noteId) {
+	public ResponseEntity<Object> generateQuiz(@PathVariable int noteId) {
 		QuizResponse quizList = quizGenerationService.generateQuizFromNote(noteId);
 		return ResponseEntity.status(HttpStatus.OK).body(quizList);
 	}

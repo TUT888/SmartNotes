@@ -45,7 +45,7 @@ public class QuizGenerationService extends AIService {
 		return quizResponse;
 	}
 	
-	public QuizResponse generateQuizFromNote(long noteId) {
+	public QuizResponse generateQuizFromNote(int noteId) {
 		checkPermission();
 		
 		NoteEntity selectedNote = noteService.getNote(noteId);

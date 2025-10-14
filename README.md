@@ -6,8 +6,8 @@ Personal project for smart note taking application
 | Module | Method | API | Description |
 | -------- | -------- | -------- | ------- |
 | Document | GET | `/api/document/all` | List all available documents  |
-| Note | GET | `/api/note/{id}` | Get note content using its id |
-| | POST | `/api/note/create` | Create new note |
+| Note | GET | `/api/document/note/{id}` | Get note content using its id |
+| | POST | `/api/document/note/create` | Create new note |
 | AI | GET | `/api/ai/generateQuiz/sample` | Get a sample quiz from sample response, this API does not require API TOKEN |
 | | GET | `/api/ai/generateQuiz/{noteId}` | Generate relevant quizzes based on 1 note, this feature **requires HuggingFace API TOKEN** to run |
 
