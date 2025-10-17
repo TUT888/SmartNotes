@@ -1,4 +1,4 @@
-package com.be08.smart_notes.entity;
+package com.be08.smart_notes.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "note")
-public class NoteEntity {
+public class Note {
 	@Id
 	private int id;
 

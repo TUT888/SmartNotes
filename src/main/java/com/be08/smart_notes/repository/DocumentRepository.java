@@ -2,8 +2,8 @@ package com.be08.smart_notes.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.be08.smart_notes.entity.DocumentEntity;
+import com.be08.smart_notes.model.Document;
 
-public interface DocumentRepository extends JpaRepository<DocumentEntity, Integer>{
+public interface DocumentRepository extends JpaRepository<Document, Integer>{
 	
 }

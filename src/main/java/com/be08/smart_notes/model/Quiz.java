@@ -1,6 +1,4 @@
-package com.be08.smart_notes.entity;
-
-import java.time.LocalDateTime;
+package com.be08.smart_notes.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,10 +16,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "document")
-public class DocumentEntity {
+@Table(name = "quiz")
+public class Quiz {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	@Column(nullable = false, name = "user_id")
@@ -29,13 +27,4 @@ public class DocumentEntity {
 
 	@Column(nullable = false)
 	private String title;
-
-	@Column(nullable = false)
-	private String type;
-
-	@Column(nullable = false, name = "created_at")
-	private LocalDateTime createdAt;
-	
-	@Column(nullable = true, name = "updated_at")
-	private LocalDateTime updatedAt;
 }

@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.be08.smart_notes.common.AppConstants;
-import com.be08.smart_notes.entity.NoteEntity;
 import com.be08.smart_notes.service.NoteService;
 import com.be08.smart_notes.dto.ai.GuidedInferenceRequest;
 import com.be08.smart_notes.dto.ai.InferenceRequest;
 import com.be08.smart_notes.dto.ai.InferenceRequestMessage;
 import com.be08.smart_notes.dto.ai.InferenceResponse;
 import com.be08.smart_notes.dto.ai.QuizResponse;
+import com.be08.smart_notes.model.Note;
 
 @Service
 public class QuizGenerationService extends AIService {
@@ -48,7 +48,7 @@ public class QuizGenerationService extends AIService {
 	public QuizResponse generateQuizFromNote(int noteId) {
 		checkPermission();
 		
-		NoteEntity selectedNote = noteService.getNote(noteId);
+		Note selectedNote = noteService.getNote(noteId);
 		if (selectedNote == null) return null;
 		
 		// Prepare JSON Body

@@ -1,4 +1,4 @@
-package com.be08.smart_notes.entity;
+package com.be08.smart_notes.model;
 
 import java.time.LocalDateTime;
 
@@ -18,27 +18,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "user")
-public class UserEntity {
+@Table(name = "document")
+public class Document {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(nullable = false, unique = true)
-	private String email;
+	@Column(nullable = false, name = "user_id")
+	private int userId;
 
 	@Column(nullable = false)
-	private String password;
+	private String title;
 
 	@Column(nullable = false)
-	private String name;
-
-	@Column(nullable = true)
-	private String avatarUrl;
+	private String type;
 
 	@Column(nullable = false, name = "created_at")
 	private LocalDateTime createdAt;
-
+	
 	@Column(nullable = true, name = "updated_at")
 	private LocalDateTime updatedAt;
 }

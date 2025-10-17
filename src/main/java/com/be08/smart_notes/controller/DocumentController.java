@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.be08.smart_notes.entity.DocumentEntity;
+import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.service.DocumentService;
 
 @RestController
@@ -20,7 +20,7 @@ public class DocumentController {
 
 	@GetMapping("/all")
 	public ResponseEntity<Object> getAllDocuments() {
-		List<DocumentEntity> documentList = documentService.getAllDocuments();
+		List<Document> documentList = documentService.getAllDocuments();
 		return ResponseEntity.status(HttpStatus.OK).body(documentList);
 	}
 }

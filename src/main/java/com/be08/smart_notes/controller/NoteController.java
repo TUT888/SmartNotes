@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.be08.smart_notes.entity.NoteEntity;
+import com.be08.smart_notes.model.Note;
 import com.be08.smart_notes.service.NoteService;
 
 @RestController
@@ -22,13 +22,13 @@ public class NoteController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> getNote(@PathVariable int id) {
-		NoteEntity note = noteService.getNote(id);
+		Note note = noteService.getNote(id);
 		return ResponseEntity.status(HttpStatus.OK).body(note);
 	}
 	
 	@PutMapping("/update")
-	public ResponseEntity<Object> createNote(@RequestBody NoteEntity note) {
-		NoteEntity createdNote = noteService.createOrUpdateNote(note);
+	public ResponseEntity<Object> createNote(@RequestBody Note note) {
+		Note createdNote = noteService.createOrUpdateNote(note);
 		return ResponseEntity.status(HttpStatus.OK).body(createdNote);
 	}
 }
