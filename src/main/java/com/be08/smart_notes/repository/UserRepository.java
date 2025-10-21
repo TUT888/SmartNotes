@@ -7,5 +7,5 @@ import com.be08.smart_notes.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
-
+    boolean existsByEmail(String email);
 }
