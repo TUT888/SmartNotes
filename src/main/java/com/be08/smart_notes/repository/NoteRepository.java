@@ -7,5 +7,4 @@ import com.be08.smart_notes.model.Note;
 
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Integer>{
-
 }
