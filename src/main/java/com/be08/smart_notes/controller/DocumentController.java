@@ -25,9 +25,9 @@ public class DocumentController {
 		List<Document> documentList = documentService.getAllDocuments();
 		return ResponseEntity.status(HttpStatus.OK).body(documentList);
 	}
-	
+
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> deleteNote(@PathVariable int id) {
+	public ResponseEntity<Object> deleteDocument(@PathVariable int id) {
 		documentService.deleteDocument(id);
 		return ResponseEntity.status(HttpStatus.OK).body("OK");
 	}

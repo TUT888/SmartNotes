@@ -4,12 +4,13 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.be08.smart_notes.dto.request.NoteCreationRequest;
+import com.be08.smart_notes.dto.request.NoteUpdateRequest;
 import com.be08.smart_notes.enums.DocumentType;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.model.Note;
+import com.be08.smart_notes.repository.DocumentRepository;
 import com.be08.smart_notes.repository.NoteRepository;
 
 @Service
@@ -17,22 +18,21 @@ public class NoteService {
 	@Autowired
 	private NoteRepository noteRepository;
 	@Autowired
-	private DocumentService documentService;
-	
-	public Note getNote(int id) {
-		Note note = noteRepository.findById(id).orElse(null);
+	private DocumentRepository documentRepository;
+
+	public Note getNote(int noteId) {
+		Note note = noteRepository.findById(noteId).orElse(null);
 		return note;
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public Note createNote(NoteCreationRequest noteCreationRequest) {
 		Document newDocument = Document.builder()
 				.userId(noteCreationRequest.getUserId())
 				.title(noteCreationRequest.getTitle())
 				.type(DocumentType.NOTE)
 				.createdAt(LocalDateTime.now())
+				.updatedAt(LocalDateTime.now())
 				.build();
-		documentService.createDocument(newDocument);
 		
 		Note newNote = Note.builder()
 				.document(newDocument)
@@ -41,11 +41,17 @@ public class NoteService {
 		noteRepository.save(newNote);
 		return newNote;
 	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteNote(int id) {
-		documentService.deleteDocument(id);
+
+	public void updateNote(int id, NoteUpdateRequest updateData) {
+		Note note = noteRepository.findById(id).orElse(null);
 		
-		noteRepository.deleteById(id);
+		note.getDocument().setTitle(updateData.getTitle());
+		note.getDocument().setUpdatedAt(LocalDateTime.now());;
+		note.setContent(updateData.getContent());
+		noteRepository.save(note);
+	}
+	
+	public void deleteNote(int noteId) {
+		documentRepository.deleteById(noteId);
 	}
 }

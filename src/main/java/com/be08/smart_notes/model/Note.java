@@ -1,7 +1,5 @@
 package com.be08.smart_notes.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -24,14 +22,13 @@ public class Note {
 	@Id
 	private int id;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String content;
-	
+
 	// Relationship
 	// Use document.id as this entity's id
-	@JsonIgnore
 	@OneToOne
-	@MapsId 
 	@JoinColumn(name = "id")
+	@MapsId
 	private Document document;
 }

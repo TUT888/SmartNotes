@@ -14,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,12 +44,13 @@ public class Document {
 
 	@Column(nullable = false, name = "created_at")
 	private LocalDateTime createdAt;
-	
+
 	@Column(nullable = true, name = "updated_at")
 	private LocalDateTime updatedAt;
-	 
+
 	// Relationships
 	@JsonIgnore
+	@PrimaryKeyJoinColumn
 	@OneToOne(mappedBy = "document", cascade = CascadeType.ALL)
 	private Note note;
 }

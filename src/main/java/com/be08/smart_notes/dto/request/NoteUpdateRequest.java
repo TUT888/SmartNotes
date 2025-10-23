@@ -1,7 +1,5 @@
 package com.be08.smart_notes.dto.request;
 
-import com.be08.smart_notes.enums.DocumentType;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NoteCreationRequest {
-	private int userId; // Can be removed later when authentication is implemented
-	private DocumentType type;
+public class NoteUpdateRequest {
 	private String title;
 	private String content;
 }

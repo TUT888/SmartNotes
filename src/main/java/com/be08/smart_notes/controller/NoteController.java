@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.be08.smart_notes.dto.request.NoteCreationRequest;
+import com.be08.smart_notes.dto.request.NoteUpdateRequest;
 import com.be08.smart_notes.model.Note;
 import com.be08.smart_notes.service.NoteService;
 
@@ -27,13 +28,19 @@ public class NoteController {
 		Note createdNote = noteService.createNote(noteCreationRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
 	}
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> getNote(@PathVariable int id) {
 		Note note = noteService.getNote(id);
 		return ResponseEntity.status(HttpStatus.OK).body(note);
 	}
 	
+	@PutMapping("/{id}")
+	public ResponseEntity<Object> updateNote(@PathVariable int id, @RequestBody NoteUpdateRequest noteUpdateRequest) {
+		noteService.updateNote(id, noteUpdateRequest);
+		return ResponseEntity.status(HttpStatus.OK).body("OK");
+	}
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> deleteNote(@PathVariable int id) {
 		noteService.deleteNote(id);
