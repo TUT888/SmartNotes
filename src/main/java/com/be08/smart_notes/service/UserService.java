@@ -1,8 +1,10 @@
 package com.be08.smart_notes.service;
 
 import com.be08.smart_notes.dto.request.UserCreationRequest;
+import com.be08.smart_notes.dto.response.UserResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
+import com.be08.smart_notes.mapper.UserMapper;
 import com.be08.smart_notes.model.User;
 import com.be08.smart_notes.repository.UserRepository;
 import lombok.AccessLevel;
@@ -11,14 +13,17 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserService {
     UserRepository userRepository;
+    UserMapper userMapper;
 
-    public User createUser(UserCreationRequest request){
+    public UserResponse createUser(UserCreationRequest request){
         String email = request.getEmail();
 
         if(userRepository.existsByEmail(email)){
@@ -26,15 +31,9 @@ public class UserService {
             throw new AppException(ErrorCode.USER_EXISTS);
         }
 
-        String name = request.getName();
-        String password = request.getPassword();
+        User user = userMapper.toUser(request);
+        user.setCreatedAt(LocalDateTime.now());
 
-        User user = User.builder()
-                .name(name)
-                .email(email)
-                .password(password)
-                .build();
-
-        return userRepository.save(user);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 }
