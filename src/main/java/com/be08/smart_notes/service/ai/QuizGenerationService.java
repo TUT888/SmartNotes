@@ -16,7 +16,7 @@ import com.be08.smart_notes.dto.ai.InferenceRequest;
 import com.be08.smart_notes.dto.ai.InferenceRequestMessage;
 import com.be08.smart_notes.dto.ai.InferenceResponse;
 import com.be08.smart_notes.dto.ai.QuizResponse;
-import com.be08.smart_notes.model.Note;
+import com.be08.smart_notes.model.Document;
 
 @Service
 public class QuizGenerationService extends AIService {
@@ -48,7 +48,7 @@ public class QuizGenerationService extends AIService {
 	public QuizResponse generateQuizFromNote(int noteId) {
 		checkPermission();
 
-		Note selectedNote = noteService.getNote(noteId);
+		Document selectedNote = noteService.getNote(noteId);
 		if (selectedNote == null)
 			return null;
 

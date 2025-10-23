@@ -3,9 +3,8 @@ package com.be08.smart_notes.model;
 import java.time.LocalDateTime;
 
 import com.be08.smart_notes.enums.DocumentType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,8 +12,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "document")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Document {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,12 +43,15 @@ public class Document {
 	@Column(nullable = false, name = "created_at")
 	private LocalDateTime createdAt;
 
-	@Column(nullable = true, name = "updated_at")
+	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
+	
+	@Column
+	private String content;
 
-	// Relationships
-	@JsonIgnore
-	@PrimaryKeyJoinColumn
-	@OneToOne(mappedBy = "document", cascade = CascadeType.ALL)
-	private Note note;
+	@Column(name = "file_url")
+	private String fileUrl;
+
+	@Column(name = "file_size")
+	private Integer fileSize;
 }
