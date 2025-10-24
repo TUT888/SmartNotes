@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatusCode;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum ErrorCode {
     UNCATEGORIZED(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_ERROR_CODE_KEY(9998, "Invalid error code key", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_EXISTS(2001, "User already exists", HttpStatus.BAD_REQUEST),
     NAME_EMPTY(2002, "Name cannot be empty", HttpStatus.BAD_REQUEST),
     EMAIL_EMPTY(2003, "Email cannot be empty", HttpStatus.BAD_REQUEST),
