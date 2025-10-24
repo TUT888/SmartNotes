@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
+import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.service.NoteService;
 import com.be08.smart_notes.validation.group.OnCreate;
@@ -28,24 +29,38 @@ public class NoteController {
 	@PostMapping
 	public ResponseEntity<Object> createNote(@Validated(OnCreate.class) @RequestBody NoteUpsertRequest noteCreationRequest) {
 		Document createdNote = noteService.createNote(noteCreationRequest);
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
+		ApiResponse<Object> apiResponse = ApiResponse.builder()
+				.message("Note created successfully")
+				.data(createdNote)
+				.build();
+		return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> getNote(@PathVariable int id) {
 		Document note = noteService.getNote(id);
-		return ResponseEntity.status(HttpStatus.OK).body(note);
+		ApiResponse<Object> apiResponse = ApiResponse.builder()
+				.message("Note fetched successfully")
+				.data(note)
+				.build();
+		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> updateNote(@PathVariable int id, @Validated(OnUpdate.class) @RequestBody NoteUpsertRequest noteUpdateRequest) {
 		noteService.updateNote(id, noteUpdateRequest);
-		return ResponseEntity.status(HttpStatus.OK).body("OK");
+		ApiResponse<Object> apiResponse = ApiResponse.builder()
+				.message("Note updated successfully")
+				.build();
+		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> deleteNote(@PathVariable int id) {
 		noteService.deleteNote(id);
-		return ResponseEntity.status(HttpStatus.OK).body("OK");
+		ApiResponse<Object> apiResponse = ApiResponse.builder()
+				.message("Note deleted successfully")
+				.build();
+		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 }

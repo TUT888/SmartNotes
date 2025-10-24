@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.service.DocumentService;
 
@@ -23,12 +24,19 @@ public class DocumentController {
 	@GetMapping
 	public ResponseEntity<Object> getAllDocuments() {
 		List<Document> documentList = documentService.getAllDocuments();
-		return ResponseEntity.status(HttpStatus.OK).body(documentList);
+		ApiResponse<Object> apiResponse = ApiResponse.builder()
+				.message("All document fetched successfully")
+				.data(documentList)
+				.build();
+		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> deleteDocument(@PathVariable int id) {
 		documentService.deleteDocument(id);
-		return ResponseEntity.status(HttpStatus.OK).body("OK");
+		ApiResponse<Object> apiResponse = ApiResponse.builder()
+				.message("Document deleted successfully")
+				.build();
+		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 }

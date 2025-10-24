@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "documents")
+@Table(name = "document")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Document {
 	@Id
