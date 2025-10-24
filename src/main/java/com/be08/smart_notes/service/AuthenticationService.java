@@ -1,5 +1,6 @@
 package com.be08.smart_notes.service;
 
+import com.be08.smart_notes.dto.request.LoginRequest;
 import com.be08.smart_notes.dto.request.UserCreationRequest;
 import com.be08.smart_notes.dto.response.AuthenticationResponse;
 import com.be08.smart_notes.exception.AppException;
@@ -56,6 +57,27 @@ public class AuthenticationService {
             log.error("Data integrity violation while creating user with email {}: {}", email, exception.getMessage());
         }
 
+        return AuthenticationResponse.builder()
+                .isAuthenticated(true)
+                .build();
+    }
+
+    public AuthenticationResponse login(LoginRequest request) {
+        String email = request.getEmail();
+        String password = request.getPassword();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.error("User with email {} not found", email);
+                    return new AppException(ErrorCode.USER_NOT_FOUND);
+                });
+
+        if (!user.getPassword().equals(password)) {
+            log.error("Invalid password for user with email {}", email);
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        log.info("User with email {} authenticated successfully", email);
         return AuthenticationResponse.builder()
                 .isAuthenticated(true)
                 .build();

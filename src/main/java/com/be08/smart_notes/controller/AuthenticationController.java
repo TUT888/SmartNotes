@@ -1,9 +1,9 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.dto.request.LoginRequest;
 import com.be08.smart_notes.dto.request.UserCreationRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.AuthenticationResponse;
-import com.be08.smart_notes.dto.response.UserResponse;
 import com.be08.smart_notes.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -26,6 +26,15 @@ public class AuthenticationController {
         AuthenticationResponse response = authenticationService.register(request);
         return ApiResponse.<AuthenticationResponse>builder()
                 .message("User registered successfully")
+                .data(response)
+                .build();
+    }
+
+    @PostMapping("/login")
+    ApiResponse<AuthenticationResponse> login(@RequestBody @Valid LoginRequest request){
+        AuthenticationResponse response = authenticationService.login(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .message("User logged in successfully")
                 .data(response)
                 .build();
     }
