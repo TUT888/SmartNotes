@@ -5,8 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.be08.smart_notes.dto.request.NoteCreationRequest;
-import com.be08.smart_notes.dto.request.NoteUpdateRequest;
+import com.be08.smart_notes.dto.request.NoteUpsertRequest;
 import com.be08.smart_notes.enums.DocumentType;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.repository.DocumentRepository;
@@ -21,7 +20,7 @@ public class NoteService {
 		return note;
 	}
 
-	public Document createNote(NoteCreationRequest newData) {
+	public Document createNote(NoteUpsertRequest newData) {
 		Document newNote = Document.builder()
 				.userId(newData.getUserId())
 				.title(newData.getTitle())
@@ -35,8 +34,8 @@ public class NoteService {
 		return newNote;
 	}
 
-	public void updateNote(int id, NoteUpdateRequest updateData) {
-		Document note = documentRepository.findById(id).orElse(null);
+	public void updateNote(int noteId, NoteUpsertRequest updateData) {
+		Document note = documentRepository.findById(noteId).orElse(null);
 		
 		note.setTitle(updateData.getTitle());
 		note.setUpdatedAt(LocalDateTime.now());;

@@ -23,14 +23,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "document")
+@Table(name = "documents")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Document {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(nullable = false, name = "user_id")
+	@Column(nullable = false)
 	private int userId;
 
 	@Column(nullable = false)
@@ -46,9 +46,11 @@ public class Document {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 	
+	// Information for note document
 	@Column
 	private String content;
 
+	// Information for pdf document
 	@Column(name = "file_url")
 	private String fileUrl;
 
