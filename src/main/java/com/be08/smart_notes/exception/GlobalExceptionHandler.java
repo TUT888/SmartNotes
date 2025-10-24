@@ -3,6 +3,7 @@ package com.be08.smart_notes.exception;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -36,5 +37,27 @@ public class GlobalExceptionHandler {
                 .message(message)
                 .build();
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    ResponseEntity<ApiResponse> handlingValidationException(MethodArgumentNotValidException exception){
+        String enumKey = exception.getFieldError().getDefaultMessage();
+
+        ErrorCode errorCode = ErrorCode.INVALID_ERROR_CODE_KEY;
+
+        try {
+            errorCode = ErrorCode.valueOf(enumKey);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid ErrorCode key: {}", enumKey);
+        }
+
+        int code = errorCode.getCode();
+        String message = errorCode.getMessage();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(code)
+                .message(message)
+                .build();
+        return ResponseEntity.badRequest().body(apiResponse);
     }
 }

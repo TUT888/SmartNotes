@@ -2,8 +2,10 @@ package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.dto.request.UserCreationRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
-import com.be08.smart_notes.model.User;
-import com.be08.smart_notes.service.UserService;
+import com.be08.smart_notes.dto.response.AuthenticationResponse;
+import com.be08.smart_notes.dto.response.UserResponse;
+import com.be08.smart_notes.service.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -17,13 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationController {
-    UserService userService;
+    AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    ApiResponse<User> register(@RequestBody UserCreationRequest request){
-        var user = userService.createUser(request);
-        return ApiResponse.<User>builder()
-                .data(user)
+    ApiResponse<AuthenticationResponse> register(@RequestBody @Valid UserCreationRequest request){
+        AuthenticationResponse response = authenticationService.register(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .message("User registered successfully")
+                .data(response)
                 .build();
     }
 }
