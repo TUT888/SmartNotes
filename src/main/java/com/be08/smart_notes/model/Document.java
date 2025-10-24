@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "documents")
+@Table(name = "document")
 public class Document {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
