@@ -13,17 +13,16 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    @NotBlank(message = "Name cannot be blank")
-    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
+    @NotBlank(message = "NAME_EMPTY")
     String name;
 
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Email should be valid")
-    @Size(max = 255, message = "Email must be less than 255 characters")
+    @NotBlank(message = "EMAIL_EMPTY")
+    @Email(message = "INVALID_EMAIL_FORMAT")
+    @Size(max = 255, message = "INVALID_EMAIL_SIZE")
     String email;
 
-    @NotBlank(message = "Password cannot be blank")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
-    @Pattern(regexp = "^(?=\\S+$)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).+$", message = "Password must contain at least one uppercase letter, one lowercase letter, and one digit, and no whitespace")
+    @NotBlank(message = "PASSWORD_EMPTY")
+    @Size(min = 8, message = "INVALID_PASSWORD_SIZE")
+    @Pattern(regexp = "^(?=\\S+$)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).+$", message = "INVALID_PASSWORD_PATTERN")
     String password;
 }

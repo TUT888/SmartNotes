@@ -38,4 +38,19 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    ResponseEntity<ApiResponse> handlingValidationException(MethodArgumentNotValidException exception){
+        String enumKey = exception.getFieldError().getDefaultMessage();
+        ErrorCode errorCode = ErrorCode.valueOf(enumKey);
+
+        int code = errorCode.getCode();
+        String message = errorCode.getMessage();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(code)
+                .message(message)
+                .build();
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
 }
