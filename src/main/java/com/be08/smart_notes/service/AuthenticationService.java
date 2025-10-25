@@ -22,6 +22,8 @@ public class AuthenticationService {
 
     PasswordEncoder passwordEncoder;
 
+    JwtService jwtService;
+
     public AuthenticationResponse login(LoginRequest request) {
         String email = request.getEmail();
 
@@ -34,13 +36,20 @@ public class AuthenticationService {
         String rawPassword = request.getPassword();
         String hashedPassword = user.getPassword();
 
-        if(!passwordEncoder.matches(rawPassword, hashedPassword)){
+        boolean isAuthenticated = passwordEncoder.matches(rawPassword, hashedPassword);
+
+        if(!isAuthenticated){
             log.warn("Login Failed: Invalid password for user with email {}", email);
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
         log.info("User with email {} authenticated successfully", email);
         return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .isAuthenticated(true)
                 .build();
     }
