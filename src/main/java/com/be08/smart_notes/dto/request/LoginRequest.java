@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString(exclude = {"password"})
 public class LoginRequest {
     @NotBlank(message = "EMAIL_EMPTY")
     @Email(message = "INVALID_EMAIL_FORMAT")

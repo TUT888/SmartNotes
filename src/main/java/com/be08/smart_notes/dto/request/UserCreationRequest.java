@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString(exclude = {"password"})
 public class UserCreationRequest {
     @NotBlank(message = "NAME_EMPTY")
     String name;

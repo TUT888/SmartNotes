@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,57 +24,23 @@ import java.time.LocalDateTime;
 @Slf4j
 public class AuthenticationService {
     UserRepository userRepository;
-    UserMapper userMapper;
 
-    public AuthenticationResponse register(UserCreationRequest request){
-        String email = request.getEmail();
-        log.info("Registering user with email: {}", email);
-        String password = request.getPassword();
-
-        // basic business-level check (defense in depth)
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email is required");
-        }
-        if (password == null || password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters");
-        }
-
-        if(userRepository.existsByEmail(email)){
-            log.error("User with email {} already exists", email);
-            throw new AppException(ErrorCode.USER_EXISTS);
-        }
-
-        User user = userMapper.toUser(request);
-        user.setCreatedAt(LocalDateTime.now());
-
-        try {
-            userRepository.save(user);
-
-            return AuthenticationResponse.builder()
-                    .isAuthenticated(true)
-                    .build();
-        } catch (DataIntegrityViolationException exception){
-            // final safeguard for concurrent inserts — DB unique constraint
-            log.error("Data integrity violation while creating user with email {}: {}", email, exception.getMessage());
-        }
-
-        return AuthenticationResponse.builder()
-                .isAuthenticated(true)
-                .build();
-    }
+    PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse login(LoginRequest request) {
         String email = request.getEmail();
-        String password = request.getPassword();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.error("User with email {} not found", email);
-                    return new AppException(ErrorCode.USER_NOT_FOUND);
+                    log.warn("Login Failed: User with email {} not found", email);
+                    return new AppException(ErrorCode.UNAUTHENTICATED);
                 });
 
-        if (!user.getPassword().equals(password)) {
-            log.error("Invalid password for user with email {}", email);
+        String rawPassword = request.getPassword();
+        String hashedPassword = user.getPassword();
+
+        if(!passwordEncoder.matches(rawPassword, hashedPassword)){
+            log.warn("Login Failed: Invalid password for user with email {}", email);
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
