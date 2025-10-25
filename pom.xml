@@ -130,6 +130,13 @@
             <version>10.5</version>
         </dependency>
 
+        <!-- Spring Security OAuth2 JOSE -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-jose -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+
 	</dependencies>
 
 	<build>
