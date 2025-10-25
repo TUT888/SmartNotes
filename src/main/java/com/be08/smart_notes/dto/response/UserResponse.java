@@ -16,7 +16,6 @@ public class UserResponse {
     String email;
     String avatarUrl;
 
-    @Builder.Default
-    LocalDateTime createdAt = LocalDateTime.now(); // Default to current time
+    LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

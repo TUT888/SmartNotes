@@ -1,22 +1,17 @@
 package com.be08.smart_notes.service;
 
 import com.be08.smart_notes.dto.request.LoginRequest;
-import com.be08.smart_notes.dto.request.UserCreationRequest;
 import com.be08.smart_notes.dto.response.AuthenticationResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
-import com.be08.smart_notes.mapper.UserMapper;
 import com.be08.smart_notes.model.User;
 import com.be08.smart_notes.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
