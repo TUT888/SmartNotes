@@ -4,7 +4,7 @@
     "topic": {
       "type": "string"
     },
-    "quizzes": {
+    "questions": {
       "type": "array",
       "items": {
         "type": "object",
@@ -21,12 +21,11 @@
           "correctIndex": {
             "type": "integer"
           }
-        }
-      }
+        }      }
     }
   },
   "required": [
     "topic",
-    "quizzes"
+    "questions"
   ]
 }

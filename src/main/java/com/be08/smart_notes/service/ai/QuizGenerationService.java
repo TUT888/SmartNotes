@@ -11,17 +11,36 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.be08.smart_notes.common.AppConstants;
 import com.be08.smart_notes.service.NoteService;
-import com.be08.smart_notes.dto.ai.GuidedInferenceRequest;
-import com.be08.smart_notes.dto.ai.InferenceRequest;
-import com.be08.smart_notes.dto.ai.InferenceRequestMessage;
-import com.be08.smart_notes.dto.ai.InferenceResponse;
+import com.be08.smart_notes.dto.ai.AIInferenceRequest;
+import com.be08.smart_notes.dto.ai.AIInferenceResponse;
 import com.be08.smart_notes.dto.ai.QuizResponse;
 import com.be08.smart_notes.model.Document;
 
 @Service
-public class QuizGenerationService extends AIService {
+public class QuizGenerationService {
+    private String systemPrompt;
+    private String quizResponseSchema;
+
+    @Autowired
+    private AIService aiService;
 	@Autowired
 	private NoteService noteService;
+
+    public QuizGenerationService() {
+        try {
+            systemPrompt = Files.readString(
+                    Path.of(AppConstants.SYSTEM_PROMPT_TEMPLATE_PATH),
+                    StandardCharsets.UTF_8
+            );
+            quizResponseSchema = Files.readString(
+                    Path.of(AppConstants.QUIZ_RESPONSE_SCHEMA_PATH),
+                    StandardCharsets.UTF_8
+            );
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
 
 	public QuizResponse generateSampleQuiz() {
 		// Below is sample response of fetchResponseFromInferenceProvider()
@@ -29,71 +48,51 @@ public class QuizGenerationService extends AIService {
 
 		// Extract raw message content from response string
 		Gson gson = new Gson();
-		QuizResponse quizResponse = null;
 		try {
 			// Extract raw message content from response string
-			InferenceResponse inferenceResponse = gson.fromJson(responseAsJSONString, InferenceResponse.class);
-			String chatMessageContent = inferenceResponse.choices[0].message.content;
+			AIInferenceResponse inferenceResponse = gson.fromJson(responseAsJSONString, AIInferenceResponse.class);
+            String chatMessageContent = inferenceResponse.getChoices()[0].getMessage().getContent();
 
 			// Parse to object
-			quizResponse = gson.fromJson(chatMessageContent, QuizResponse.class);
+			return gson.fromJson(chatMessageContent, QuizResponse.class);
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			e.printStackTrace();
 		}
 
-		return quizResponse;
+		return null;
 	}
 
 	public QuizResponse generateQuizFromNote(int noteId) {
-		checkPermission();
+        if (this.systemPrompt == null) {
+            return null;
+        }
 
+		// Get note
 		Document selectedNote = noteService.getNote(noteId);
-		if (selectedNote == null)
-			return null;
+		if (selectedNote == null) {
+            return null;
+        }
 
-		// Prepare JSON Body
-		String systemPrompt = null;
-		String noteContent = null;
-		String guidedSchema = null;
-		try {
-			noteContent = selectedNote.getContent();
-			systemPrompt = Files.readString(Path.of(AppConstants.SYSTEM_PROMPT_TEMPLATE_PATH), StandardCharsets.UTF_8);
-			guidedSchema = Files.readString(Path.of(AppConstants.QUIZ_RESPONSE_SCHEMA_PATH), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
-		}
-		if (systemPrompt == null || noteContent == null || guidedSchema == null)
-			return null;
+		// Generate content
+		String generatedContent = aiService.generateContent(this.systemPrompt, selectedNote.getContent(), quizResponseSchema);
+		if (generatedContent == null || generatedContent.isEmpty()) {
+            return null;
+        }
 
-		// Create inference request
-		Gson gson = new Gson();
-		InferenceRequestMessage systemMessage = new InferenceRequestMessage(AI_API_SYSTEM_ROLE, systemPrompt);
-		InferenceRequestMessage userMessage = new InferenceRequestMessage(AI_API_USER_ROLE, noteContent);
-		InferenceRequest info = new GuidedInferenceRequest(AI_API_MODEL,
-				new InferenceRequestMessage[] { systemMessage, userMessage }, AI_API_TEMPERATURE, AI_API_TOP_P,
-				guidedSchema);
-		String chatJSON = gson.toJson(info);
-
-		// Fetch response from AI API
-		String responseAsJSONString = fetchResponseFromInferenceProvider(chatJSON);
-		if (responseAsJSONString.isEmpty())
-			return null;
-
-		QuizResponse quizResponse = null;
 		try {
 			// Extract raw message content from response string
-			InferenceResponse inferenceResponse = gson.fromJson(responseAsJSONString, InferenceResponse.class);
-			String chatMessageContent = inferenceResponse.choices[0].message.content;
+            Gson gson = new Gson();
+			AIInferenceResponse inferenceResponse = gson.fromJson(generatedContent, AIInferenceResponse.class);
+            String chatMessageContent = inferenceResponse.getChoices()[0].getMessage().getContent();
 
 			// Parse to object
-			quizResponse = gson.fromJson(chatMessageContent, QuizResponse.class);
+			return gson.fromJson(chatMessageContent, QuizResponse.class);
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			e.printStackTrace();
 		}
 
-		return quizResponse;
+		return null;
 	}
 }
