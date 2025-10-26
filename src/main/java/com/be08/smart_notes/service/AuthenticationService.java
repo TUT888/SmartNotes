@@ -1,6 +1,7 @@
 package com.be08.smart_notes.service;
 
 import com.be08.smart_notes.dto.request.LoginRequest;
+import com.be08.smart_notes.dto.request.RefreshTokenRequest;
 import com.be08.smart_notes.dto.response.AuthenticationResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
@@ -12,6 +13,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +26,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final JwtDecoder jwtDecoder;
 
     // Inject the key alias to be used for signing tokens
     @Value("${jwt.signing.key.alias}")
@@ -58,6 +63,45 @@ public class AuthenticationService {
                 .isAuthenticated(true)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .build();
+    }
+
+    /**
+     * Refresh JWT tokens using a valid refresh token
+     * @param request
+     * @return AuthenticationResponse containing new access and refresh tokens
+     */
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request){
+        String refreshToken = request.getRefreshToken();
+
+        int userId;
+
+        try {
+            // Decode and validate the refresh token
+            Jwt jwt = jwtDecoder.decode(refreshToken);
+
+            // Extract user ID from token subject
+            userId = Integer.parseInt(jwt.getSubject());
+        } catch (JwtException exception) {
+            log.warn("Refresh Token failed validation: {}", exception.getMessage());
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("Refresh Token Failed: User with ID {} not found", userId);
+                    return new AppException(ErrorCode.UNAUTHENTICATED);
+                });
+
+        String newAccessToken = jwtService.generateAccessToken(user, signingKeyAlias);
+        String newRefreshToken = jwtService.generateRefreshToken(user, signingKeyAlias);
+
+        log.info("New tokens generated successfully for user ID {}", userId);
+
+        return AuthenticationResponse.builder()
+                .isAuthenticated(true)
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
                 .build();
     }
 }

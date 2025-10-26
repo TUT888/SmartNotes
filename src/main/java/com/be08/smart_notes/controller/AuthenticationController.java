@@ -1,6 +1,7 @@
 package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.dto.request.LoginRequest;
+import com.be08.smart_notes.dto.request.RefreshTokenRequest;
 import com.be08.smart_notes.dto.request.UserCreationRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.AuthenticationResponse;
@@ -24,6 +25,11 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
     UserService userService;
 
+    /**
+     * User Registration
+     * @param request
+     * @return ApiResponse containing UserResponse
+     */
     @PostMapping("/register")
     ApiResponse<UserResponse> register(@RequestBody @Valid UserCreationRequest request){
         UserResponse response = userService.createUser(request);
@@ -33,11 +39,30 @@ public class AuthenticationController {
                 .build();
     }
 
+    /**
+     * User Login
+     * @param request
+     * @return ApiResponse containing AuthenticationResponse
+     */
     @PostMapping("/login")
     ApiResponse<AuthenticationResponse> login(@RequestBody @Valid LoginRequest request){
         AuthenticationResponse response = authenticationService.login(request);
         return ApiResponse.<AuthenticationResponse>builder()
                 .message("User logged in successfully")
+                .data(response)
+                .build();
+    }
+
+    /**
+     * Refresh JWT Token
+     * @param request
+     * @return ApiResponse containing new AuthenticationResponse
+     */
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest request){
+        AuthenticationResponse response = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .message("Token refreshed successfully")
                 .data(response)
                 .build();
     }

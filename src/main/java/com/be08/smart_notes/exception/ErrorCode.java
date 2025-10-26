@@ -11,8 +11,12 @@ import org.springframework.http.HttpStatusCode;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum ErrorCode {
+    // 99xx - General errors
     UNCATEGORIZED(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
+    // Used when an invalid error code key is provided
     INVALID_ERROR_CODE_KEY(9998, "Invalid error code key", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    // 20xx - User-related errors
     USER_EXISTS(2001, "User already exists", HttpStatus.BAD_REQUEST),
     NAME_EMPTY(2002, "Name cannot be empty", HttpStatus.BAD_REQUEST),
     EMAIL_EMPTY(2003, "Email cannot be empty", HttpStatus.BAD_REQUEST),
@@ -22,7 +26,10 @@ public enum ErrorCode {
     INVALID_PASSWORD_SIZE(2007, "Password must be at least 8 characters long", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD_PATTERN(2008, "Password must contain at least one uppercase letter, one lowercase letter, and one digit, and no whitespace", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(2009, "User not found", HttpStatus.NOT_FOUND),
-    UNAUTHENTICATED(2010, "Unauthenticated access", HttpStatus.UNAUTHORIZED)
+    UNAUTHENTICATED(2010, "Unauthenticated access", HttpStatus.UNAUTHORIZED),
+
+    // 21xx - Token-related errors
+    REFRESH_TOKEN_EMPTY(2102, "Refresh token cannot be empty", HttpStatus.BAD_REQUEST),
     ;
 
     int code;
