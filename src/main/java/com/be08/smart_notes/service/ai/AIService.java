@@ -1,32 +1,21 @@
 package com.be08.smart_notes.service.ai;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
 import com.be08.smart_notes.dto.ai.AIInferenceRequest;
-import com.be08.smart_notes.dto.ai.QuizResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
-import com.google.gson.Gson;
+import com.be08.smart_notes.dto.ai.AIInferenceResponse;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.victools.jsonschema.generator.*;
+import com.github.victools.jsonschema.module.jackson.JacksonModule;
+import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationModule;
+import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationOption;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class AIService {
-	@Value("${API_TOKEN}")
-	protected String AI_API_TOKEN;
-
-	@Value("${API_URL}")
-	protected String AI_API_URL;
+    @Autowired
+    private RestClient restClient;
 
 	@Value("${MODEL}")
 	protected String AI_API_MODEL;
@@ -50,82 +39,55 @@ public class AIService {
         }
 
         // Create inference JSON body
-        Gson gson = new Gson();
         AIInferenceRequest info = AIInferenceRequest.builder()
                 .model(AI_API_MODEL)
                 .temperature(AI_API_TEMPERATURE)
-                .top_p(AI_API_TOP_P)
-                .guided_json(guidedSchema)
+                .topP(AI_API_TOP_P)
+                .guidedJson(guidedSchema)
                 .messages(new AIInferenceRequest.RequestMessage[] {
                         new AIInferenceRequest.RequestMessage(AI_API_SYSTEM_ROLE, systemPrompt),
                         new AIInferenceRequest.RequestMessage(AI_API_USER_ROLE, noteContent)
                 })
                 .build();
-        String chatJSON = gson.toJson(info);
 
         // Fetch and return response from AI API
-        return fetchResponseFromInferenceProvider(chatJSON);
+        AIInferenceResponse inferenceResponse = fetchResponseFromInferenceProvider(info);
+        return inferenceResponse.getChoices()[0].getMessage().getContent();
     }
 
     private boolean checkPermission() {
-        if (AI_API_TOKEN == null || AI_API_URL == null || AI_API_MODEL == null) {
-            System.out.println("Missing AI_API_TOKEN or AI_API_URL or AI_API_MODEL.");
+        if (AI_API_MODEL == null) {
+            System.out.println("Missing AI_API_MODEL.");
             System.out.println("Please check your .env file and try again.");
             return false;
         }
         return true;
     }
 
-    private String generateGuidedSchema(Class<?> ClassType) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonSchemaGenerator schemaGenerator = new JsonSchemaGenerator(mapper);
-            JsonSchema schema = schemaGenerator.generateSchema(ClassType);
-
-            String schemaString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema);
-            return schemaString;
-        } catch (JsonProcessingException e) {
-            System.out.println(e.toString());
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-	private String fetchResponseFromInferenceProvider(String JSONBody) {
-		StringBuilder response = new StringBuilder();
-		try {
-			// Send request
-			URL url = new URI(AI_API_URL).toURL();
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setRequestProperty("Authorization", "Bearer " + AI_API_TOKEN);
-			connection.setDoOutput(true);
-
-			try (OutputStream os = connection.getOutputStream()) {
-				os.write(JSONBody.getBytes(StandardCharsets.UTF_8));
-			}
-
-			// Handle response
-			int responseCode = connection.getResponseCode();
-			if (responseCode != HttpURLConnection.HTTP_OK) {
-				System.out.println("Error: HTTP Response code - " + responseCode);
-				return "";
-			}
-
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                String line = null;
-                while ((line = bufferedReader.readLine()) != null) {
-                    response.append(line);
-                }
-            }
-
-			connection.disconnect();
-		} catch (IOException | URISyntaxException e) {
-			System.out.println(e.toString());
-			e.printStackTrace();
-		}
-		return response.toString();
+	private AIInferenceResponse fetchResponseFromInferenceProvider(AIInferenceRequest info) {
+        AIInferenceResponse response = restClient.post()
+                .body(info)
+                .retrieve()
+                .body(AIInferenceResponse.class);
+        return response;
 	}
+
+    // Unused methods, will debug later
+    private String generateGuidedSchema(Class<?> ClassType) {
+        SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON);
+
+        JakartaValidationModule validationModule = new JakartaValidationModule(
+                JakartaValidationOption.NOT_NULLABLE_FIELD_IS_REQUIRED,
+                JakartaValidationOption.INCLUDE_PATTERN_EXPRESSIONS
+        );
+        configBuilder.with(new JacksonModule());
+        configBuilder.with(validationModule);
+
+        SchemaGeneratorConfig config = configBuilder.build();
+        SchemaGenerator generator = new SchemaGenerator(config);
+        ObjectNode jsonSchema = generator.generateSchema(ClassType);
+        jsonSchema.remove("$schema");
+
+        return jsonSchema.toString();
+    }
 }

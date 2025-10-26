@@ -1,8 +1,10 @@
 package com.be08.smart_notes.dto.ai;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -14,11 +16,16 @@ public class AIInferenceRequest {
 
     // Optional
     private double temperature;
-    private double top_p;
-    private String guided_json;
+
+    @JsonProperty("top_p")
+    private double topP;
+
+    @JsonProperty("guided_json")
+    private String guidedJson;
 
     // Static nested class
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class RequestMessage {
         private String role;

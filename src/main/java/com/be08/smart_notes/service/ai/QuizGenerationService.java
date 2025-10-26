@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.be08.smart_notes.common.AppConstants;
 import com.be08.smart_notes.service.NoteService;
-import com.be08.smart_notes.dto.ai.AIInferenceRequest;
 import com.be08.smart_notes.dto.ai.AIInferenceResponse;
 import com.be08.smart_notes.dto.ai.QuizResponse;
 import com.be08.smart_notes.model.Document;
@@ -75,24 +74,12 @@ public class QuizGenerationService {
         }
 
 		// Generate content
-		String generatedContent = aiService.generateContent(this.systemPrompt, selectedNote.getContent(), quizResponseSchema);
+        String generatedContent = aiService.generateContent(this.systemPrompt, selectedNote.getContent(), quizResponseSchema);
 		if (generatedContent == null || generatedContent.isEmpty()) {
             return null;
         }
 
-		try {
-			// Extract raw message content from response string
-            Gson gson = new Gson();
-			AIInferenceResponse inferenceResponse = gson.fromJson(generatedContent, AIInferenceResponse.class);
-            String chatMessageContent = inferenceResponse.getChoices()[0].getMessage().getContent();
-
-			// Parse to object
-			return gson.fromJson(chatMessageContent, QuizResponse.class);
-		} catch (Exception e) {
-			System.out.println(e.toString());
-			e.printStackTrace();
-		}
-
-		return null;
-	}
+        Gson gson = new Gson();
+        return gson.fromJson(generatedContent, QuizResponse.class);
+    }
 }

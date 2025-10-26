@@ -17,21 +17,22 @@ import org.springframework.beans.factory.annotation.Value;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizResponse {
-    @NotBlank
+    @NotNull
 	private String topic;
     @NotNull
     private List<Question> questions;
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Question {
-        @NotBlank
+        @NotNull
         private String question;
 
         @NotNull
-        @Size(min = 4, max = 4)
         private String[] options;
 
-        private int correctIndex;
+        @NotNull
+        private Integer correctIndex;
     }
 }
