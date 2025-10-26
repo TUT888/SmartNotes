@@ -11,6 +11,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +25,8 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
 
+    PasswordEncoder passwordEncoder;
+
     public UserResponse createUser(UserCreationRequest request){
         String email = request.getEmail();
 
@@ -34,6 +38,31 @@ public class UserService {
         User user = userMapper.toUser(request);
         user.setCreatedAt(LocalDateTime.now());
 
+        // Encode the password before saving
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        log.info("User with email {} registered successfully", email);
+
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    /**
+     * Get the currently authenticated user's details
+     * @return UserResponse of the authenticated user
+     */
+    public UserResponse getMe(){
+        // Get the security context
+        var context = SecurityContextHolder.getContext();
+
+        // Extract user ID from authentication principal
+        int userId = Integer.parseInt(context.getAuthentication().getName());
+
+        // Fetch user from repository
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error("User with id {} not found", userId);
+            return new AppException(ErrorCode.USER_NOT_FOUND);
+        });
+
+        return userMapper.toUserResponse(user);
     }
 }

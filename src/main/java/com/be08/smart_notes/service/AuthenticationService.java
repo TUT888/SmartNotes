@@ -1,63 +1,107 @@
 package com.be08.smart_notes.service;
 
-import com.be08.smart_notes.dto.request.UserCreationRequest;
+import com.be08.smart_notes.dto.request.LoginRequest;
+import com.be08.smart_notes.dto.request.RefreshTokenRequest;
 import com.be08.smart_notes.dto.response.AuthenticationResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
-import com.be08.smart_notes.mapper.UserMapper;
 import com.be08.smart_notes.model.User;
 import com.be08.smart_notes.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
 public class AuthenticationService {
-    UserRepository userRepository;
-    UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final JwtDecoder jwtDecoder;
 
-    public AuthenticationResponse register(UserCreationRequest request){
+    // Inject the key alias to be used for signing tokens
+    @Value("${jwt.signing.key.alias}")
+    private String signingKeyAlias;
+
+    /**
+     * Authenticate user and generate JWT tokens
+     * @param request
+     * @return AuthenticationResponse containing access and refresh tokens
+     */
+    public AuthenticationResponse login(LoginRequest request) {
         String email = request.getEmail();
-        log.info("Registering user with email: {}", email);
-        String password = request.getPassword();
 
-        // basic business-level check (defense in depth)
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email is required");
-        }
-        if (password == null || password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters");
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.warn("Login Failed: User with email {} not found", email);
+                    return new AppException(ErrorCode.UNAUTHENTICATED);
+                });
+
+        String rawPassword = request.getPassword();
+        String hashedPassword = user.getPassword();
+
+        if(!passwordEncoder.matches(rawPassword, hashedPassword)){
+            log.warn("Login Failed: Invalid password for user with email {}", email);
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        if(userRepository.existsByEmail(email)){
-            log.error("User with email {} already exists", email);
-            throw new AppException(ErrorCode.USER_EXISTS);
-        }
+        // Create Access Token and Refresh Token, passing the key alias
+        String accessToken = jwtService.generateAccessToken(user, signingKeyAlias);
+        String refreshToken = jwtService.generateRefreshToken(user, signingKeyAlias);
 
-        User user = userMapper.toUser(request);
-        user.setCreatedAt(LocalDateTime.now());
+        log.info("User with email {} authenticated successfully", email);
+        return AuthenticationResponse.builder()
+                .isAuthenticated(true)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    /**
+     * Refresh JWT tokens using a valid refresh token
+     * @param request
+     * @return AuthenticationResponse containing new access and refresh tokens
+     */
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request){
+        String refreshToken = request.getRefreshToken();
+
+        int userId;
 
         try {
-            userRepository.save(user);
+            // Decode and validate the refresh token
+            Jwt jwt = jwtDecoder.decode(refreshToken);
 
-            return AuthenticationResponse.builder()
-                    .isAuthenticated(true)
-                    .build();
-        } catch (DataIntegrityViolationException exception){
-            // final safeguard for concurrent inserts — DB unique constraint
-            log.error("Data integrity violation while creating user with email {}: {}", email, exception.getMessage());
+            // Extract user ID from token subject
+            userId = Integer.parseInt(jwt.getSubject());
+        } catch (JwtException exception) {
+            log.warn("Refresh Token failed validation: {}", exception.getMessage());
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("Refresh Token Failed: User with ID {} not found", userId);
+                    return new AppException(ErrorCode.UNAUTHENTICATED);
+                });
+
+        String newAccessToken = jwtService.generateAccessToken(user, signingKeyAlias);
+        String newRefreshToken = jwtService.generateRefreshToken(user, signingKeyAlias);
+
+        log.info("New tokens generated successfully for user ID {}", userId);
 
         return AuthenticationResponse.builder()
                 .isAuthenticated(true)
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
                 .build();
     }
 }

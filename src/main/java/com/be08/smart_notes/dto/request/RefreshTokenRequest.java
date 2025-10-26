@@ -1,5 +1,6 @@
-package com.be08.smart_notes.dto.response;
+package com.be08.smart_notes.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -8,8 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationResponse {
-    boolean isAuthenticated;
-    String accessToken;
+public class RefreshTokenRequest {
+    @NotBlank(message = "REFRESH_TOKEN_EMPTY")
     String refreshToken;
 }
