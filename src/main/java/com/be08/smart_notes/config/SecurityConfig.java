@@ -1,6 +1,7 @@
 package com.be08.smart_notes.config;
 
 import com.be08.smart_notes.common.SecurityConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -15,6 +16,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Bean
+    public ObjectMapper objectMapper(){
+        return new ObjectMapper();
+    }
 
     @Bean
     PasswordEncoder passwordEncoder(){
@@ -43,7 +49,11 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // Configure OAuth2 Resource Server to use JWT for authentication
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(Customizer.withDefaults())
+                        // Custom authentication entry point for handling auth errors
+                        .authenticationEntryPoint(new CustomBearerTokenAuthenticationEntryPoint(objectMapper()))
+                )
                 // Set session management to stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

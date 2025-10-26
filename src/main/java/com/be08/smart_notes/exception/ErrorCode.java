@@ -15,6 +15,8 @@ public enum ErrorCode {
     UNCATEGORIZED(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
     // Used when an invalid error code key is provided
     INVALID_ERROR_CODE_KEY(9998, "Invalid error code key", HttpStatus.INTERNAL_SERVER_ERROR),
+    // Used when authentication is required but not provided
+    UNAUTHORIZED(9997, "Unauthorized: Full authentication is required to access this resource", HttpStatus.UNAUTHORIZED),
 
     // 20xx - User-related errors
     USER_EXISTS(2001, "User already exists", HttpStatus.BAD_REQUEST),
