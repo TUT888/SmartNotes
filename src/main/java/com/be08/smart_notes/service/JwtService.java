@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -42,12 +43,16 @@ public class JwtService {
     public String generateToken(User user, long expirationDuration, ChronoUnit unit, String keyId) {
         Instant now = Instant.now();
 
+        // Unique Token ID (jti) for token identification
+        String jti = UUID.randomUUID().toString();
+
         // 1. Define claims (Payload)
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("smart-notes-auth-server")
                 .issuedAt(now)
                 .expiresAt(now.plus(expirationDuration, unit))
                 .subject(String.valueOf(user.getId())) // Subject is User ID
+                .id(jti) // Unique JWT Token ID
                 .claim("email", user.getEmail())
                 .claim("scope", "USER")
                 .build();
