@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -27,6 +28,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final JwtDecoder jwtDecoder;
+    private final LogoutService logoutService;
 
     // Inject the key alias to be used for signing tokens
     @Value("${jwt.signing.key.alias}")
@@ -76,9 +78,16 @@ public class AuthenticationService {
 
         int userId;
 
+        Jwt jwt;
+
         try {
             // Decode and validate the refresh token
-            Jwt jwt = jwtDecoder.decode(refreshToken);
+            jwt = jwtDecoder.decode(refreshToken);
+
+            if(logoutService.isRefreshTokenBlacklisted(jwt.getId())){
+                log.warn("Refresh Token is blacklisted: jti {}", jwt.getId());
+                throw new JwtException("Refresh Token has been revoked (blacklisted)");
+            }
 
             // Extract user ID from token subject
             userId = Integer.parseInt(jwt.getSubject());
@@ -98,10 +107,22 @@ public class AuthenticationService {
 
         log.info("New tokens generated successfully for user ID {}", userId);
 
+        // Blacklist the previously used refresh token to prevent reuse
+        logoutService.blacklistRefreshToken(jwt);
+
         return AuthenticationResponse.builder()
                 .isAuthenticated(true)
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
+    }
+
+    /**
+     * Logout user by invalidating the current access token to blacklist its jti and prevent further use
+     * @param authentication
+     */
+    public void logout(Authentication authentication){
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        logoutService.blacklistAccessToken(jwt);
     }
 }

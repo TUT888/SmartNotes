@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,6 +65,21 @@ public class AuthenticationController {
         return ApiResponse.<AuthenticationResponse>builder()
                 .message("Token refreshed successfully")
                 .data(response)
+                .build();
+    }
+
+    /**
+     * User Logout
+     * Invalidate the current access token by adding its ID (jti) to the blacklist
+     * @param authentication
+     * @return ApiResponse with logout confirmation
+     */
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(Authentication authentication){
+        authenticationService.logout(authentication);
+
+        return ApiResponse.<Void>builder()
+                .message("Logged out successfully! Access token is now invalid.")
                 .build();
     }
 }
