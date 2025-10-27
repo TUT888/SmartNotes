@@ -78,9 +78,16 @@ public class AuthenticationService {
 
         int userId;
 
+        Jwt jwt;
+
         try {
             // Decode and validate the refresh token
-            Jwt jwt = jwtDecoder.decode(refreshToken);
+            jwt = jwtDecoder.decode(refreshToken);
+
+            if(logoutService.isRefreshTokenBlacklisted(jwt.getId())){
+                log.warn("Refresh Token is blacklisted: jti {}", jwt.getId());
+                throw new JwtException("Refresh Token has been revoked (blacklisted)");
+            }
 
             // Extract user ID from token subject
             userId = Integer.parseInt(jwt.getSubject());
@@ -99,6 +106,9 @@ public class AuthenticationService {
         String newRefreshToken = jwtService.generateRefreshToken(user, signingKeyAlias);
 
         log.info("New tokens generated successfully for user ID {}", userId);
+
+        // Blacklist the previously used refresh token to prevent reuse
+        logoutService.blacklistRefreshToken(jwt);
 
         return AuthenticationResponse.builder()
                 .isAuthenticated(true)

@@ -145,6 +145,13 @@
             <version>3.5.7</version>
         </dependency>
 
+        <!-- Jackson JSR310 for Java 8 Date/Time API -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
 	</dependencies>
 
 	<build>

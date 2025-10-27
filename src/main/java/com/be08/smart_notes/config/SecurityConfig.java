@@ -3,6 +3,8 @@ package com.be08.smart_notes.config;
 import com.be08.smart_notes.common.SecurityConstants;
 import com.be08.smart_notes.service.LogoutService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +35,12 @@ public class SecurityConfig {
 
     @Bean
     public ObjectMapper objectMapper(){
-        return new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return mapper;
     }
 
     @Bean
