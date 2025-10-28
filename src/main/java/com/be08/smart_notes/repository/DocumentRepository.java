@@ -1,6 +1,7 @@
 package com.be08.smart_notes.repository;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +10,8 @@ import org.springframework.data.repository.query.Param;
 import com.be08.smart_notes.model.Document;
 
 public interface DocumentRepository extends JpaRepository<Document, Integer> {
-	@Query("UPDATE Document d SET d.title = :title, d.updatedAt = :updatedAt WHERE d.id = :id")
-	Document updateTitle(@Param(value = "id") int id, @Param(value = "title") String title,
-			@Param(value = "updatedAt") LocalDateTime updatedAt);
+	List<Document> findAllByIdIn(List<Integer> ids);
+
+    @Query("SELECT d.content FROM Document d WHERE d.id IN :ids")
+    List<String> findAllContentFromIdIn(@Param(value="ids") List<Integer> ids);
 }

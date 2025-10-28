@@ -1,15 +1,13 @@
 package com.be08.smart_notes.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,11 +18,18 @@ import lombok.NoArgsConstructor;
 public class Quiz {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	@Column(nullable = false, name = "user_id")
-	private int userId;
+	private Integer userId;
 
 	@Column(nullable = false)
 	private String title;
+
+    @Column(nullable = false, name = "created_at")
+    private LocalDateTime createdAt;
+
+    // Relationship
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Question> questions;
 }

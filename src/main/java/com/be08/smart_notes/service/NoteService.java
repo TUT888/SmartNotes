@@ -1,6 +1,8 @@
 package com.be08.smart_notes.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,4 +48,8 @@ public class NoteService {
 	public void deleteNote(int noteId) {
 		documentRepository.deleteById(noteId);
 	}
+
+    public List<Document> getAllNotesByIds(List<Integer> noteIds) {
+        return documentRepository.findAllByIdIn(noteIds);
+    }
 }

@@ -12,20 +12,14 @@
           "question": {
             "type": "string"
           },
-          "optionA": {
-            "type": "string"
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
-          "optionB": {
-            "type": "string"
-          },
-          "optionC": {
-            "type": "string"
-          },
-          "optionD": {
-            "type": "string"
-          },
-          "correctAnswer": {
-            "type": "string"
+          "correctIndex": {
+            "type": "integer"
           }
         }
       }
