@@ -34,7 +34,7 @@ public class AIService {
 
     public String generateContent(String systemPrompt, String noteContent, String guidedSchema) {
         // Check environment setup
-        if (!checkPermission()) {
+        if (!checkConfiguration()) {
             return null;
         }
 
@@ -55,9 +55,9 @@ public class AIService {
         return inferenceResponse.getChoices()[0].getMessage().getContent();
     }
 
-    private boolean checkPermission() {
-        if (AI_API_MODEL == null) {
-            System.out.println("Missing AI_API_MODEL.");
+    private boolean checkConfiguration() {
+        if (AI_API_MODEL == null || AI_API_USER_ROLE == null || AI_API_SYSTEM_ROLE == null || AI_API_TEMPERATURE <= 0 || AI_API_TOP_P <= 0) {
+            System.out.println("Missing AI Inference Configuration.");
             System.out.println("Please check your .env file and try again.");
             return false;
         }

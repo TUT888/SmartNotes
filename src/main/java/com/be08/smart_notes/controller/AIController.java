@@ -1,16 +1,13 @@
 package com.be08.smart_notes.controller;
 
-import com.be08.smart_notes.dto.ai.QuizGenerationRequest;
-import com.be08.smart_notes.dto.ai.QuizQuestion;
-import com.be08.smart_notes.model.Document;
+import com.be08.smart_notes.dto.ai.QuizResponse;
+import com.be08.smart_notes.dto.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.be08.smart_notes.service.ai.QuizGenerationService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/ai/quiz/")
@@ -20,15 +17,24 @@ public class AIController {
 
 	@GetMapping("/generate/sample")
 	public ResponseEntity<Object> generateSampleQuiz() {
-		QuizQuestion quizList = quizGenerationService.generateSampleQuiz();
-		return ResponseEntity.status(HttpStatus.OK).body(quizList);
+        int userId = 1;
+		QuizResponse quizResponse = quizGenerationService.generateSampleQuiz(userId);
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Sample quiz generated created successfully")
+                .data(quizResponse)
+                .build();
+		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
 	@GetMapping("/generate/{noteId}")
 	public ResponseEntity<Object> generateQuiz(@PathVariable int noteId) {
         int userId = 1;
-		QuizQuestion quizList = quizGenerationService.generateQuizFromSingleNote(userId, noteId);
-		return ResponseEntity.status(HttpStatus.OK).body(quizList);
+		QuizResponse quizResponse = quizGenerationService.generateQuizFromSingleNote(userId, noteId);
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Quiz generated created successfully")
+                .data(quizResponse)
+                .build();
+		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
 //    @PostMapping("/generate")

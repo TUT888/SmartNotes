@@ -6,31 +6,35 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import com.be08.smart_notes.dto.ai.QuizQuestion;
+import com.be08.smart_notes.dto.ai.AIQuizResponse;
+import com.be08.smart_notes.dto.ai.QuizResponse;
+import com.be08.smart_notes.mapper.QuizMapper;
+import com.be08.smart_notes.model.Quiz;
 import com.be08.smart_notes.service.QuizService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
 import com.be08.smart_notes.common.AppConstants;
 import com.be08.smart_notes.service.NoteService;
-import com.be08.smart_notes.dto.ai.AIInferenceResponse;
 import com.be08.smart_notes.model.Document;
 
 @Service
+@Slf4j
 public class QuizGenerationService {
     private String systemPrompt;
     private String quizResponseSchema;
-
-    @Autowired
-    private QuizService quizService;
+    private static int DEFAULT_TOTAL_QUESTIONS = 10;
 
     @Autowired
     private AIService aiService;
 	@Autowired
 	private NoteService noteService;
+    @Autowired
+    private QuizService quizService;
+    @Autowired
+    private QuizMapper quizMapper;
 
     public QuizGenerationService() {
         try {
@@ -43,24 +47,23 @@ public class QuizGenerationService {
                     StandardCharsets.UTF_8
             );
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred while loading AI configuration.");
             e.printStackTrace();
         }
     }
 
-	public QuizQuestion generateSampleQuiz() {
-		// Below is sample response of fetchResponseFromInferenceProvider()
-		String responseAsJSONString = "{\"id\":\"chatcmpl-123456\",\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"logprobs\":null,\"message\":{\"content\":\"{\\\"topic\\\": \\\"Object-Oriented Programming Concepts\\\", \\\"quizzes\\\": [\\n    {\\n        \\\"question\\\": \\\"What is the primary focus of Object-Oriented Programming?\\\",\\n        \\\"options\\\": [\\n            \\\"Writing code for specific tasks\\\",\\n            \\\"Organizing code around objects\\\",\\n            \\\"Implementing algorithms for complex problems\\\",\\n            \\\"Using pre-defined functions\\\"\\n        ],\\n        \\\"correctIndex\\\": 1\\n    },\\n    {\\n        \\\"question\\\": \\\"What is the primary benefit of encapsulation?\\\",\\n        \\\"options\\\": [\\n            \\\"Hiding internal details of an object\\\",\\n            \\\"Allowing easy modification of an object\\\",\\n            \\\"Promoting code reusability through inheritance\\\",\\n            \\\"Making code more efficient and faster\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"Which of the following is an example of inheritance?\\\",\\n        \\\"options\\\": [\\n            \\\"Creating a class called 'Dog' that inherits from 'Animal'\\\",\\n            \\\"Defining a method called 'calculateArea' within a class\\\",\\n            \\\"Using a constructor to initialize an object's properties\\\",\\n            \\\"Writing code to display a message on the screen\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"What does polymorphism allow?\\\",\\n        \\\"options\\\": [\\n            \\\"The same method to behave differently in different classes\\\",\\n            \\\"A single method to handle different data types\\\",\\n            \\\"Classes to inherit common functionalities from their parent classes\\\",\\n            \\\"Objects to access data and methods in a controlled manner\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"What is a constructor in OOP?\\\",\\n        \\\"options\\\": [\\n            \\\"A method that runs when an object is created\\\",\\n            \\\"A method that defines the behavior of an object\\\",\\n            \\\"A method that is called repeatedly for a specific task\\\",\\n            \\\"A method that handles exceptions and errors\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    },\\n    {\\n        \\\"question\\\": \\\"What is the role of an interface in OOP?\\\",\\n        \\\"options\\\": [\\n            \\\"A contract that defines a set of methods that classes must implement\\\",\\n            \\\"A blueprint for creating a specific type of object\\\",\\n            \\\"A way to communicate between different objects\\\",\\n            \\\"A way to store and manage data\\\"\\n        ],\\n        \\\"correctIndex\\\": 0\\n    }\\n]}\",\"refusal\":null,\"role\":\"assistant\",\"audio\":null,\"function_call\":null,\"tool_calls\":[],\"reasoning_content\":null},\"stop_reason\":null}],\"created\":1751445406,\"model\":\"google/gemma-2-2b-it\",\"object\":\"chat.completion\",\"service_tier\":null,\"system_fingerprint\":null,\"usage\":{\"completion_tokens\":531,\"prompt_tokens\":953,\"total_tokens\":1484,\"completion_tokens_details\":null,\"prompt_tokens_details\":null},\"prompt_logprobs\":null}\r\n";
+	public QuizResponse generateSampleQuiz(int userId) {
+		// Below is sample generated content
+		String generatedContent = "{\"topic\":\"Object-Oriented Programming Concepts\",\"questions\":[{\"question\":\"What is the main purpose of Object-Oriented Programming (OOP)?\",\"options\":[\"A. To simplify data structures\",\"B. To organize code around objects\",\"C. To create complex algorithms\",\"D. To optimize code execution speed\"], \"correct_index\": 1}, {\"question\":\"Which of the following best describes encapsulation in OOP?\",\"options\":[\"A. Hiding internal data and exposing only necessary information\",\"B. Creating multiple objects from a single class\",\"C. Passing data between different classes\",\"D. Defining the structure of a class\",\"\"], \"correct_index\": 1}, {\"question\":\"What is the primary function of a constructor in OOP?\",\"options\":[\"A. To delete an object from memory\",\"B. To store data for an object\",\"C. To initialize an object when it is created\",\"D. To define the behavior of an object\",\"\"], \"correct_index\": 3}, {\"question\":\"How does inheritance work in OOP?\",\"options\":[\"A. It allows objects to inherit properties and methods from other objects\",\"B. It creates a new class based on an existing one and adds new features\",\"C. It allows objects to access private members of other objects\",\"D. It enables objects to communicate with each other through messages\",\"\"], \"correct_index\": 1}, {\"question\":\"What does polymorphism refer to in OOP?\",\"options\":[\"A. The ability of an object to be accessed from multiple classes\",\"B. The ability of an object to behave differently based on its context\",\"C. The ability of an object to be used in different programming languages\",\"D. The ability of an object to be inherited from other objects\",\"\"], \"correct_index\": 1}, {\"question\":\"Which of the following is NOT a benefit of OOP?\",\"options\":[\"A. Improved code reusability\",\"B. Easier code maintenance\",\"C. Increased program complexity\",\"D. Enhanced code readability\",\"\"], \"correct_index\": 3}, {\"question\":\"What is the primary difference between a class and an object?\",\"options\":[\"A. A class is a blueprint for creating objects, while an object is an instance of that blueprint\",\"B. A class is a data structure, while an object is a programming language\",\"C. A class is a variable, while an object is a function\",\"D. A class is a method, while an object is a program\",\"\"], \"correct_index\": 1}, {\"question\":\"What is the main purpose of a static method?\",\"options\":[\"A. To define a method that is specific to a particular object\",\"B. To define a method that belongs to a class and not to individual objects\",\"C. To define a method that is called when an object is created\",\"D. To define a method that is called when an object is destroyed\",\"\"], \"correct_index\": 1}, {\"question\":\"Which of the following is an example of a common mistake to avoid in OOP?\",\"options\":[\"A. Using inheritance when it is not needed\",\"B. Using public access modifiers for every method\",\"C. Using static methods for every method\",\"D. Creating complex objects that are not needed\",\"\"], \"correct_index\": 1}, {\"question\":\"What is the purpose of an interface in OOP?\",\"options\":[\"A. To define the behavior of a class\",\"B. To create a contract that classes must follow\",\"C. To define the structure of a class\",\"D. To create a blueprint for creating objects\",\"\"], \"correct_index\": 1}, {\"question\":\"What is the purpose of a method overriding?\",\"options\":[\"A. To create a new class that is based on an existing one\",\"B. To define a new method with a different implementation in a child class\",\"C. To create a new method that overrides the behavior of a parent class\",\"D. To create a new class that inherits from a different class\",\"\"], \"correct_index\": 3}]}\n";
 
 		// Extract raw message content from response string
-		Gson gson = new Gson();
+        ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			// Extract raw message content from response string
-			AIInferenceResponse inferenceResponse = gson.fromJson(responseAsJSONString, AIInferenceResponse.class);
-            String chatMessageContent = inferenceResponse.getChoices()[0].getMessage().getContent();
+            AIQuizResponse aiQuizResponse = objectMapper.readValue(generatedContent, AIQuizResponse.class);
 
-			// Parse to object
-			return gson.fromJson(chatMessageContent, QuizQuestion.class);
+            Quiz sampleQuizEntity = quizMapper.fromAIQuizResponseToQuiz(aiQuizResponse);
+            return quizMapper.fromQuizToQuizResponse(sampleQuizEntity);
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			e.printStackTrace();
@@ -69,7 +72,7 @@ public class QuizGenerationService {
 		return null;
 	}
 
-	public QuizQuestion generateQuizFromSingleNote(int userId, int noteId) {
+	public QuizResponse generateQuizFromSingleNote(int userId, int noteId) {
         if (this.systemPrompt == null) {
             return null;
         }
@@ -82,35 +85,61 @@ public class QuizGenerationService {
 
 		// Generate content
         String generatedContent = aiService.generateContent(
-                String.format(this.systemPrompt, 10),
+                String.format(this.systemPrompt, DEFAULT_TOTAL_QUESTIONS),
                 selectedNote.getContent(),
                 quizResponseSchema
         );
 		if (generatedContent == null || generatedContent.isEmpty()) {
             return null;
         }
+        System.out.println("generatedContent: \n" + generatedContent);
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            QuizQuestion quizQuestion = objectMapper.readValue(generatedContent, QuizQuestion.class);
-            quizService.createQuiz(userId, noteId, quizQuestion);
-            return quizQuestion;
-        } catch (JsonProcessingException e) {
+            AIQuizResponse aiQuizResponse = objectMapper.readValue(generatedContent, AIQuizResponse.class);
+            System.out.println("\naiQuizResponse: \n" + aiQuizResponse);
+
+            QuizResponse quizResponse = quizService.saveQuizFromAIResponse(userId, noteId, aiQuizResponse);
+            System.out.println("\nsavedQuiz: \n" + quizResponse);
+            return quizResponse;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public List<Document> generateQuizFromListOfNotes(List<Integer> noteIds) {
+    public QuizResponse generateQuizFromListOfNotes(int userId, List<Integer> noteIds) {
         if (this.systemPrompt == null) {
             return null;
         }
 
+        return null;
         // Get note
-        List<Document> noteList = noteService.getAllNotesByIds(noteIds);
-        if (noteList.isEmpty()) {
-            return null;
-        }
-
-        return noteList;
+//        List<Document> noteList = noteService.getAllNotesByIds(noteIds);
+//        if (noteList.isEmpty()) {
+//            return null;
+//        }
+//
+//        String systemPrompt = String.format(this.systemPrompt, DEFAULT_TOTAL_QUESTIONS);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        for (Document note : noteList) {
+//            String generatedContent = aiService.generateContent(
+//                    systemPrompt,
+//                    note.getContent(),
+//                    quizResponseSchema
+//            );
+//            if (generatedContent == null || generatedContent.isEmpty()) {
+//                return null;
+//            }
+//
+//            try {
+//                AIQuizResponse quizResponse = objectMapper.readValue(generatedContent, AIQuizResponse.class);
+//                quizService.createQuiz(userId, note.getId(), quizResponse);
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//
+//        AIQuizResponse quizResponse =
+//        return noteList;
     }
 }

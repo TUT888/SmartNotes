@@ -12,20 +12,18 @@
           "question": {
             "type": "string"
           },
-          "optionA": {
-            "type": "string"
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minLength": 4,
+            "maxLength": 4
           },
-          "optionB": {
-            "type": "string"
-          },
-          "optionC": {
-            "type": "string"
-          },
-          "optionD": {
-            "type": "string"
-          },
-          "correctAnswer": {
-            "type": "string"
+          "correct_index": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3
           }
         }
       }

@@ -1,6 +1,7 @@
 package com.be08.smart_notes.service;
 
-import com.be08.smart_notes.dto.ai.QuizQuestion;
+import com.be08.smart_notes.dto.ai.AIQuizResponse;
+import com.be08.smart_notes.dto.ai.QuizResponse;
 import com.be08.smart_notes.mapper.QuizMapper;
 import com.be08.smart_notes.model.Question;
 import com.be08.smart_notes.model.Quiz;
@@ -17,20 +18,26 @@ public class QuizService {
     @Autowired
     private QuizMapper quizMapper;
 
-    public Quiz createQuiz(int userId, int sourceDocumentId, QuizQuestion quizQuestion) {
-        Quiz quiz = quizMapper.fromQuizResponseToQuiz(quizQuestion);
+    public QuizResponse saveQuizFromAIResponse(int userId, int sourceDocumentId, AIQuizResponse aiQuizResponse) {
+        Quiz quiz = quizMapper.fromAIQuizResponseToQuiz(aiQuizResponse);
         quiz.setCreatedAt(LocalDateTime.now());
         quiz.setUserId(userId);
 
         for (Question question : quiz.getQuestions()) {
             question.setSourceDocumentId(sourceDocumentId);
-            question.setQuiz(null);
+            question.setQuiz(quiz);
         }
 
-        return quizRepository.save(quiz);
+        Quiz savedQuiz = quizRepository.save(quiz);
+        return quizMapper.fromQuizToQuizResponse(savedQuiz);
     }
 
-    public void deleteQuiz(int id) {
+    public QuizResponse getQuizById(int id) {
+        Quiz quiz = quizRepository.findById(id).orElse(null);
+        return quizMapper.fromQuizToQuizResponse(quiz);
+    }
+
+    public void deleteQuizById(int id) {
         quizRepository.deleteById(id);
     }
 }

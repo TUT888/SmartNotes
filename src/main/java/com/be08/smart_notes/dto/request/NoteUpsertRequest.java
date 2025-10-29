@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NoteUpsertRequest {
 	@NotNull(groups = OnCreate.class)
-	private int userId;
+	private Integer userId;
 	
 	@NotNull(groups = {OnCreate.class, OnUpdate.class})
 	private String title;

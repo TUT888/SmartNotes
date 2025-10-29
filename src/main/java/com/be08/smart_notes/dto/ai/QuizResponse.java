@@ -1,5 +1,6 @@
 package com.be08.smart_notes.dto.ai;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
@@ -10,18 +11,29 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizQuestion {
+public class QuizResponse {
     @NotNull
-	private String topic;
+    private Integer id;
+
+    @NotNull
+    private LocalDateTime createdAt;
+
+    @NotNull
+	private String title;
+
     @NotNull
     private List<Question> questions;
 
+    // Static nested class
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Question {
         @NotNull
-        private String question;
+        private Integer id;
+
+        @NotNull
+        private String questionText;
 
         @NotNull
         private String optionA;
@@ -37,5 +49,8 @@ public class QuizQuestion {
 
         @NotNull
         private String correctAnswer;
+
+        @NotNull
+        private Integer sourceDocumentId;
     }
 }
