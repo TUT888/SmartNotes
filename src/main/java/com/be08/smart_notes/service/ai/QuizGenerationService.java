@@ -16,7 +16,6 @@ import com.be08.smart_notes.dto.ai.InferenceRequest;
 import com.be08.smart_notes.dto.ai.InferenceRequestMessage;
 import com.be08.smart_notes.dto.ai.InferenceResponse;
 import com.be08.smart_notes.dto.ai.QuizResponse;
-import com.be08.smart_notes.model.Note;
 
 @Service
 public class QuizGenerationService extends AIService {

@@ -1,9 +1,17 @@
 package com.be08.smart_notes.repository;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.be08.smart_notes.model.Document;
 
-public interface DocumentRepository extends JpaRepository<Document, Integer>{
-	
+public interface DocumentRepository extends JpaRepository<Document, Integer> {
+    List<Document> findAllByIdIn(List<Integer> ids);
+
+    @Query("SELECT d.content FROM Document d WHERE d.id IN :ids")
+    List<String> findAllContentFromIdIn(@Param(value="ids") List<Integer> ids);
 }

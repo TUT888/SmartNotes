@@ -32,7 +32,12 @@ public enum ErrorCode {
 
     // 21xx - Token-related errors
     REFRESH_TOKEN_EMPTY(2102, "Refresh token cannot be empty", HttpStatus.BAD_REQUEST),
+
+    // 22xx - Document-related errors
+    DOCUMENT_CANNOT_BE_DELETED(2208, "This document cannot be deleted", HttpStatus.BAD_REQUEST)
     ;
+
+
 
     int code;
     String message;
