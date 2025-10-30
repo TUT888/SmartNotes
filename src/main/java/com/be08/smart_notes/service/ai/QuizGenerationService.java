@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.be08.smart_notes.dto.response.NoteResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,7 @@ public class QuizGenerationService extends AIService {
 	public QuizResponse generateQuizFromNote(int noteId) {
 		checkPermission();
 
-		Document selectedNote = noteService.getNote(noteId);
+		NoteResponse selectedNote = noteService.getNote(noteId);
 		if (selectedNote == null)
 			return null;
 

@@ -2,7 +2,9 @@ package com.be08.smart_notes.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,9 +19,10 @@ import com.be08.smart_notes.service.DocumentService;
 
 @RestController
 @RequestMapping("/api/document")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DocumentController {
-	@Autowired
-	private DocumentService documentService;
+	DocumentService documentService;
 
 	@GetMapping
 	public ResponseEntity<Object> getAllDocuments() {
