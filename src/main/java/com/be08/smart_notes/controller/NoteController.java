@@ -21,7 +21,7 @@ import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.service.NoteService;
 
 @RestController
-@RequestMapping("/api/document/note")
+@RequestMapping("/api/documents/notes")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class NoteController {

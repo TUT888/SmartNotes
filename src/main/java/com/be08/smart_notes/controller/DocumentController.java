@@ -18,7 +18,7 @@ import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.service.DocumentService;
 
 @RestController
-@RequestMapping("/api/document")
+@RequestMapping("/api/documents")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DocumentController {
