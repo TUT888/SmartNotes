@@ -16,13 +16,13 @@ import com.be08.smart_notes.service.ai.QuizGenerationService;
 public class AIController {
 	@Autowired
 	private QuizGenerationService quizGenerationService;
-	
+
 	@GetMapping("/generateQuiz/sample")
 	public ResponseEntity<Object> generateSampleQuiz() {
 		QuizResponse quizList = quizGenerationService.generateSampleQuiz();
 		return ResponseEntity.status(HttpStatus.OK).body(quizList);
 	}
-	
+
 	@GetMapping("/generateQuiz/{noteId}")
 	public ResponseEntity<Object> generateQuiz(@PathVariable int noteId) {
 		QuizResponse quizList = quizGenerationService.generateQuizFromNote(noteId);

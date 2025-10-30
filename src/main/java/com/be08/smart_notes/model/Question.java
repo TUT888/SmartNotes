@@ -23,10 +23,10 @@ public class Question {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	@Column(nullable = false, name = "quiz_id")
 	private int quizId;
-	
+
 	@Column(nullable = false, name = "question_text")
 	private String questionText;
 

@@ -29,9 +29,14 @@ public enum ErrorCode {
     INVALID_PASSWORD_PATTERN(2008, "Password must contain at least one uppercase letter, one lowercase letter, and one digit, and no whitespace", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(2009, "User not found", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(2010, "Unauthenticated access", HttpStatus.UNAUTHORIZED),
+    ACCESS_DENIED(2011, "Access denied", HttpStatus.FORBIDDEN),
 
     // 21xx - Token-related errors
     REFRESH_TOKEN_EMPTY(2102, "Refresh token cannot be empty", HttpStatus.BAD_REQUEST),
+
+    // 22xx - Document-related features
+    DOCUMENT_NOT_FOUND(2201, "Document not found", HttpStatus.NOT_FOUND),
+    NOTE_CONTENT_EMPTY(2202, "Note content cannot be empty", HttpStatus.BAD_REQUEST),
     ;
 
     int code;
