@@ -65,4 +65,19 @@ public class UserService {
 
         return userMapper.toUserResponse(user);
     }
+
+    /**
+     * Get user by ID
+     * @param userId ID of the user to fetch
+     * @return User entity
+     */
+    public User getById(int userId){
+        // Fetch user from repository
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("User with id {} not found", userId);
+                    return new AppException(ErrorCode.USER_NOT_FOUND);
+                });
+        return user;
+    }
 }

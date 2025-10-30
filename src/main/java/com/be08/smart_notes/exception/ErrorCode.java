@@ -34,6 +34,8 @@ public enum ErrorCode {
     REFRESH_TOKEN_EMPTY(2102, "Refresh token cannot be empty", HttpStatus.BAD_REQUEST),
 
     // 22xx - Document-related errors
+    DOCUMENT_NOT_FOUND(2204, "Document not found", HttpStatus.NOT_FOUND),
+    SYSTEM_SOURCE_DOCUMENT_NOT_FOUND(2205, "System source document not found", HttpStatus.NOT_FOUND),
     DOCUMENT_CANNOT_BE_DELETED(2208, "This document cannot be deleted", HttpStatus.BAD_REQUEST),
 
     // 23xx - Note-related errors
@@ -42,6 +44,10 @@ public enum ErrorCode {
     FLASHCARD_FRONT_CONTENT_REQUIRED(2401, "Flashcard front content is required", HttpStatus.BAD_REQUEST),
     FLASHCARD_BACK_CONTENT_REQUIRED(2402, "Flashcard back content is required", HttpStatus.BAD_REQUEST),
     FLASHCARD_SOURCE_DOCUMENT_ID_REQUIRED(2403, "Flashcard source document ID is required", HttpStatus.BAD_REQUEST),
+    FLASHCARD_NOT_FOUND(2404, "Flashcard not found", HttpStatus.NOT_FOUND),
+
+    // 25xx - Flashcard Set-related errors
+    FLASHCARD_SET_NOT_FOUND(2504, "Flashcard set not found", HttpStatus.NOT_FOUND)
     ;
 
 
