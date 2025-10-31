@@ -5,9 +5,17 @@ Personal project for smart note taking application
 ## Supported Features
 | Module | Method | API | Description |
 | -------- | -------- | -------- | ------- |
-| Document | GET | `/api/document/all` | List all available documents  |
-| Note | GET | `/api/document/note/{id}` | Get note content using its id |
-| | POST | `/api/document/note/create` | Create new note |
+| Authentication | POST | `/api/auth/register` | Register new user |
+| | POST | `/api/auth/login` | Login with your account |
+| | POST | `/api/auth/logout` | Logout of current session |
+| | POST | `/api/auth/refresh` | Refresh your authentication token |
+| | GET | `/api/users/me` | Get your information (logged in) |
+| Document | GET | `/api/documents` | List all available documents  |
+| | DELETE | `/api/documents/{id}` | Delete document using its id  |
+| Note | POST | `/api/documents/notes` | Create new note |
+|  | GET | `/api/documents/notes/{id}` | Get note content using its id |
+| | PUT | `/api/documents/notes/{id}` | Update note content using its id |
+| | DELETE | `/api/documents/notes/{id}` | Delete note content using its id |
 | AI | GET | `/api/ai/generateQuiz/sample` | Get a sample quiz from sample response, this API does not require API TOKEN |
 | | GET | `/api/ai/generateQuiz/{noteId}` | Generate relevant quizzes based on 1 note, this feature **requires HuggingFace API TOKEN** to run |
 
