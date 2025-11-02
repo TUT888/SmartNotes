@@ -37,6 +37,12 @@ public enum ErrorCode {
     // 22xx - Document-related features
     DOCUMENT_NOT_FOUND(2201, "Document not found", HttpStatus.NOT_FOUND),
     NOTE_CONTENT_EMPTY(2202, "Note content cannot be empty", HttpStatus.BAD_REQUEST),
+
+    // 23xx - AI-related features
+    FAILED_INFERENCE_REQUEST(2301, "AI inference request failed", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    // 24xx - Quiz-related features
+    QUIZ_NOT_FOUND(2401, "Quiz not found", HttpStatus.NOT_FOUND),
     ;
 
     int code;

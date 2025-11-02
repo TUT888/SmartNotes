@@ -152,8 +152,6 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-		</dependency>
-
         <!-- Handle JSON Schema parsing -->
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jsonSchema -->
         <dependency>

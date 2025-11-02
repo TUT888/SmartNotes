@@ -1,9 +1,12 @@
 package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.dto.ai.AIQuizResponse;
-import com.be08.smart_notes.dto.ai.QuizResponse;
+import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.service.QuizService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/quiz")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class QuizController {
-    @Autowired
-    private QuizService quizService;
+    QuizService quizService;
 
     @PostMapping
     public ResponseEntity<Object> createQuiz(@RequestBody AIQuizResponse aiQuizResponse) {
-        int userId = 1;
-        QuizResponse quizResponse = quizService.saveQuizFromAIResponse(userId, 1, aiQuizResponse);
+        QuizResponse quizResponse = quizService.saveQuizFromAIResponse(1, aiQuizResponse);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz created successfully")
                 .data(quizResponse)

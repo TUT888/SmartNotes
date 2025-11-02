@@ -1,7 +1,7 @@
 package com.be08.smart_notes.mapper;
 
 import com.be08.smart_notes.dto.ai.AIQuizResponse;
-import com.be08.smart_notes.dto.ai.QuizResponse;
+import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.model.Question;
 import com.be08.smart_notes.model.Quiz;
 import org.mapstruct.Mapper;

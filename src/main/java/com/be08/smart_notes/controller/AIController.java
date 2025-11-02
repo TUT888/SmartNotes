@@ -1,8 +1,10 @@
 package com.be08.smart_notes.controller;
 
-import com.be08.smart_notes.dto.ai.QuizResponse;
+import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +13,14 @@ import com.be08.smart_notes.service.ai.QuizGenerationService;
 
 @RestController
 @RequestMapping("/api/ai/quiz/")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AIController {
-	@Autowired
-	private QuizGenerationService quizGenerationService;
+	QuizGenerationService quizGenerationService;
 
 	@GetMapping("/generate/sample")
 	public ResponseEntity<Object> generateSampleQuiz() {
-        int userId = 1;
-		QuizResponse quizResponse = quizGenerationService.generateSampleQuiz(userId);
+		QuizResponse quizResponse = quizGenerationService.generateSampleQuiz();
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Sample quiz generated created successfully")
                 .data(quizResponse)
@@ -28,8 +30,7 @@ public class AIController {
 
 	@GetMapping("/generate/{noteId}")
 	public ResponseEntity<Object> generateQuiz(@PathVariable int noteId) {
-        int userId = 1;
-		QuizResponse quizResponse = quizGenerationService.generateQuizFromSingleNote(userId, noteId);
+		QuizResponse quizResponse = quizGenerationService.generateQuizFromSingleNote(noteId);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz generated created successfully")
                 .data(quizResponse)

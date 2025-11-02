@@ -1,4 +1,4 @@
-package com.be08.smart_notes.dto.ai;
+package com.be08.smart_notes.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
