@@ -29,6 +29,7 @@ public class FlashcardService {
 
     DocumentService documentService;
     FlashcardSetService flashcardSetService;
+    AuthorizationService authorizationService;
 
     // -- CRUD Operations --
     // -- Create Flashcard --
@@ -39,7 +40,7 @@ public class FlashcardService {
      */
     public FlashcardResponse createFlashcard(FlashcardCreationRequest request){
         // Get current user ID from claim sub of JWT token (security context)
-        int currentUserId = getCurrentUserId();
+        int currentUserId = authorizationService.getCurrentUserId();
 
         Document sourceDocument = validateAndGetSourceDocument(request.getSourceDocumentId(), currentUserId);
         FlashcardSet flashcardSet = validateAndGetFlashcardSet(request.getFlashcardSetId(), currentUserId);
@@ -59,7 +60,7 @@ public class FlashcardService {
      * @return FlashcardResponse
      */
     public FlashcardResponse getFlashcardById(int flashcardId){
-        int currentUserId = getCurrentUserId();
+        int currentUserId = authorizationService.getCurrentUserId();
 
         Flashcard flashcard = flashcardRepository.findByIdAndFlashcardSet_Owner_Id(flashcardId, currentUserId)
                 .orElseThrow(() -> new AppException(ErrorCode.FLASHCARD_NOT_FOUND));
@@ -73,7 +74,7 @@ public class FlashcardService {
      * @return List of FlashcardResponse
      */
     public List<FlashcardResponse> getFlashcardsBySetId(int flashcardSetId){
-        int currentUserId = getCurrentUserId();
+        int currentUserId = authorizationService.getCurrentUserId();
 
         // Validate ownership of the flashcard set
         flashcardSetService.validateOwner(flashcardSetId, currentUserId);
@@ -93,7 +94,7 @@ public class FlashcardService {
      * @return Updated FlashcardResponse
      */
     public FlashcardResponse updateFlashcard(int flashcardId, FlashcardCreationRequest request){
-        int currentUserId = getCurrentUserId();
+        int currentUserId = authorizationService.getCurrentUserId();
 
         Flashcard existingFlashcard = flashcardRepository.findByIdAndFlashcardSet_Owner_Id(flashcardId, currentUserId)
                 .orElseThrow(() -> new AppException(ErrorCode.FLASHCARD_NOT_FOUND));
@@ -120,22 +121,12 @@ public class FlashcardService {
      * @param flashcardId ID of the flashcard to delete
      */
     public void deleteFlashcard(int flashcardId){
-        int currentUserId = getCurrentUserId();
+        int currentUserId = authorizationService.getCurrentUserId();
         Flashcard flashcard = flashcardRepository.findByIdAndFlashcardSet_Owner_Id(flashcardId, currentUserId)
                 .orElseThrow(() -> new AppException(ErrorCode.FLASHCARD_NOT_FOUND));
     }
 
     // -- Private Helper Methods --
-
-    /**
-     * Get the currently authenticated user's ID
-     * @return userId
-     */
-    private int getCurrentUserId(){
-        // Extract user ID from security context
-        String userIdString = SecurityContextHolder.getContext().getAuthentication().getName();
-        return Integer.parseInt(userIdString);
-    }
 
     /**
      * Validate and get the source document

@@ -16,6 +16,8 @@ public class DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
 
+    AuthorizationService authorizationService;
+
     private static final String SYSTEM_SOURCE_TITLE = "__SYSTEM_UNFILED_SOURCE__";
 
     public List<Document> getAllDocuments() {
@@ -25,7 +27,7 @@ public class DocumentService {
 
     public void deleteDocument(int id) {
         // Get current user ID from claim sub of JWT token (security context)
-        int currentUserId = getCurrentUserId();
+        int currentUserId = authorizationService.getCurrentUserId();
 
         // Validate ownership and existence of document
         Document document = getDocumentIfOwned(id, currentUserId);
@@ -53,15 +55,5 @@ public class DocumentService {
     public Document getSystemSourceDocument(int userId){
         return documentRepository.findByTitleAndUserId(SYSTEM_SOURCE_TITLE, userId)
                 .orElseThrow(() -> new AppException(ErrorCode.SYSTEM_SOURCE_DOCUMENT_NOT_FOUND));
-    }
-
-    /**
-     * Get the currently authenticated user's ID
-     * @return int userId
-     */
-    private int getCurrentUserId(){
-        // Extract user ID from security context
-        String userIdString = SecurityContextHolder.getContext().getAuthentication().getName();
-        return Integer.parseInt(userIdString);
     }
 }

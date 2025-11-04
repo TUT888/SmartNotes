@@ -29,25 +29,26 @@ public enum ErrorCode {
     INVALID_PASSWORD_PATTERN(2008, "Password must contain at least one uppercase letter, one lowercase letter, and one digit, and no whitespace", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(2009, "User not found", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(2010, "Unauthenticated access", HttpStatus.UNAUTHORIZED),
+    ACCESS_DENIED(2011, "Access denied", HttpStatus.FORBIDDEN),
 
     // 21xx - Token-related errors
     REFRESH_TOKEN_EMPTY(2102, "Refresh token cannot be empty", HttpStatus.BAD_REQUEST),
 
     // 22xx - Document-related errors
-    DOCUMENT_NOT_FOUND(2204, "Document not found", HttpStatus.NOT_FOUND),
+    DOCUMENT_NOT_FOUND(2201, "Document not found", HttpStatus.NOT_FOUND),
+    NOTE_CONTENT_EMPTY(2202, "Note content cannot be empty", HttpStatus.BAD_REQUEST),
     SYSTEM_SOURCE_DOCUMENT_NOT_FOUND(2205, "System source document not found", HttpStatus.NOT_FOUND),
     DOCUMENT_CANNOT_BE_DELETED(2208, "This document cannot be deleted", HttpStatus.BAD_REQUEST),
 
-    // 23xx - Note-related errors
 
-    // 24xx - Flashcard-related errors
-    FLASHCARD_FRONT_CONTENT_REQUIRED(2401, "Flashcard front content is required", HttpStatus.BAD_REQUEST),
-    FLASHCARD_BACK_CONTENT_REQUIRED(2402, "Flashcard back content is required", HttpStatus.BAD_REQUEST),
-    FLASHCARD_SOURCE_DOCUMENT_ID_REQUIRED(2403, "Flashcard source document ID is required", HttpStatus.BAD_REQUEST),
-    FLASHCARD_NOT_FOUND(2404, "Flashcard not found", HttpStatus.NOT_FOUND),
+    // 25xx - Flashcard-related errors
+    FLASHCARD_FRONT_CONTENT_REQUIRED(2501, "Flashcard front content is required", HttpStatus.BAD_REQUEST),
+    FLASHCARD_BACK_CONTENT_REQUIRED(2502, "Flashcard back content is required", HttpStatus.BAD_REQUEST),
+    FLASHCARD_SOURCE_DOCUMENT_ID_REQUIRED(2503, "Flashcard source document ID is required", HttpStatus.BAD_REQUEST),
+    FLASHCARD_NOT_FOUND(2504, "Flashcard not found", HttpStatus.NOT_FOUND),
 
-    // 25xx - Flashcard Set-related errors
-    FLASHCARD_SET_NOT_FOUND(2504, "Flashcard set not found", HttpStatus.NOT_FOUND)
+    // 26xx - Flashcard Set-related errors
+    FLASHCARD_SET_NOT_FOUND(2604, "Flashcard set not found", HttpStatus.NOT_FOUND)
     ;
 
 

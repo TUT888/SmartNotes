@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Flashcard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "flashcard_set_id", nullable = false)
