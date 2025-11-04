@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface QuizSetRepository extends JpaRepository<QuizSet,Integer> {
     Optional<QuizSet> findByTitleAndUserId(String title, int userId);
+
+    void deleteAllByUserId(int userId);
 }

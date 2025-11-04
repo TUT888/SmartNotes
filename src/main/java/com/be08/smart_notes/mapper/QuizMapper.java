@@ -1,6 +1,6 @@
 package com.be08.smart_notes.mapper;
 
-import com.be08.smart_notes.dto.ai.AIQuizResponse;
+import com.be08.smart_notes.dto.QuizQuestion;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
 import com.be08.smart_notes.model.Question;
@@ -22,17 +22,18 @@ public interface QuizMapper {
     QuizResponse toQuizResponse(Quiz entity);
     Quiz toQuiz(QuizResponse dto);
 
-    // Quiz Entity <--> AIQuizResponse dto
-    Quiz toQuiz(AIQuizResponse dto);
+    // Quiz Entity <--> QuizQuestion
+    List<Quiz> toQuizList(List<QuizQuestion> dtoList);
+    Quiz toQuiz(QuizQuestion dto);
 
-    // Question Entity <--> AIQuizResponse.Question dto
+    // Question Entity <--> QuizQuestion.Question dto
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "optionA", expression = "java(dto.getOptions()[0])")
     @Mapping(target = "optionB", expression = "java(dto.getOptions()[1])")
     @Mapping(target = "optionC", expression = "java(dto.getOptions()[2])")
     @Mapping(target = "optionD", expression = "java(dto.getOptions()[3])")
     @Mapping(target = "correctAnswer", expression = "java(indexToLetter(dto.getCorrectIndex()))")
-    Question toQuestionEntity(AIQuizResponse.Question dto);
+    Question toQuestionEntity(QuizQuestion.Question dto);
 
     default Character indexToLetter(Integer index) {
         return (char) ('A' + index);

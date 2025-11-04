@@ -44,13 +44,22 @@ public class QuizSet {
         quiz.setQuizSet(this);
     }
 
+    public void addQuizzes(List<Quiz> newQuizzes){
+        if (this.quizzes == null) {
+            this.quizzes = new ArrayList<>();
+        }
+        newQuizzes.forEach(quiz -> quiz.setQuizSet(this));
+        quizzes.addAll(newQuizzes);
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PreUpdate void onUpdate() {
+    @PreUpdate
+    protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 }

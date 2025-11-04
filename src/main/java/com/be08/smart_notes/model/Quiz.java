@@ -43,7 +43,7 @@ public class Quiz {
     @JoinColumn(name = "quiz_set_id", referencedColumnName = "id")
     private QuizSet quizSet;
 
-    @Column(nullable = false, name = "source_document_id")
+    @Column(name = "source_document_id")
     private Integer sourceDocumentId;
 
     @PrePersist

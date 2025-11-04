@@ -1,6 +1,5 @@
-package com.be08.smart_notes.dto.ai;
+package com.be08.smart_notes.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -15,7 +14,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AIQuizResponse {
+public class QuizQuestion {
+    private Integer sourceDocumentId;
+
     @NotNull
     @JsonProperty(value = "topic")
 	private String title;

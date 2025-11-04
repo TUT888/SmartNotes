@@ -41,11 +41,15 @@ public class NoteService {
 		return documentMapper.toNoteResponse(note);
 	}
 
-    public List<Document> getNotesByIds(List<Integer> noteIds) {
+    public List<Document> getAllNotesByUserIdAndIds(List<Integer> noteIds) {
         // Get current user id
         int currentUserId = authorizationService.getCurrentUserId();
 
         return documentRepository.findAllByUserIdAndIdIn(currentUserId, noteIds);
+    }
+
+    public List<Document> getAllNotesByIds(List<Integer> noteIds) {
+        return documentRepository.findAllByIdIn(noteIds);
     }
 
 	public NoteResponse createNote(NoteUpsertRequest newData) {

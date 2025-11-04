@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.be08.smart_notes.dto.ai.AIQuizResponse;
+import com.be08.smart_notes.dto.QuizQuestion;
 import com.be08.smart_notes.dto.request.QuizGenerationRequest;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.NoteResponse;
@@ -17,7 +17,6 @@ import com.be08.smart_notes.exception.ErrorCode;
 import com.be08.smart_notes.mapper.QuizMapper;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.model.Quiz;
-import com.be08.smart_notes.model.QuizSet;
 import com.be08.smart_notes.service.QuizSetService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
@@ -73,9 +72,9 @@ public class QuizGenerationService {
         ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			// Extract raw message content from response string
-            AIQuizResponse aiQuizResponse = objectMapper.readValue(generatedContent, AIQuizResponse.class);
+            QuizQuestion quizQuestion = objectMapper.readValue(generatedContent, QuizQuestion.class);
 
-            Quiz sampleQuizEntity = quizMapper.toQuiz(aiQuizResponse);
+            Quiz sampleQuizEntity = quizMapper.toQuiz(quizQuestion);
             return quizMapper.toQuizResponse(sampleQuizEntity);
 		} catch (Exception e) {
             log.error("An error occurred when mapping objects, could not create sample quiz.");
@@ -83,99 +82,65 @@ public class QuizGenerationService {
 		}
 	}
 
-	public QuizSetResponse generateQuiz(int noteId) {
+    public QuizSetResponse generateQuiz(QuizGenerationRequest quizGenerationRequest) {
         if (this.systemPrompt == null || this.quizResponseSchema == null) {
             log.error("Could not generate quiz because of invalid system prompt and/or guided schema.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
 
-		// Get note
-		NoteResponse selectedNote = noteService.getNote(noteId);
+        // Extract required data from request
+        int totalQuestions = quizGenerationRequest.getTotalQuestions();
+        String prompt = String.format(this.systemPrompt, totalQuestions);
+        List<Integer> noteIds = quizGenerationRequest.getIds();
 
-		// Generate content
+        // Save single quiz from single note
+        if (noteIds.size() == 1) {
+            int noteId = noteIds.get(0);
+            NoteResponse selectedNote = noteService.getNote(noteId);
+            QuizQuestion quizQuestion = generateQuizFromNote(selectedNote.getContent(), String.format(this.systemPrompt, 10));
+
+            quizQuestion.setSourceDocumentId(noteId);
+            return quizSetService.saveQuizSet(quizQuestion);
+        }
+
+        // Save quizzes from list of notes (generate one by one)
+        List<Document> noteList = noteService.getAllNotesByIds(noteIds);
+
+        List<QuizQuestion> quizQuestionList = new ArrayList<>();
+        for (Document note : noteList) {
+            QuizQuestion quizQuestion = generateQuizFromNote(note.getContent(), prompt);
+
+            quizQuestion.setSourceDocumentId(note.getId());
+            quizQuestionList.add(quizQuestion);
+        }
+        return quizSetService.saveQuizSet(QuizSetService.DEFAULT_QUIZ_SET_TITLE, quizQuestionList);
+    }
+
+    // --- Internal methods --- //
+    private QuizQuestion generateQuizFromNote(String noteContent, String prompt) {
         String generatedContent = aiService.generateContent(
-                String.format(this.systemPrompt, 10),
-                selectedNote.getContent(),
+                prompt,
+                noteContent,
                 quizResponseSchema
         );
-		if (generatedContent == null || generatedContent.isEmpty()) {
+        if (generatedContent == null || generatedContent.isEmpty()) {
             log.error("Could not process quiz because generated content is empty.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
 
         // Map generated content (JSON String) to Object
         ObjectMapper objectMapper = new ObjectMapper();
-        AIQuizResponse aiQuizResponse = null;
+        QuizQuestion quizQuestion = null;
         try {
-            aiQuizResponse = objectMapper.readValue(generatedContent, AIQuizResponse.class);
+            quizQuestion = objectMapper.readValue(generatedContent, QuizQuestion.class);
         } catch (Exception e) {
-            log.error("Could not map generated content to AIQuizResponse.");
+            log.error("Could not map generated content to QuizQuestion.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
-        if (aiQuizResponse  == null) {
+        if (quizQuestion == null) {
             log.error("Could not generate quiz because of invalid object mapping result.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
-
-        // Save and return quiz from mapped object
-        return quizSetService.saveQuizSetFromAIResponse(noteId, aiQuizResponse);
+        return quizQuestion;
     }
-
-//    public QuizSetResponse generateQuiz(QuizGenerationRequest quizGenerationRequest) {
-//        if (this.systemPrompt == null || this.quizResponseSchema == null) {
-//            log.error("Could not generate quiz because of invalid system prompt and/or guided schema.");
-//            throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
-//        }
-//
-//        // Extract required data from request
-//        int totalQuestions = quizGenerationRequest.getTotalQuestions();
-//        String systemPrompt = String.format(this.systemPrompt, totalQuestions);
-//
-//        // Get list of notes
-//        List<Document> noteList = noteService.getNotesByIds(quizGenerationRequest.getIds());
-//
-//        // Generate quiz from notes (one by one)
-//        List<AIQuizResponse> aiQuizResponseList = new ArrayList<>();
-//        for (Document note : noteList) {
-//            String generatedContent = aiService.generateContent(
-//                    systemPrompt,
-//                    note.getContent(),
-//                    quizResponseSchema
-//            );
-//
-//            // Generate content
-//            if (generatedContent == null || generatedContent.isEmpty()) {
-//                log.error("Error when generating quiz for note {}: Generated content is empty.", note.getId());
-//                continue;
-//            }
-//
-//            // Map generated content (JSON String) to Object
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            AIQuizResponse aiQuizResponse = null;
-//            try {
-//                aiQuizResponse = objectMapper.readValue(generatedContent, AIQuizResponse.class);
-//            } catch (Exception e) {
-//                log.error("Error when generating quiz for note {}: Could not map generated content to AIQuizResponse.", note.getId());
-//                continue;
-//            }
-//            if (aiQuizResponse  == null) {
-//                log.error("Error when generating quiz for note {}: Invalid object mapping result.", note.getId());
-//                continue;
-//            }
-//
-//            // Add to combined quiz resposne object
-//            aiQuizResponse.setSourceDocumentId(note.getId());
-//            aiQuizResponseList.add(aiQuizResponse);
-//        }
-//
-//
-//        QuizResponse quizResponse = quizSetService.saveQuizFromAIResponse(aiQuizResponse);
-//
-//
-//
-//
-//
-//        // Save and return quiz from mapped object
-//        return quizSetService.saveQuizFromAIResponse(noteId, aiQuizResponse);
-//    }
 }

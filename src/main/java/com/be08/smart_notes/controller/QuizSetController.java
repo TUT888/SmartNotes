@@ -1,7 +1,6 @@
 package com.be08.smart_notes.controller;
 
-import com.be08.smart_notes.dto.ai.AIQuizResponse;
-import com.be08.smart_notes.dto.response.QuizResponse;
+import com.be08.smart_notes.dto.QuizQuestion;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
 import com.be08.smart_notes.service.QuizSetService;
@@ -19,13 +18,21 @@ import org.springframework.web.bind.annotation.*;
 public class QuizSetController {
     QuizSetService quizSetService;
 
-    // --- Operations on QuizSets --- //
     @PostMapping
-    public ResponseEntity<Object> createQuizSet(@RequestBody AIQuizResponse aiQuizResponse) {
-        QuizSetResponse quizSetResponse = quizSetService.saveQuizSetFromAIResponse(null, aiQuizResponse);
+    public ResponseEntity<Object> createQuizSet(@RequestBody QuizQuestion quizQuestion) {
+        QuizSetResponse quizSetResponse = quizSetService.saveQuizSet(quizQuestion);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz set created successfully")
                 .data(quizSetResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Object> deleteAllQuizSet() {
+        quizSetService.deleteAllQuizSet();
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("All quiz set deleted successfully")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

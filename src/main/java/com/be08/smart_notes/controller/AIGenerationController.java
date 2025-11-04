@@ -1,5 +1,6 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.dto.request.QuizGenerationRequest;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.be08.smart_notes.service.ai.QuizGenerationService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/ai/generation")
@@ -29,19 +32,13 @@ public class AIGenerationController {
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
-	@PostMapping("/quiz-sets/{noteId}")
-	public ResponseEntity<Object> generateQuizSet(@PathVariable int noteId) {
-        QuizSetResponse quizSetResponse = quizGenerationService.generateQuiz(noteId);
+    @PostMapping("/quiz-sets")
+    public ResponseEntity<Object> generateQuizSet(@RequestBody QuizGenerationRequest quizGenerationRequest) {
+        QuizSetResponse quizSetResponse = quizGenerationService.generateQuiz(quizGenerationRequest);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz set generated created successfully")
                 .data(quizSetResponse)
                 .build();
-		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-	}
-
-//    @PostMapping("/generate")
-//    public ResponseEntity<Object> generateQuizFromNotes(@RequestBody QuizGenerationRequest quizGenerationRequest) {
-//        List<Document> quizList = quizGenerationService.generateQuizFromListOfNotes(quizGenerationRequest.getIds());
-//        return ResponseEntity.status(HttpStatus.OK).body(quizList);
-//    }
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }
