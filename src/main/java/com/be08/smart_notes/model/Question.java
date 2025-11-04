@@ -36,9 +36,6 @@ public class Question {
 	@Column(nullable = false, name = "correct_answer")
 	private Character correctAnswer;
 
-	@Column(nullable = false, name = "source_document_id")
-	private Integer sourceDocumentId;
-
     // Relationship
     @JsonIgnore
     @ManyToOne

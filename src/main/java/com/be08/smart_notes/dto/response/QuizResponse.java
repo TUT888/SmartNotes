@@ -19,7 +19,13 @@ public class QuizResponse {
     private LocalDateTime createdAt;
 
     @NotNull
+    private LocalDateTime updatedAt;
+
+    @NotNull
 	private String title;
+
+    @NotNull
+    private Integer sourceDocumentId;
 
     @NotNull
     private List<Question> questions;
@@ -49,8 +55,5 @@ public class QuizResponse {
 
         @NotNull
         private String correctAnswer;
-
-        @NotNull
-        private Integer sourceDocumentId;
     }
 }

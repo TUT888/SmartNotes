@@ -2,6 +2,7 @@ package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.ApiResponse;
+import com.be08.smart_notes.dto.response.QuizSetResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -12,28 +13,28 @@ import org.springframework.web.bind.annotation.*;
 import com.be08.smart_notes.service.ai.QuizGenerationService;
 
 @RestController
-@RequestMapping("/api/ai/quiz/")
+@RequestMapping("/api/ai/generation")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AIController {
+public class AIGenerationController {
 	QuizGenerationService quizGenerationService;
 
-	@GetMapping("/generate/sample")
-	public ResponseEntity<Object> generateSampleQuiz() {
+	@GetMapping("/quiz-sets/sample")
+	public ResponseEntity<Object> generateSampleQuizSet() {
 		QuizResponse quizResponse = quizGenerationService.generateSampleQuiz();
         ApiResponse<Object> apiResponse = ApiResponse.builder()
-                .message("Sample quiz generated created successfully")
+                .message("Sample quiz set generated created successfully")
                 .data(quizResponse)
                 .build();
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
 
-	@GetMapping("/generate/{noteId}")
-	public ResponseEntity<Object> generateQuiz(@PathVariable int noteId) {
-		QuizResponse quizResponse = quizGenerationService.generateQuizFromSingleNote(noteId);
+	@PostMapping("/quiz-sets/{noteId}")
+	public ResponseEntity<Object> generateQuizSet(@PathVariable int noteId) {
+        QuizSetResponse quizSetResponse = quizGenerationService.generateQuiz(noteId);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
-                .message("Quiz generated created successfully")
-                .data(quizResponse)
+                .message("Quiz set generated created successfully")
+                .data(quizSetResponse)
                 .build();
 		return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 	}
