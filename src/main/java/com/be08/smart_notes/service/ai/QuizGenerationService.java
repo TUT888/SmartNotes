@@ -17,6 +17,7 @@ import com.be08.smart_notes.exception.ErrorCode;
 import com.be08.smart_notes.mapper.QuizMapper;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.model.Quiz;
+import com.be08.smart_notes.service.QuizService;
 import com.be08.smart_notes.service.QuizSetService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
@@ -36,12 +37,14 @@ public class QuizGenerationService {
 
     AIService aiService;
     NoteService noteService;
+    QuizService quizService;
     QuizSetService quizSetService;
     QuizMapper quizMapper;
 
-    public QuizGenerationService(AIService aiService, NoteService noteService, QuizSetService quizSetService, QuizMapper quizMapper) {
+    public QuizGenerationService(AIService aiService, NoteService noteService, QuizService quizService, QuizSetService quizSetService, QuizMapper quizMapper) {
         this.aiService = aiService;
         this.noteService = noteService;
+        this.quizService = quizService;
         this.quizSetService = quizSetService;
         this.quizMapper = quizMapper;
 
@@ -82,30 +85,37 @@ public class QuizGenerationService {
 		}
 	}
 
-    public QuizSetResponse generateQuiz(QuizGenerationRequest quizGenerationRequest) {
+    public QuizResponse generateQuiz(QuizGenerationRequest quizGenerationRequest) {
         if (this.systemPrompt == null || this.quizResponseSchema == null) {
             log.error("Could not generate quiz because of invalid system prompt and/or guided schema.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
 
         // Extract required data from request
-        int totalQuestions = quizGenerationRequest.getTotalQuestions();
+        int totalQuestions = quizGenerationRequest.getSizeOfEachQuiz();
         String prompt = String.format(this.systemPrompt, totalQuestions);
-        List<Integer> noteIds = quizGenerationRequest.getIds();
+        int noteId = quizGenerationRequest.getDocId();
 
-        // Save single quiz from single note
-        if (noteIds.size() == 1) {
-            int noteId = noteIds.get(0);
-            NoteResponse selectedNote = noteService.getNote(noteId);
-            QuizQuestion quizQuestion = generateQuizFromNote(selectedNote.getContent(), String.format(this.systemPrompt, 10));
+        NoteResponse selectedNote = noteService.getNote(noteId);
+        QuizQuestion quizQuestion = generateQuizFromNote(selectedNote.getContent(), prompt);
 
-            quizQuestion.setSourceDocumentId(noteId);
-            return quizSetService.saveQuizSet(quizQuestion);
+        quizQuestion.setSourceDocumentId(noteId);
+        return quizService.saveQuiz(quizQuestion);
+    }
+
+    public QuizSetResponse generateQuizSet(QuizGenerationRequest quizGenerationRequest) {
+        if (this.systemPrompt == null || this.quizResponseSchema == null) {
+            log.error("Could not generate quiz because of invalid system prompt and/or guided schema.");
+            throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
+
+        // Extract required data from request
+        int totalQuestions = quizGenerationRequest.getSizeOfEachQuiz();
+        String prompt = String.format(this.systemPrompt, totalQuestions);
+        List<Integer> noteIds = quizGenerationRequest.getDocIds();
 
         // Save quizzes from list of notes (generate one by one)
         List<Document> noteList = noteService.getAllNotesByIds(noteIds);
-
         List<QuizQuestion> quizQuestionList = new ArrayList<>();
         for (Document note : noteList) {
             QuizQuestion quizQuestion = generateQuizFromNote(note.getContent(), prompt);
@@ -113,10 +123,10 @@ public class QuizGenerationService {
             quizQuestion.setSourceDocumentId(note.getId());
             quizQuestionList.add(quizQuestion);
         }
-        return quizSetService.saveQuizSet(QuizSetService.DEFAULT_QUIZ_SET_TITLE, quizQuestionList);
+        return quizSetService.saveQuizSet(AppConstants.DEFAULT_QUIZ_SET_TITLE, quizQuestionList);
     }
 
-    // --- Internal methods --- //
+    // ------ Internal methods ------ //
     private QuizQuestion generateQuizFromNote(String noteContent, String prompt) {
         String generatedContent = aiService.generateContent(
                 prompt,

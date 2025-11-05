@@ -36,15 +36,17 @@ public enum ErrorCode {
 
     // 22xx - Document-related features
     DOCUMENT_NOT_FOUND(2201, "Document not found", HttpStatus.NOT_FOUND),
-    NOTE_CONTENT_EMPTY(2202, "Note content cannot be empty", HttpStatus.BAD_REQUEST),
+    DOCUMENT_ID_REQUIRED(2202, "Single document ID required", HttpStatus.BAD_REQUEST),
+    DOCUMENT_IDS_REQUIRED(2202, "List of document IDs required", HttpStatus.BAD_REQUEST),
+    NOTE_CONTENT_EMPTY(2203, "Note content cannot be empty", HttpStatus.BAD_REQUEST),
 
     // 23xx - AI-related features
-    FAILED_INFERENCE_REQUEST(2301, "AI inference request failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    FAILED_INFERENCE_REQUEST(2301, "AI inference request failed", HttpStatus.BAD_GATEWAY),
 
     // 24xx - Quiz-related features
     QUIZ_NOT_FOUND(2401, "Quiz not found", HttpStatus.NOT_FOUND),
     QUIZ_DOCUMENT_SIZE_EXCEED(2402, "Number of quiz IDs must be between 1 and 5", HttpStatus.BAD_REQUEST),
-    INVALID_QUIZ_SIZE(2403, "Total number of questions must between 1 and 50", HttpStatus.BAD_REQUEST),
+    INVALID_QUIZ_SIZE(2403, "Total number of questions must between 1 and 20", HttpStatus.BAD_REQUEST),
     ;
 
     int code;

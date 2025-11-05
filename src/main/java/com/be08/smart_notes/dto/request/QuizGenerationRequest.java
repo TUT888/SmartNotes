@@ -1,5 +1,7 @@
 package com.be08.smart_notes.dto.request;
 
+import com.be08.smart_notes.validation.group.MultipleDocument;
+import com.be08.smart_notes.validation.group.SingleDocument;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,13 +15,15 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class QuizGenerationRequest {
-    @NotEmpty
-    @Size(min = 1, max = 5, message = "QUIZ_DOCUMENT_SIZE_EXCEED")
-    private List<Integer> ids;
+    @NotNull(groups = SingleDocument.class, message = "DOCUMENT_ID_REQUIRED")
+    private Integer docId;
 
-    @NotNull
+    @NotNull(groups = MultipleDocument.class, message = "DOCUMENT_IDS_REQUIRED")
+    @Size(min = 1, max = 5, message = "QUIZ_DOCUMENT_SIZE_EXCEED")
+    private List<Integer> docIds;
+
     @Builder.Default
     @Min(value = 1, message = "INVALID_QUIZ_SIZE")
-    @Max(value = 50, message = "INVALID_QUIZ_SIZE")
-    private Integer totalQuestions = 10;
+    @Max(value = 20, message = "INVALID_QUIZ_SIZE")
+    private Integer sizeOfEachQuiz = 10;
 }

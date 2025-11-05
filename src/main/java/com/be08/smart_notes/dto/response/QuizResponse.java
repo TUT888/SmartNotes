@@ -12,22 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizResponse {
-    @NotNull
     private Integer id;
-
-    @NotNull
-    private LocalDateTime createdAt;
-
-    @NotNull
-    private LocalDateTime updatedAt;
-
-    @NotNull
-	private String title;
-
-    @NotNull
+    private String title;
     private Integer sourceDocumentId;
-
-    @NotNull
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private List<Question> questions;
 
     // Static nested class
@@ -35,25 +24,12 @@ public class QuizResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Question {
-        @NotNull
         private Integer id;
-
-        @NotNull
         private String questionText;
-
-        @NotNull
         private String optionA;
-
-        @NotNull
         private String optionB;
-
-        @NotNull
         private String optionC;
-
-        @NotNull
         private String optionD;
-
-        @NotNull
         private String correctAnswer;
     }
 }

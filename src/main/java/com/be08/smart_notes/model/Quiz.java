@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,9 +22,6 @@ public class Quiz {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-//	@Column(nullable = false, name = "user_id")
-//	private Integer userId;
-
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
@@ -33,9 +31,8 @@ public class Quiz {
 	@Column(nullable = false)
 	private String title;
 
-    // Relationship: quiz - question
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions;
+    @Column(name = "source_document_id")
+    private Integer sourceDocumentId;
 
     // Relationship: quiz - quiz set
     @JsonIgnore
@@ -43,8 +40,9 @@ public class Quiz {
     @JoinColumn(name = "quiz_set_id", referencedColumnName = "id")
     private QuizSet quizSet;
 
-    @Column(name = "source_document_id")
-    private Integer sourceDocumentId;
+    // Relationship: quiz - question
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Question> questions;
 
     @PrePersist
     protected void onCreate() {

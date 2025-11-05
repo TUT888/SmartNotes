@@ -10,11 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AIInferenceRequest {
-    // Required
     private String model;
     private RequestMessage[] messages;
-
-    // Optional
     private double temperature;
 
     @JsonProperty("top_p")

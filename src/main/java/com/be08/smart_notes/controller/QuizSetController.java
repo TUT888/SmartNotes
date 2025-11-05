@@ -20,9 +20,19 @@ public class QuizSetController {
 
     @PostMapping
     public ResponseEntity<Object> createQuizSet(@RequestBody QuizQuestion quizQuestion) {
-        QuizSetResponse quizSetResponse = quizSetService.saveQuizSet(quizQuestion);
+        QuizSetResponse quizSetResponse = quizSetService.saveQuizSet(null, quizQuestion);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz set created successfully")
+                .data(quizSetResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getQuizSet(@PathVariable int id) {
+        QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id);
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Quiz fetched successfully")
                 .data(quizSetResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -42,16 +52,6 @@ public class QuizSetController {
         quizSetService.deleteQuizSetById(id);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz set deleted successfully")
-                .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getQuizSet(@PathVariable int id) {
-        QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id);
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
-                .message("Quiz fetched successfully")
-                .data(quizSetResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

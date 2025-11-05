@@ -1,5 +1,6 @@
 package com.be08.smart_notes.model;
 
+import com.be08.smart_notes.enums.OriginType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,9 @@ public class QuizSet {
 
     @Column(nullable = false, name = "title")
     private String title;
+
+    @Column(nullable = false, name = "origin_type")
+    private OriginType originType;
 
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
