@@ -48,7 +48,12 @@ public enum ErrorCode {
     FLASHCARD_NOT_FOUND(2504, "Flashcard not found", HttpStatus.NOT_FOUND),
 
     // 26xx - Flashcard Set-related errors
-    FLASHCARD_SET_NOT_FOUND(2604, "Flashcard set not found", HttpStatus.NOT_FOUND)
+    FLASHCARD_SET_TITLE_REQUIRED(2601, "Flashcard set title is required", HttpStatus.BAD_REQUEST),
+    FLASHCARD_SET_TITLE_TOO_LONG(2602, "Flashcard set title is too long", HttpStatus.BAD_REQUEST),
+    INVALID_FLASHCARD_SET_TITLE(2603, "Invalid flashcard set title", HttpStatus.BAD_REQUEST),
+    FLASHCARD_SET_NOT_FOUND(2604, "Flashcard set not found", HttpStatus.NOT_FOUND),
+    FLASHCARD_SET_CANNOT_BE_MODIFIED(2605, "This flashcard set cannot be modified", HttpStatus.BAD_REQUEST),
+    FLASHCARD_SET_CANNOT_BE_DELETED(2606, "This flashcard set cannot be deleted", HttpStatus.BAD_REQUEST)
     ;
 
 

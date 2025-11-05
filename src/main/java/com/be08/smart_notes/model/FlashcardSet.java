@@ -1,5 +1,6 @@
 package com.be08.smart_notes.model;
 
+import com.be08.smart_notes.enums.FlashcardSetOriginType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -34,6 +35,10 @@ public class FlashcardSet {
 
     @Column(nullable = true, name = "updated_at")
     LocalDateTime updatedAt;
+
+    @Column(nullable = false, name = "origin_type")
+    @Enumerated(EnumType.STRING)
+    FlashcardSetOriginType originType = FlashcardSetOriginType.USER;
 
     @PrePersist
     protected void onCreate(){
