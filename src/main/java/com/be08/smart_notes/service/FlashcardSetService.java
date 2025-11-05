@@ -2,7 +2,7 @@ package com.be08.smart_notes.service;
 
 import com.be08.smart_notes.dto.request.FlashcardSetCreationRequest;
 import com.be08.smart_notes.dto.response.FlashcardSetResponse;
-import com.be08.smart_notes.enums.FlashcardSetOriginType;
+import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
 import com.be08.smart_notes.mapper.FlashcardSetMapper;
@@ -50,14 +50,14 @@ public class FlashcardSetService {
      * @return FlashcardSet
      */
     public FlashcardSet getOrCreateDefaultSet(int userId){
-        return flashcardSetRepository.findByOwner_IdAndOriginType(userId, FlashcardSetOriginType.DEFAULT)
+        return flashcardSetRepository.findByOwner_IdAndOriginType(userId, OriginType.DEFAULT)
                 .orElseGet(() -> {
                     User user = userService.getById(userId);
 
                     FlashcardSet defaultSet = FlashcardSet.builder()
                             .title(DEFAULT_SET_TITLE)
                             .owner(user)
-                            .originType(FlashcardSetOriginType.DEFAULT)
+                            .originType(OriginType.DEFAULT)
                             .build();
 
                     return flashcardSetRepository.save(defaultSet);
@@ -80,7 +80,7 @@ public class FlashcardSetService {
 
         FlashcardSet newSet = flashcardSetMapper.toFlashcardSet(request);
         newSet.setOwner(user);
-        newSet.setOriginType(FlashcardSetOriginType.USER);
+        newSet.setOriginType(OriginType.USER);
 
         newSet = flashcardSetRepository.save(newSet);
         return flashcardSetMapper.toFlashcardSetResponse(newSet);
@@ -95,7 +95,7 @@ public class FlashcardSetService {
 
         List<FlashcardSet> flashcardSetList = flashcardSetRepository.findAllByOwner_Id(currentUserId);
         return flashcardSetList.stream()
-                .filter(set -> set.getOriginType() != FlashcardSetOriginType.DEFAULT)
+                .filter(set -> set.getOriginType() != OriginType.DEFAULT)
                 .map(flashcardSetMapper::toFlashcardSetResponse)
                 .collect(Collectors.toList());
     }
@@ -121,7 +121,7 @@ public class FlashcardSetService {
         int currentUserId = authorizationService.getCurrentUserId();
         FlashcardSet existingSet = validateOwner(flashcardSetId, currentUserId);
 
-        if(existingSet.getOriginType() == FlashcardSetOriginType.DEFAULT){
+        if(existingSet.getOriginType() == OriginType.DEFAULT){
             log.error("Flashcard Set Update Failed: Cannot update default flashcard set with id {}", flashcardSetId);
             throw new AppException(ErrorCode.FLASHCARD_SET_CANNOT_BE_MODIFIED);
         }
@@ -140,7 +140,7 @@ public class FlashcardSetService {
         int currentUserId = authorizationService.getCurrentUserId();
         FlashcardSet existingSet = validateOwner(flashcardSetId, currentUserId);
 
-        if(existingSet.getOriginType() == FlashcardSetOriginType.DEFAULT){
+        if(existingSet.getOriginType() == OriginType.DEFAULT){
             log.error("Flashcard Set Deletion Failed: Cannot delete default flashcard set with id {}", flashcardSetId);
             throw new AppException(ErrorCode.FLASHCARD_SET_CANNOT_BE_DELETED);
         }

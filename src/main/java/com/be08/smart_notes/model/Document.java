@@ -31,7 +31,7 @@ public class Document {
     private Integer id;
 
     @Column(nullable = false)
-    private int userId;
+    private Integer userId;
 
     @Column(nullable = false)
     private String title;

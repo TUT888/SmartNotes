@@ -1,19 +1,48 @@
 package com.be08.smart_notes.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class QuizQuestion {
-	public String question;
-	public String[] options;
-	public int correctIndex;
-	
-	public QuizQuestion() {
-		this.question = "";
-		this.options = new String[4];
-		this.correctIndex = -1;
-	}
-	
-	public QuizQuestion(String question, String[] options, int correctIndex) {
-		this.question = question;
-		this.options = options;
-		this.correctIndex = correctIndex;
-	}
+    private Integer sourceDocumentId;
+
+    @NotNull
+    @JsonProperty(value = "topic")
+    private String title;
+
+    @NotNull
+    @JsonProperty(value = "questions")
+    private List<Question> questions;
+
+    // Static nested class
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Question {
+        @NotNull
+        @JsonProperty(value = "question")
+        private String questionText;
+
+        @NotNull
+        @Size(min = 4, max = 4)
+        @JsonProperty(value = "options")
+        private String[] options;
+
+        @NotNull
+        @Min(0)
+        @Max(3)
+        @JsonProperty(value = "correct_index")
+        private Integer correctIndex;
+    }
 }

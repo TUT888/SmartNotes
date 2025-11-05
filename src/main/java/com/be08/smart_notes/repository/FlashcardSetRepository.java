@@ -1,6 +1,6 @@
 package com.be08.smart_notes.repository;
 
-import com.be08.smart_notes.enums.FlashcardSetOriginType;
+import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.model.FlashcardSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -22,7 +22,7 @@ public interface FlashcardSetRepository extends JpaRepository<FlashcardSet, Inte
      * @param originType
      * @return Optional containing the flashcard set if found, otherwise empty
      */
-    Optional<FlashcardSet> findByOwner_IdAndOriginType(int ownerId, FlashcardSetOriginType originType);
+    Optional<FlashcardSet> findByOwner_IdAndOriginType(int ownerId, OriginType originType);
 
     /**
      * Find all flashcard sets owned by a specific user
@@ -37,5 +37,5 @@ public interface FlashcardSetRepository extends JpaRepository<FlashcardSet, Inte
      * @param originType
      * @return List of flashcard sets owned by the user with the specified origin type
      */
-    List<FlashcardSet> findAllByOwner_IdAndOriginType(int ownerId, FlashcardSetOriginType originType);
+    List<FlashcardSet> findAllByOwner_IdAndOriginType(int ownerId, OriginType originType);
 }
