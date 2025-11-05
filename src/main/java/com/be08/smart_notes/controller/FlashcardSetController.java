@@ -2,7 +2,9 @@ package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.dto.request.FlashcardSetCreationRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
+import com.be08.smart_notes.dto.response.FlashcardResponse;
 import com.be08.smart_notes.dto.response.FlashcardSetResponse;
+import com.be08.smart_notes.service.FlashcardService;
 import com.be08.smart_notes.service.FlashcardSetService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -13,11 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/flashcard-sets")
+@RequestMapping("/api/flashcard-sets")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FlashcardSetController {
     FlashcardSetService flashcardSetService;
+    FlashcardService flashcardService;
 
     /**
      * Create a new flashcard set
@@ -59,6 +62,21 @@ public class FlashcardSetController {
 
         return ApiResponse.<FlashcardSetResponse>builder()
                 .message("Flashcard set retrieved successfully!")
+                .data(response)
+                .build();
+    }
+
+    /**
+     * Get all flashcards in a specific flashcard set
+     * @param flashcardSetId ID of the flashcard set
+     * @return ApiResponse containing list of FlashcardResponse
+     */
+    @GetMapping("/{flashcardSetId}/flashcards")
+    public ApiResponse<List<FlashcardResponse>> getFlashcardsBySet(@PathVariable int flashcardSetId){
+        List<FlashcardResponse> response = flashcardService.getFlashcardsBySetId(flashcardSetId);
+
+        return ApiResponse.<List<FlashcardResponse>>builder()
+                .message("Flashcards retrieved successfully!")
                 .data(response)
                 .build();
     }
