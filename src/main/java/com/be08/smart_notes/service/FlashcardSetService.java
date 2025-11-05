@@ -33,11 +33,22 @@ public class FlashcardSetService {
 
     private static final String DEFAULT_SET_TITLE = "Unsorted Flashcards";
 
+    /**
+     * Validate that the flashcard set with the given ID is owned by the user with the given ID
+     * @param flashcardSetId
+     * @param userId
+     * @return FlashcardSet
+     */
     public FlashcardSet validateOwner(int flashcardSetId, int userId){
         return flashcardSetRepository.findByIdAndOwner_Id(flashcardSetId, userId)
                 .orElseThrow(() -> new AppException(ErrorCode.FLASHCARD_SET_NOT_FOUND));
     }
 
+    /**
+     * Get or create the default flashcard set for the user with the given ID
+     * @param userId
+     * @return FlashcardSet
+     */
     public FlashcardSet getOrCreateDefaultSet(int userId){
         return flashcardSetRepository.findByOwner_IdAndOriginType(userId, FlashcardSetOriginType.DEFAULT)
                 .orElseGet(() -> {
@@ -53,6 +64,11 @@ public class FlashcardSetService {
                 });
     }
 
+    /**
+     * Create a new flashcard set
+     * @param request
+     * @return FlashcardSetResponse
+     */
     public FlashcardSetResponse createFlashcardSet(FlashcardSetCreationRequest request){
         int currentUserId = authorizationService.getCurrentUserId();
         User user = userService.getById(currentUserId);
@@ -70,6 +86,10 @@ public class FlashcardSetService {
         return flashcardSetMapper.toFlashcardSetResponse(newSet);
     }
 
+    /**
+     * Get all flashcard sets owned by the current user, excluding default sets
+     * @return List of FlashcardSetResponse
+     */
     public List<FlashcardSetResponse> getAllFlashcardSets(){
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -80,6 +100,23 @@ public class FlashcardSetService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get a flashcard set by its ID
+     * @param flashcardSetId
+     * @return FlashcardSetResponse
+     */
+    public FlashcardSetResponse getFlashcardSet(int flashcardSetId){
+        int currentUserId = authorizationService.getCurrentUserId();
+        FlashcardSet existingSet = validateOwner(flashcardSetId, currentUserId);
+        return flashcardSetMapper.toFlashcardSetResponse(existingSet);
+    }
+
+    /**
+     * Update an existing flashcard set
+     * @param flashcardSetId
+     * @param request
+     * @return FlashcardSetResponse
+     */
     public FlashcardSetResponse updateFlashcardSet(int flashcardSetId, FlashcardSetCreationRequest request){
         int currentUserId = authorizationService.getCurrentUserId();
         FlashcardSet existingSet = validateOwner(flashcardSetId, currentUserId);
@@ -95,6 +132,10 @@ public class FlashcardSetService {
         return flashcardSetMapper.toFlashcardSetResponse(existingSet);
     }
 
+    /**
+     * Delete a flashcard set by its ID
+     * @param flashcardSetId
+     */
     public void deleteFlashcardSet(int flashcardSetId){
         int currentUserId = authorizationService.getCurrentUserId();
         FlashcardSet existingSet = validateOwner(flashcardSetId, currentUserId);
