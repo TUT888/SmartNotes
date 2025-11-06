@@ -125,6 +125,8 @@ public class FlashcardService {
         int currentUserId = authorizationService.getCurrentUserId();
         Flashcard flashcard = flashcardRepository.findByIdAndFlashcardSet_Owner_Id(flashcardId, currentUserId)
                 .orElseThrow(() -> new AppException(ErrorCode.FLASHCARD_NOT_FOUND));
+
+        flashcardRepository.delete(flashcard);
     }
 
     // -- Private Helper Methods --
