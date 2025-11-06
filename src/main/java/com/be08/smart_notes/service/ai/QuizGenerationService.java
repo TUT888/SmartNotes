@@ -137,7 +137,7 @@ public class QuizGenerationService {
             log.error("Quiz set was not created because no quizzes are generated.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
-        return quizSetService.saveQuizSet(AppConstants.DEFAULT_QUIZ_SET_TITLE, quizQuestionList, OriginType.AI);
+        return quizSetService.createQuizSet(AppConstants.DEFAULT_QUIZ_SET_TITLE, quizQuestionList, OriginType.AI);
     }
 
     // ------ Internal methods ------ //

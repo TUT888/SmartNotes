@@ -46,7 +46,11 @@ public enum ErrorCode {
     // 24xx - Quiz-related features
     QUIZ_NOT_FOUND(2401, "Quiz not found", HttpStatus.NOT_FOUND),
     QUIZ_DOCUMENT_SIZE_EXCEED(2402, "Number of quiz IDs must be between 1 and 5", HttpStatus.BAD_REQUEST),
-    INVALID_QUIZ_SIZE(2403, "Total number of questions must between 1 and 20", HttpStatus.BAD_REQUEST),
+    INVALID_QUIZ_SIZE(2404, "Total number of questions must between 1 and 20", HttpStatus.BAD_REQUEST),
+
+    // 25xx - Quiz-related features
+    QUIZ_SET_NOT_FOUND(2501, "Quiz set not found", HttpStatus.NOT_FOUND),
+    QUIZ_SET_TITLE_REQUIRED(2502, "Quiz set title required", HttpStatus.BAD_REQUEST),
     ;
 
     int code;

@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface QuizSetRepository extends JpaRepository<QuizSet,Integer> {
     Optional<QuizSet> findByUserIdAndOriginType(int userID, OriginType originType);
-    List<QuizSet> findAllByUserId(Integer userId);
+    Optional<QuizSet> findByIdAndUserId(int quizSetId, int userId);
 
+    List<QuizSet> findAllByUserId(int userId);
     void deleteAllByUserId(int userId);
 }
