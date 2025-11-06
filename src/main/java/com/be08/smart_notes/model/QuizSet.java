@@ -28,6 +28,7 @@ public class QuizSet {
     private String title;
 
     @Column(nullable = false, name = "origin_type")
+    @Enumerated(EnumType.STRING)
     private OriginType originType;
 
     @Column(nullable = false, name = "created_at")

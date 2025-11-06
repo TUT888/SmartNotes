@@ -41,17 +41,6 @@ public class NoteService {
 		return documentMapper.toNoteResponse(note);
 	}
 
-    public List<Document> getAllNotesByUserIdAndIds(List<Integer> noteIds) {
-        // Get current user id
-        int currentUserId = authorizationService.getCurrentUserId();
-
-        return documentRepository.findAllByUserIdAndIdIn(currentUserId, noteIds);
-    }
-
-    public List<Document> getAllNotesByIds(List<Integer> noteIds) {
-        return documentRepository.findAllByIdIn(noteIds);
-    }
-
 	public NoteResponse createNote(NoteUpsertRequest newData) {
         // Get current user id
         int currentUserId = authorizationService.getCurrentUserId();
@@ -99,4 +88,16 @@ public class NoteService {
 
 		documentRepository.deleteById(noteId);
 	}
+
+    // ------ Methods that returns entities ------ //
+    public List<Document> getAllNotesByUserIdAndIds(int userId, List<Integer> noteIds) {
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        return documentRepository.findAllByUserIdAndIdIn(currentUserId, noteIds);
+    }
+
+    public List<Document> getAllNotesByIds(List<Integer> noteIds) {
+        return documentRepository.findAllByIdIn(noteIds);
+    }
 }

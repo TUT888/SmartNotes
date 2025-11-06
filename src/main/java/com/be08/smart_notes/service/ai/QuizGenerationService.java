@@ -12,11 +12,13 @@ import com.be08.smart_notes.dto.request.QuizGenerationRequest;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
+import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
 import com.be08.smart_notes.mapper.QuizMapper;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.model.Quiz;
+import com.be08.smart_notes.service.AuthorizationService;
 import com.be08.smart_notes.service.QuizService;
 import com.be08.smart_notes.service.QuizSetService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,14 +41,16 @@ public class QuizGenerationService {
     NoteService noteService;
     QuizService quizService;
     QuizSetService quizSetService;
+    AuthorizationService authorizationService;
     QuizMapper quizMapper;
 
-    public QuizGenerationService(AIService aiService, NoteService noteService, QuizService quizService, QuizSetService quizSetService, QuizMapper quizMapper) {
+    public QuizGenerationService(AIService aiService, NoteService noteService, QuizService quizService, QuizSetService quizSetService, QuizMapper quizMapper, AuthorizationService authorizationService) {
         this.aiService = aiService;
         this.noteService = noteService;
         this.quizService = quizService;
         this.quizSetService = quizSetService;
         this.quizMapper = quizMapper;
+        this.authorizationService = authorizationService;
 
         String prompt = null;
         String schema = null;
@@ -118,12 +122,22 @@ public class QuizGenerationService {
         List<Document> noteList = noteService.getAllNotesByIds(noteIds);
         List<QuizQuestion> quizQuestionList = new ArrayList<>();
         for (Document note : noteList) {
-            QuizQuestion quizQuestion = generateQuizFromNote(note.getContent(), prompt);
+            try {
+                authorizationService.validateOwnership(note.getUserId());
 
-            quizQuestion.setSourceDocumentId(note.getId());
-            quizQuestionList.add(quizQuestion);
+                QuizQuestion quizQuestion = generateQuizFromNote(note.getContent(), prompt);
+                quizQuestion.setSourceDocumentId(note.getId());
+                quizQuestionList.add(quizQuestion);
+            } catch (Exception e) {
+                System.out.println("Error in generating quiz: " + e.getMessage());
+            }
         }
-        return quizSetService.saveQuizSet(AppConstants.DEFAULT_QUIZ_SET_TITLE, quizQuestionList);
+
+        if (quizQuestionList.isEmpty()) {
+            log.error("Quiz set was not created because no quizzes are generated.");
+            throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
+        }
+        return quizSetService.saveQuizSet(AppConstants.DEFAULT_QUIZ_SET_TITLE, quizQuestionList, OriginType.AI);
     }
 
     // ------ Internal methods ------ //

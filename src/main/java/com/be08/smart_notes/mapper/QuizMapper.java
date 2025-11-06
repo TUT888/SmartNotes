@@ -17,14 +17,15 @@ import java.util.List;
 public interface QuizMapper {
     // QuizSet entity <--> QuizSetResponse dto
     QuizSetResponse toQuizSetResponse(QuizSet quizSet);
+    List<QuizSetResponse> toQuizSetResponseList(List<QuizSet> quizSet);
 
     // Quiz Entity <--> QuizResponse dto
     QuizResponse toQuizResponse(Quiz entity);
     Quiz toQuiz(QuizResponse dto);
 
     // Quiz Entity <--> QuizQuestion
-    List<Quiz> toQuizList(List<QuizQuestion> dtoList);
     Quiz toQuiz(QuizQuestion dto);
+    List<Quiz> toQuizList(List<QuizQuestion> dtoList);
 
     // Question Entity <--> QuizQuestion.Question dto
     @Mapping(target = "id", ignore = true)

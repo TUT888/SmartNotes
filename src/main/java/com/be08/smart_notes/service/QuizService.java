@@ -57,10 +57,11 @@ public class QuizService {
 
     // ------ Methods that returns entities ------ //
     public Quiz saveAsNewQuizEntity(int userId, QuizQuestion quizQuestion) {
+        QuizSet defaultSet = quizSetService.getOrCreateDefaultSet(userId);
+
         Quiz newQuiz = quizMapper.toQuiz(quizQuestion);
+        newQuiz.setQuizSet(defaultSet);
 
-        QuizSet defaultSet = quizSetService.saveNewQuizToDefaultSet(userId, newQuiz);
-
-        return newQuiz;
+        return quizRepository.save(newQuiz);
     }
 }

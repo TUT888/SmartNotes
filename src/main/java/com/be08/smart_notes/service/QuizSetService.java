@@ -34,10 +34,10 @@ public class QuizSetService {
      * @param quizQuestion a quiz with its questions
      * @return response dto for saved quiz set
      */
-    public QuizSetResponse saveQuizSet(String quizSetTitle, QuizQuestion quizQuestion) {
+    public QuizSetResponse saveQuizSet(String quizSetTitle, QuizQuestion quizQuestion, OriginType originType) {
         int currentUserId = authorizationService.getCurrentUserId();
 
-        QuizSet savedQuizSet = saveAsNewQuizSetEntity(currentUserId, quizSetTitle, quizQuestion);
+        QuizSet savedQuizSet = saveAsNewQuizSetEntity(currentUserId, quizSetTitle, quizQuestion, originType);
         return quizMapper.toQuizSetResponse(savedQuizSet);
     }
 
@@ -47,10 +47,10 @@ public class QuizSetService {
      * @param quizQuestionList list of quizzes to be added together with new set
      * @return response dto for saved quiz set
      */
-    public QuizSetResponse saveQuizSet(String quizSetTitle, List<QuizQuestion> quizQuestionList) {
+    public QuizSetResponse saveQuizSet(String quizSetTitle, List<QuizQuestion> quizQuestionList, OriginType originType) {
         int currentUserId = authorizationService.getCurrentUserId();
 
-        QuizSet savedQuizSet = saveAsNewQuizSetEntity(currentUserId, quizSetTitle, quizQuestionList);
+        QuizSet savedQuizSet = saveAsNewQuizSetEntity(currentUserId, quizSetTitle, quizQuestionList, originType);
         return quizMapper.toQuizSetResponse(savedQuizSet);
     }
 
@@ -68,6 +68,17 @@ public class QuizSetService {
         authorizationService.validateOwnership(quiz.getUserId());
 
         return quizMapper.toQuizSetResponse(quiz);
+    }
+
+    /**
+     * Get a QuizSet with associated quizzes using given id
+     * @return response dto for all quiz set
+     */
+    public List<QuizSetResponse> getAllQuizSets() {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        List<QuizSet> quizSets = quizSetRepository.findAllByUserId(currentUserId);
+        return quizMapper.toQuizSetResponseList(quizSets);
     }
 
     /**
@@ -101,7 +112,7 @@ public class QuizSetService {
      * @return default quiz set
      */
     public QuizSet getOrCreateDefaultSet(int userId) {
-        return quizSetRepository.findByUserIDAndOriginType(userId, OriginType.DEFAULT).orElseGet(() -> {
+        return quizSetRepository.findByUserIdAndOriginType(userId, OriginType.DEFAULT).orElseGet(() -> {
             QuizSet defaultSet = QuizSet.builder()
                     .userId(userId)
                     .title(AppConstants.DEFAULT_QUIZ_SET_TITLE)
@@ -130,13 +141,13 @@ public class QuizSetService {
      * @param quizQuestion the quiz with questions to be added in new quiz set
      * @return the saved QuizSet
      */
-    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, QuizQuestion quizQuestion) {
+    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, QuizQuestion quizQuestion, OriginType originType) {
         Quiz quiz = quizMapper.toQuiz(quizQuestion);
 
         QuizSet quizSet = QuizSet.builder()
                 .userId(userId)
                 .title(quizSetTitle != null ? quizSetTitle : quizQuestion.getTitle())
-                .build();
+                .originType(originType).build();
         quizSet.addQuiz(quiz);
 
         return quizSetRepository.save(quizSet);
@@ -149,13 +160,13 @@ public class QuizSetService {
      * @param quizQuestionList list of quizzes with questions to be added in new quiz set
      * @return the saved QuizSet
      */
-    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, List<QuizQuestion> quizQuestionList) {
+    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, List<QuizQuestion> quizQuestionList, OriginType originType) {
         List<Quiz> newQuizzes = quizMapper.toQuizList(quizQuestionList);
 
         QuizSet quizSet = QuizSet.builder()
                 .userId(userId)
                 .title(quizSetTitle != null ? quizSetTitle : AppConstants.DEFAULT_QUIZ_SET_TITLE)
-                .build();
+                .originType(originType).build();
         quizSet.addQuizzes(newQuizzes);
 
         return quizSetRepository.save(quizSet);
