@@ -20,6 +20,9 @@ public class QuizResponse {
     private String title;
 
     @JsonView(Level.Basic.class)
+    private Integer quizSetId;
+
+    @JsonView(Level.Basic.class)
     private Integer sourceDocumentId;
 
     @JsonView(Level.Basic.class)

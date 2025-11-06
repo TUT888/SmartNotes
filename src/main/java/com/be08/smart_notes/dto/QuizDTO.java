@@ -1,10 +1,9 @@
 package com.be08.smart_notes.dto;
 
+import com.be08.smart_notes.validation.group.OnCreate;
+import com.be08.smart_notes.validation.group.OnUpdate;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,14 +13,18 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizQuestion {
+public class QuizDTO {
     private Integer sourceDocumentId;
 
-    @NotNull
-    @JsonProperty(value = "topic")
-	private String title;
+    // If null in creation request, new quiz will be categorised in default set
+    @NotNull(groups = OnUpdate.class, message = "QUIZ_SET_ID_REQUIRED")
+    private Integer quizSetId;
 
-    @NotNull
+    @NotEmpty(groups = {OnCreate.class, OnUpdate.class}, message = "QUIZ_TITLE_REQUIRED")
+    @JsonProperty(value = "topic")
+    private String title;
+
+    @NotEmpty(groups = OnCreate.class)
     @JsonProperty(value = "questions")
     private List<Question> questions;
 

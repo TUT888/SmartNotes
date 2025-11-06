@@ -62,7 +62,7 @@ public class QuizSetController {
     public ResponseEntity<Object> updateQuizSet(@PathVariable int id, @RequestBody QuizSetUpsertRequest request) {
         QuizSetResponse quizSetResponse = quizSetService.updateQuizSet(id, request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
-                .message("Quiz set created successfully")
+                .message("Quiz set updated successfully")
                 .data(quizSetResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);

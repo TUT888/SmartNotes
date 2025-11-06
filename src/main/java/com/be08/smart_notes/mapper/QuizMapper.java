@@ -1,6 +1,6 @@
 package com.be08.smart_notes.mapper;
 
-import com.be08.smart_notes.dto.QuizQuestion;
+import com.be08.smart_notes.dto.QuizDTO;
 import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
@@ -20,28 +20,39 @@ public interface QuizMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "title", source = "title")
+    @Mapping(target = "quizzes", ignore = true)
     void updateQuizSet(@MappingTarget QuizSet quizSet, QuizSetUpsertRequest request);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "title", source = "title")
+    @Mapping(target = "sourceDocumentId", source = "sourceDocumentId")
+    @Mapping(target = "quizSet", ignore = true)
+    @Mapping(target = "questions", ignore = true)
+    void updateQuiz(@MappingTarget Quiz quiz, QuizDTO request);
 
     // QuizSet entity <--> QuizSetResponse dto
     QuizSetResponse toQuizSetResponse(QuizSet quizSet);
     List<QuizSetResponse> toQuizSetResponseList(List<QuizSet> quizSet);
 
     // Quiz Entity <--> QuizResponse dto
+    @Mapping(target = "quizSetId", source = "entity.quizSet.id")
     QuizResponse toQuizResponse(Quiz entity);
     Quiz toQuiz(QuizResponse dto);
 
-    // Quiz Entity <--> QuizQuestion
-    Quiz toQuiz(QuizQuestion dto);
-    List<Quiz> toQuizList(List<QuizQuestion> dtoList);
+    // Quiz Entity <--> QuizDTO
+    Quiz toQuiz(QuizDTO dto);
+    List<Quiz> toQuizList(List<QuizDTO> dtoList);
 
-    // Question Entity <--> QuizQuestion.Question dto
+    // Question Entity <--> QuizDTO.Question dto
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "optionA", expression = "java(dto.getOptions()[0])")
     @Mapping(target = "optionB", expression = "java(dto.getOptions()[1])")
     @Mapping(target = "optionC", expression = "java(dto.getOptions()[2])")
     @Mapping(target = "optionD", expression = "java(dto.getOptions()[3])")
     @Mapping(target = "correctAnswer", expression = "java(indexToLetter(dto.getCorrectIndex()))")
-    Question toQuestionEntity(QuizQuestion.Question dto);
+    Question toQuestionEntity(QuizDTO.Question dto);
 
     default Character indexToLetter(Integer index) {
         return (char) ('A' + index);

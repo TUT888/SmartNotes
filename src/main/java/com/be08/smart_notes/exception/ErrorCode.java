@@ -50,6 +50,7 @@ public enum ErrorCode {
 
     // 25xx - Quiz-related features
     QUIZ_SET_NOT_FOUND(2501, "Quiz set not found", HttpStatus.NOT_FOUND),
+    QUIZ_SET_ID_REQUIRED(2502, "Quiz set ID required", HttpStatus.BAD_REQUEST),
     QUIZ_SET_TITLE_REQUIRED(2502, "Quiz set title required", HttpStatus.BAD_REQUEST),
     ;
 

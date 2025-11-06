@@ -1,6 +1,6 @@
 package com.be08.smart_notes.service;
 
-import com.be08.smart_notes.dto.QuizQuestion;
+import com.be08.smart_notes.dto.QuizDTO;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
@@ -24,44 +24,64 @@ public class QuizService {
     QuizRepository quizRepository;
     QuizMapper quizMapper;
 
-    public QuizResponse saveQuiz(QuizQuestion quizQuestion) {
+    public QuizResponse createQuiz(QuizDTO quizDTO) {
         int currentUserId = authorizationService.getCurrentUserId();
 
-        Quiz savedQuiz = saveAsNewQuizEntity(currentUserId, quizQuestion);
+        QuizSet defaultSet = quizSetService.getOrCreateDefaultSet(currentUserId);
+        Quiz newQuiz = quizMapper.toQuiz(quizDTO);
+        newQuiz.setQuizSet(defaultSet);
+
+        Quiz savedQuiz = quizRepository.save(newQuiz);
         return quizMapper.toQuizResponse(savedQuiz);
     }
 
     public QuizResponse getQuizById(int quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> {
-            log.error("Quiz with id {} not found", quizId);
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        Quiz quiz = quizRepository.findByIdAndQuizSetUserId(quizId, currentUserId).orElseThrow(() -> {
+            log.error("Quiz with id {} not found in user's account", quizId);
             return new AppException(ErrorCode.QUIZ_NOT_FOUND);
         });
-
-        // Check ownership
-        authorizationService.validateOwnership(quiz.getQuizSet().getUserId());
 
         return quizMapper.toQuizResponse(quiz);
     }
 
-    public void deleteQuizById(int quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> {
-            log.error("Quiz with id {} not found", quizId);
+    public QuizResponse updateQuiz(int quizId, QuizDTO quizDTO) {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        Quiz existingQuiz = quizRepository.findByIdAndQuizSetUserId(quizId, currentUserId).orElseThrow(() -> {
+            log.error("Quiz with id {} not found in user's account", quizId);
             return new AppException(ErrorCode.QUIZ_NOT_FOUND);
         });
 
-        // Check ownership
-        authorizationService.validateOwnership(quiz.getQuizSet().getUserId());
+        if (quizDTO.getQuizSetId() != null) {
+            QuizSet quizSet = quizSetService.getQuizSetEntityById(quizDTO.getQuizSetId());
+            existingQuiz.setQuizSet(quizSet);
+        }
+
+        quizMapper.updateQuiz(existingQuiz, quizDTO);
+        existingQuiz = quizRepository.save(existingQuiz);
+        return quizMapper.toQuizResponse(existingQuiz);
+    }
+
+    public void deleteQuizById(int quizId) {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        Quiz quiz = quizRepository.findByIdAndQuizSetUserId(quizId, currentUserId).orElseThrow(() -> {
+            log.error("Quiz with id {} not found in user's account", quizId);
+            return new AppException(ErrorCode.QUIZ_NOT_FOUND);
+        });
 
         quizRepository.deleteById(quizId);
     }
 
     // ------ Methods that returns entities ------ //
-    public Quiz saveAsNewQuizEntity(int userId, QuizQuestion quizQuestion) {
-        QuizSet defaultSet = quizSetService.getOrCreateDefaultSet(userId);
-
-        Quiz newQuiz = quizMapper.toQuiz(quizQuestion);
-        newQuiz.setQuizSet(defaultSet);
-
-        return quizRepository.save(newQuiz);
-    }
+//    public Quiz saveAsNewQuizEntity(int userId, QuizDTO quizDTO) {
+//        QuizSet defaultSet = quizSetService.getOrCreateDefaultSet(userId);
+//
+//        Quiz newQuiz = quizMapper.toQuiz(quizDTO);
+//        newQuiz.setQuizSet(defaultSet);
+//
+//        return quizRepository.save(newQuiz);
+//    }
 }
