@@ -2,10 +2,8 @@ package com.be08.smart_notes.model;
 
 import com.be08.smart_notes.enums.OriginType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,30 +14,31 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity(name = "quiz_set")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuizSet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Integer id;
 
     @Column(nullable = false, name = "user_id")
-    private Integer userId;
+    Integer userId;
 
     @Column(nullable = false, name = "title")
-    private String title;
+    String title;
 
     @Column(nullable = false, name = "origin_type")
     @Enumerated(EnumType.STRING)
-    private OriginType originType;
+    OriginType originType;
 
     @Column(nullable = false, name = "created_at")
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt;
 
     @Column(nullable = false, name = "updated_at")
-    private LocalDateTime updatedAt;
+    LocalDateTime updatedAt;
 
     // Relationship
     @OneToMany(mappedBy = "quizSet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Quiz> quizzes;
+    List<Quiz> quizzes;
 
     public void addQuiz(Quiz quiz){
         if (this.quizzes == null) {

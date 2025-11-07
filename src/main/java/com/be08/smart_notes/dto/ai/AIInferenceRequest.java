@@ -1,31 +1,31 @@
 package com.be08.smart_notes.dto.ai;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @AllArgsConstructor
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AIInferenceRequest {
-    private String model;
-    private RequestMessage[] messages;
-    private double temperature;
+    String model;
+    RequestMessage[] messages;
+    double temperature;
 
     @JsonProperty("top_p")
-    private double topP;
+    double topP;
 
     @JsonProperty("guided_json")
-    private String guidedJson;
+    String guidedJson;
 
     // Static nested class
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class RequestMessage {
-        private String role;
-        private String content;
+        String role;
+        String content;
     }
 }

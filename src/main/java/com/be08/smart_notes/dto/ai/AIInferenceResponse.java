@@ -1,27 +1,32 @@
 package com.be08.smart_notes.dto.ai;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AIInferenceResponse {
-    private String id;
-    private String model;
-    private String object;
-    private ResponseChoice[] choices;
+    String id;
+    String model;
+    String object;
+    ResponseChoice[] choices;
 
     // Static nested class
     @Data
     @AllArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class ResponseChoice {
-        private ResponseMessage message;
+        ResponseMessage message;
 
         @Data
         @AllArgsConstructor
+        @FieldDefaults(level = AccessLevel.PRIVATE)
         public static class ResponseMessage {
-            private String content;
-            private String role;
+            String content;
+            String role;
         }
     }
 }

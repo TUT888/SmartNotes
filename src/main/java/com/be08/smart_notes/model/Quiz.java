@@ -2,10 +2,8 @@ package com.be08.smart_notes.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,32 +14,33 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "quiz")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Quiz {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	Integer id;
 
     @Column(nullable = false, name = "created_at")
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt;
 
     @Column(nullable = false, name = "updated_at")
-    private LocalDateTime updatedAt;
+    LocalDateTime updatedAt;
 
 	@Column(nullable = false)
-	private String title;
+	String title;
 
     @Column(name = "source_document_id")
-    private Integer sourceDocumentId;
+    Integer sourceDocumentId;
 
     // Relationship: quiz - quiz set
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "quiz_set_id", referencedColumnName = "id")
-    private QuizSet quizSet;
+    QuizSet quizSet;
 
     // Relationship: quiz - question
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions;
+    List<Question> questions;
 
     @PrePersist
     protected void onCreate() {
@@ -49,7 +48,8 @@ public class Quiz {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PreUpdate void onUpdate() {
+    @PreUpdate
+    protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 }

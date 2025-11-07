@@ -31,8 +31,11 @@ public class QuizService {
      * @return quiz response dto
      */
     public QuizResponse createQuiz(QuizUpsertDTO quizUpsertDTO) {
-        int quizSetId = quizUpsertDTO.getQuizSetId();
-        QuizSet existingQuizSet = quizSetService.getQuizSetEntityById(quizSetId);
+        Integer quizSetId = quizUpsertDTO.getQuizSetId();
+        QuizSet existingQuizSet = null;
+        if (quizSetId != null) {
+            existingQuizSet = quizSetService.getQuizSetEntityById(quizSetId);
+        }
         if (existingQuizSet == null) {
             existingQuizSet = quizSetService.getOrCreateDefaultSet();
         }

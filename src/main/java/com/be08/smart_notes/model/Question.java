@@ -2,10 +2,8 @@ package com.be08.smart_notes.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor
@@ -13,32 +11,33 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "question")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Question {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	Integer id;
 
 	@Column(nullable = false, name = "question_text")
-	private String questionText;
+	String questionText;
 
 	@Column(nullable = false, name = "option_a")
-	private String optionA;
+	String optionA;
 
 	@Column(nullable = false, name = "option_b")
-	private String optionB;
+	String optionB;
 
 	@Column(nullable = false, name = "option_c")
-	private String optionC;
+	String optionC;
 
 	@Column(nullable = false, name = "option_d")
-	private String optionD;
+	String optionD;
 
 	@Column(nullable = false, name = "correct_answer")
-	private Character correctAnswer;
+	Character correctAnswer;
 
     // Relationship
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "quiz_id", referencedColumnName = "id")
-    private Quiz quiz;
+    Quiz quiz;
 }
