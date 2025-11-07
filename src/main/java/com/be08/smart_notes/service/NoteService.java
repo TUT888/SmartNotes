@@ -1,6 +1,8 @@
 package com.be08.smart_notes.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.exception.AppException;
@@ -27,14 +29,14 @@ public class NoteService {
     DocumentMapper documentMapper;
 
 	public NoteResponse getNote(int noteId) {
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
+
         // Get note
-		Document note = documentRepository.findById(noteId).orElseThrow(() -> {
-            log.error("Note with id {} not found", noteId);
+		Document note = documentRepository.findByIdAndUserId(noteId, currentUserId).orElseThrow(() -> {
+            log.error("Note with id {} not found in user's account", noteId);
             return new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
         });
-
-        // Check ownership
-        authorizationService.validateOwnership(note.getUserId());
 
 		return documentMapper.toNoteResponse(note);
 	}
@@ -58,14 +60,14 @@ public class NoteService {
 	}
 
 	public NoteResponse updateNote(int noteId, NoteUpsertRequest updateData) {
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
+
         // Get note
-		Document note = documentRepository.findById(noteId).orElseThrow(() -> {
-            log.error("Note with id {} not found", noteId);
+        Document note = documentRepository.findByIdAndUserId(noteId, currentUserId).orElseThrow(() -> {
+            log.error("Note with id {} not found in user's account", noteId);
             return new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
         });
-
-        // Check ownership
-        authorizationService.validateOwnership(note.getUserId());
 		
 		note.setTitle(updateData.getTitle());
 		note.setUpdatedAt(LocalDateTime.now());;
@@ -75,15 +77,27 @@ public class NoteService {
 	}
 	
 	public void deleteNote(int noteId) {
-        // Get document
-        Document note = documentRepository.findById(noteId).orElseThrow(() -> {
-            log.error("Note with id {} not found", noteId);
-            throw new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
-        });
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
 
-        // Check ownership
-        authorizationService.validateOwnership(note.getUserId());
+        // Get document
+        Document note = documentRepository.findByIdAndUserId(noteId, currentUserId).orElseThrow(() -> {
+            log.error("Note with id {} not found in user's account", noteId);
+            return new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
+        });
 
 		documentRepository.deleteById(noteId);
 	}
+
+    // ------ Methods that returns entities ------ //
+    public List<Document> getAllNotesByUserIdAndIds(int userId, List<Integer> noteIds) {
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        return documentRepository.findAllByUserIdAndIdIn(currentUserId, noteIds);
+    }
+
+    public List<Document> getAllNotesByIds(List<Integer> noteIds) {
+        return documentRepository.findAllByIdIn(noteIds);
+    }
 }

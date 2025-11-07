@@ -27,19 +27,18 @@ public class DocumentService {
         // Get current user
         int currentUserId = authorizationService.getCurrentUserId();
 
-        // Get document
         return documentRepository.findAllByUserId(currentUserId);
 	}
 
 	public void deleteDocument(int id) {
+        // Get current user
+        int currentUserId = authorizationService.getCurrentUserId();
+
         // Get document
-        Document document = documentRepository.findById(id).orElseThrow(() -> {
-            log.error("Document with id {} not found", id);
+        Document document = documentRepository.findByIdAndUserId(id, currentUserId).orElseThrow(() -> {
+            log.error("Document with id {} not found in user's account", id);
             throw new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
         });
-
-        // Check ownership
-        authorizationService.validateOwnership(document.getUserId());
 
         // Prevent deletion of system source document
         if(SYSTEM_SOURCE_TITLE.equals(document.getTitle())){
