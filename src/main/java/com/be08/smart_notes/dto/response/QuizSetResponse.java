@@ -1,6 +1,7 @@
 package com.be08.smart_notes.dto.response;
 
 import com.be08.smart_notes.dto.view.Level;
+import com.be08.smart_notes.enums.OriginType;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,9 @@ public class QuizSetResponse {
 
     @JsonView(Level.Basic.class)
     String title;
+
+    @JsonView(Level.Basic.class)
+    OriginType originType;
 
     @JsonView(Level.Basic.class)
     LocalDateTime createdAt;

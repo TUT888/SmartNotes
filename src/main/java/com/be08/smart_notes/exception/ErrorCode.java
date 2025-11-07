@@ -63,7 +63,7 @@ public enum ErrorCode {
     INVALID_FLASHCARD_SET_TITLE(2603, "Invalid flashcard set title", HttpStatus.BAD_REQUEST),
     FLASHCARD_SET_NOT_FOUND(2604, "Flashcard set not found", HttpStatus.NOT_FOUND),
     FLASHCARD_SET_CANNOT_BE_MODIFIED(2605, "This flashcard set cannot be modified", HttpStatus.BAD_REQUEST),
-    FLASHCARD_SET_CANNOT_BE_DELETED(2606, "This flashcard set cannot be deleted", HttpStatus.BAD_REQUEST)
+    FLASHCARD_SET_CANNOT_BE_DELETED(2606, "This flashcard set cannot be deleted", HttpStatus.BAD_REQUEST),
 
     // 27xx - Quiz-related features
     QUIZ_SET_NOT_FOUND(2701, "Quiz set not found", HttpStatus.NOT_FOUND),
