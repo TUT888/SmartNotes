@@ -31,13 +31,15 @@ public class QuizService {
      * @return quiz response dto
      */
     public QuizResponse createQuiz(QuizUpsertDTO quizUpsertDTO) {
+        int currentUserId = authorizationService.getCurrentUserId();
+
         Integer quizSetId = quizUpsertDTO.getQuizSetId();
         QuizSet existingQuizSet = null;
         if (quizSetId != null) {
-            existingQuizSet = quizSetService.getQuizSetEntityById(quizSetId);
+            existingQuizSet = quizSetService.getQuizSetEntityById(quizSetId, currentUserId);
         }
         if (existingQuizSet == null) {
-            existingQuizSet = quizSetService.getOrCreateDefaultSet();
+            existingQuizSet = quizSetService.getOrCreateDefaultSet(currentUserId);
         }
 
         Quiz newQuiz = quizMapper.toQuiz(quizUpsertDTO);
@@ -78,7 +80,7 @@ public class QuizService {
         });
 
         if (quizUpsertDTO.getQuizSetId() != null) {
-            QuizSet quizSet = quizSetService.getQuizSetEntityById(quizUpsertDTO.getQuizSetId());
+            QuizSet quizSet = quizSetService.getQuizSetEntityById(quizUpsertDTO.getQuizSetId(), currentUserId);
             existingQuiz.setQuizSet(quizSet);
         }
 

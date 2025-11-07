@@ -27,7 +27,8 @@ public class QuizUpsertDTO {
     @JsonProperty(value = "topic")
     String title;
 
-    @NotEmpty(groups = OnCreate.class)
+    // Questions are ignored in mapper, will not modify questions in quiz update request (currently not supported)
+    @NotEmpty(groups = OnCreate.class, message = "QUIZ_QUESTION_REQUIRED")
     @JsonProperty(value = "questions")
     List<Question> questions;
 

@@ -143,12 +143,10 @@ public class QuizSetService {
      * Get or create a default set if not exist for current user. Default set is unique for each user
      * @return default QuizSet entity
      */
-    public QuizSet getOrCreateDefaultSet() {
-        int currentUserId = authorizationService.getCurrentUserId();
-
-        return quizSetRepository.findByUserIdAndOriginType(currentUserId, OriginType.DEFAULT).orElseGet(() -> {
+    public QuizSet getOrCreateDefaultSet(int userId) {
+        return quizSetRepository.findByUserIdAndOriginType(userId, OriginType.DEFAULT).orElseGet(() -> {
             QuizSet defaultSet = QuizSet.builder()
-                    .userId(currentUserId)
+                    .userId(userId)
                     .title(AppConstants.DEFAULT_QUIZ_SET_TITLE)
                     .originType(OriginType.DEFAULT).build();
             return quizSetRepository.save(defaultSet);
@@ -160,10 +158,8 @@ public class QuizSetService {
      * @param quizSetId id of quiz set
      * @return found QuizSet entity
      */
-    public QuizSet getQuizSetEntityById(int quizSetId) {
-        int currentUserId = authorizationService.getCurrentUserId();
-
-        QuizSet quizSet = quizSetRepository.findByIdAndUserId(quizSetId, currentUserId).orElseThrow(() -> {
+    public QuizSet getQuizSetEntityById(int quizSetId, int userId) {
+        QuizSet quizSet = quizSetRepository.findByIdAndUserId(quizSetId, userId).orElseThrow(() -> {
             log.error("Quiz set with id {} not found in user's account", quizSetId);
             return new AppException(ErrorCode.QUIZ_SET_NOT_FOUND);
         });

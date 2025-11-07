@@ -49,7 +49,8 @@ public enum ErrorCode {
     QUIZ_NOT_FOUND(2401, "Quiz not found", HttpStatus.NOT_FOUND),
     QUIZ_DOCUMENT_SIZE_EXCEED(2402, "Number of quiz IDs must be between 1 and 5", HttpStatus.BAD_REQUEST),
     INVALID_QUIZ_SIZE(2403, "Total number of questions must between 1 and 20", HttpStatus.BAD_REQUEST),
-
+    QUIZ_TITLE_REQUIRED(2404, "Quiz title cannot be empty", HttpStatus.BAD_REQUEST),
+    QUIZ_QUESTION_REQUIRED(2405, "Quiz question cannot be empty", HttpStatus.BAD_REQUEST),
 
     // 25xx - Flashcard-related errors
     FLASHCARD_FRONT_CONTENT_REQUIRED(2501, "Flashcard front content is required", HttpStatus.BAD_REQUEST),
@@ -65,7 +66,7 @@ public enum ErrorCode {
     FLASHCARD_SET_CANNOT_BE_MODIFIED(2605, "This flashcard set cannot be modified", HttpStatus.BAD_REQUEST),
     FLASHCARD_SET_CANNOT_BE_DELETED(2606, "This flashcard set cannot be deleted", HttpStatus.BAD_REQUEST),
 
-    // 27xx - Quiz-related features
+    // 27xx - Quiz set-related features
     QUIZ_SET_NOT_FOUND(2701, "Quiz set not found", HttpStatus.NOT_FOUND),
     QUIZ_SET_ID_REQUIRED(2702, "Quiz set ID required", HttpStatus.BAD_REQUEST),
     QUIZ_SET_TITLE_REQUIRED(2703, "Quiz set title required", HttpStatus.BAD_REQUEST),

@@ -29,14 +29,14 @@ public class NoteService {
     DocumentMapper documentMapper;
 
 	public NoteResponse getNote(int noteId) {
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
+
         // Get note
-		Document note = documentRepository.findById(noteId).orElseThrow(() -> {
-            log.error("Note with id {} not found", noteId);
+		Document note = documentRepository.findByIdAndUserId(noteId, currentUserId).orElseThrow(() -> {
+            log.error("Note with id {} not found in user's account", noteId);
             return new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
         });
-
-        // Check ownership
-        authorizationService.validateOwnership(note.getUserId());
 
 		return documentMapper.toNoteResponse(note);
 	}
@@ -60,14 +60,14 @@ public class NoteService {
 	}
 
 	public NoteResponse updateNote(int noteId, NoteUpsertRequest updateData) {
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
+
         // Get note
-		Document note = documentRepository.findById(noteId).orElseThrow(() -> {
-            log.error("Note with id {} not found", noteId);
+        Document note = documentRepository.findByIdAndUserId(noteId, currentUserId).orElseThrow(() -> {
+            log.error("Note with id {} not found in user's account", noteId);
             return new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
         });
-
-        // Check ownership
-        authorizationService.validateOwnership(note.getUserId());
 		
 		note.setTitle(updateData.getTitle());
 		note.setUpdatedAt(LocalDateTime.now());;
@@ -77,14 +77,14 @@ public class NoteService {
 	}
 	
 	public void deleteNote(int noteId) {
-        // Get document
-        Document note = documentRepository.findById(noteId).orElseThrow(() -> {
-            log.error("Note with id {} not found", noteId);
-            throw new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
-        });
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
 
-        // Check ownership
-        authorizationService.validateOwnership(note.getUserId());
+        // Get document
+        Document note = documentRepository.findByIdAndUserId(noteId, currentUserId).orElseThrow(() -> {
+            log.error("Note with id {} not found in user's account", noteId);
+            return new AppException(ErrorCode.DOCUMENT_NOT_FOUND);
+        });
 
 		documentRepository.deleteById(noteId);
 	}
