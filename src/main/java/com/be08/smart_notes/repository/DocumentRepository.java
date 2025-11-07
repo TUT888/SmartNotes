@@ -11,10 +11,7 @@ import org.springframework.data.repository.query.Param;
 import com.be08.smart_notes.model.Document;
 
 public interface DocumentRepository extends JpaRepository<Document, Integer> {
-    List<Document> findAllByIdIn(List<Integer> ids);
-
-    @Query("SELECT d.content FROM Document d WHERE d.id IN :ids")
-    List<String> findAllContentFromIdIn(@Param(value="ids") List<Integer> ids);
+    List<Document> findAllByUserId(Integer userId);
 
     Optional<Document> findByIdAndUserId(int documentId, int userId);
 

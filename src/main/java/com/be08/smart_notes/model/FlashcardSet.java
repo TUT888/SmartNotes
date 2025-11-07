@@ -1,6 +1,6 @@
 package com.be08.smart_notes.model;
 
-import com.be08.smart_notes.enums.FlashcardSetOriginType;
+import com.be08.smart_notes.enums.OriginType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -38,7 +38,7 @@ public class FlashcardSet {
 
     @Column(nullable = false, name = "origin_type")
     @Enumerated(EnumType.STRING)
-    FlashcardSetOriginType originType = FlashcardSetOriginType.USER;
+    OriginType originType = OriginType.USER;
 
     @PrePersist
     protected void onCreate(){
