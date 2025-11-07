@@ -21,6 +21,8 @@ public class DocumentService {
     AuthorizationService authorizationService;
 	DocumentRepository documentRepository;
 
+    private static final String SYSTEM_SOURCE_TITLE = "__SYSTEM_UNFILED_SOURCE__";
+
 	public List<Document> getAllDocuments() {
         // Get current user
         int currentUserId = authorizationService.getCurrentUserId();
@@ -39,6 +41,34 @@ public class DocumentService {
         // Check ownership
         authorizationService.validateOwnership(document.getUserId());
 
+        // Prevent deletion of system source document
+        if(SYSTEM_SOURCE_TITLE.equals(document.getTitle())){
+            throw new AppException(ErrorCode.DOCUMENT_CANNOT_BE_DELETED);
+        }
+
 		documentRepository.delete(document);
 	}
+
+    /**
+     * Get document if owned by user
+     * @param documentId
+     * @param userId
+     * @return Document
+     * @throws AppException if document not found or not owned by user
+     */
+    public Document getDocumentIfOwned(int documentId, int userId){
+        return documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new AppException(ErrorCode.DOCUMENT_NOT_FOUND));
+    }
+
+    /**
+     * Get system source document for user
+     * @param userId
+     * @return Document
+     * @throws AppException if system source document not found
+     */
+    public Document getSystemSourceDocument(int userId){
+        return documentRepository.findByTitleAndUserId(SYSTEM_SOURCE_TITLE, userId)
+                .orElseThrow(() -> new AppException(ErrorCode.SYSTEM_SOURCE_DOCUMENT_NOT_FOUND));
+    }
 }
