@@ -1,13 +1,14 @@
 package com.be08.smart_notes.service;
 
 import com.be08.smart_notes.common.AppConstants;
-import com.be08.smart_notes.dto.QuizDTO;
+import com.be08.smart_notes.dto.QuizUpsertDTO;
 import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
 import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
 import com.be08.smart_notes.mapper.QuizMapper;
+import com.be08.smart_notes.mapper.QuizSetMapper;
 import com.be08.smart_notes.model.Quiz;
 import com.be08.smart_notes.model.QuizSet;
 import com.be08.smart_notes.repository.QuizSetRepository;
@@ -29,6 +30,7 @@ public class QuizSetService {
     AuthorizationService authorizationService;
     QuizSetRepository quizSetRepository;
     QuizMapper quizMapper;
+    QuizSetMapper quizSetMapper;
 
     /**
      * Create new empty QuizSet with no quizzes inside
@@ -45,19 +47,19 @@ public class QuizSetService {
                 .originType(originType).build();
 
         QuizSet savedQuizSet = quizSetRepository.save(quizSet);
-        return quizMapper.toQuizSetResponse(savedQuizSet);
+        return quizSetMapper.toQuizSetResponse(savedQuizSet);
     }
 
     /**
      * Create new QuizSet from multiple quizzes with their associated questions
      * @param quizSetTitle a title for new quiz set, use default name if null
-     * @param quizDTOList list of quizzes to be added together with new set
+     * @param quizUpsertDTOList list of quizzes to be added together with new set
      * @return response dto for saved quiz set
      */
-    public QuizSetResponse createQuizSet(String quizSetTitle, List<QuizDTO> quizDTOList, OriginType originType) {
+    public QuizSetResponse createQuizSet(String quizSetTitle, List<QuizUpsertDTO> quizUpsertDTOList, OriginType originType) {
         int currentUserId = authorizationService.getCurrentUserId();
 
-        List<Quiz> newQuizzes = quizMapper.toQuizList(quizDTOList);
+        List<Quiz> newQuizzes = quizMapper.toQuizList(quizUpsertDTOList);
         QuizSet quizSet = QuizSet.builder()
                 .userId(currentUserId)
                 .title(quizSetTitle != null ? quizSetTitle : AppConstants.DEFAULT_QUIZ_SET_TITLE)
@@ -65,7 +67,7 @@ public class QuizSetService {
         quizSet.addQuizzes(newQuizzes);
 
         QuizSet savedQuizSet = quizSetRepository.save(quizSet);
-        return quizMapper.toQuizSetResponse(savedQuizSet);
+        return quizSetMapper.toQuizSetResponse(savedQuizSet);
     }
 
     /**
@@ -81,7 +83,7 @@ public class QuizSetService {
             return new AppException(ErrorCode.QUIZ_SET_NOT_FOUND);
         });
 
-        return quizMapper.toQuizSetResponse(quiz);
+        return quizSetMapper.toQuizSetResponse(quiz);
     }
 
     /**
@@ -92,7 +94,7 @@ public class QuizSetService {
         int currentUserId = authorizationService.getCurrentUserId();
 
         List<QuizSet> quizSets = quizSetRepository.findAllByUserId(currentUserId);
-        return quizMapper.toQuizSetResponseList(quizSets);
+        return quizSetMapper.toQuizSetResponseList(quizSets);
     }
 
     /**
@@ -108,9 +110,9 @@ public class QuizSetService {
             return new AppException(ErrorCode.QUIZ_SET_NOT_FOUND);
         });
 
-        quizMapper.updateQuizSet(existingQuizSet, request);
+        quizSetMapper.updateQuizSet(existingQuizSet, request);
         existingQuizSet = quizSetRepository.save(existingQuizSet);
-        return quizMapper.toQuizSetResponse(existingQuizSet);
+        return quizSetMapper.toQuizSetResponse(existingQuizSet);
     }
 
     /**
@@ -183,7 +185,7 @@ public class QuizSetService {
      * @param quizQuestion the quiz with questions to be added in new quiz set
      * @return the saved QuizSet
      */
-//    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, QuizDTO quizQuestion, OriginType originType) {
+//    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, QuizUpsertDTO quizQuestion, OriginType originType) {
 //        Quiz quiz = quizMapper.toQuiz(quizQuestion);
 //
 //        QuizSet quizSet = QuizSet.builder()
@@ -202,7 +204,7 @@ public class QuizSetService {
      * @param quizQuestionList list of quizzes with questions to be added in new quiz set
      * @return the saved QuizSet
      */
-//    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, List<QuizDTO> quizQuestionList, OriginType originType) {
+//    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, List<QuizUpsertDTO> quizQuestionList, OriginType originType) {
 //        List<Quiz> newQuizzes = quizMapper.toQuizList(quizQuestionList);
 //
 //        QuizSet quizSet = QuizSet.builder()

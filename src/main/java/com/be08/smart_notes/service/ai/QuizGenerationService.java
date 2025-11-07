@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.be08.smart_notes.dto.QuizDTO;
+import com.be08.smart_notes.dto.QuizUpsertDTO;
 import com.be08.smart_notes.dto.request.QuizGenerationRequest;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.response.NoteResponse;
@@ -79,9 +79,9 @@ public class QuizGenerationService {
         ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			// Extract raw message content from response string
-            QuizDTO quizDTO = objectMapper.readValue(generatedContent, QuizDTO.class);
+            QuizUpsertDTO quizUpsertDTO = objectMapper.readValue(generatedContent, QuizUpsertDTO.class);
 
-            Quiz sampleQuizEntity = quizMapper.toQuiz(quizDTO);
+            Quiz sampleQuizEntity = quizMapper.toQuiz(quizUpsertDTO);
             return quizMapper.toQuizResponse(sampleQuizEntity);
 		} catch (Exception e) {
             log.error("An error occurred when mapping objects, could not create sample quiz.");
@@ -101,10 +101,10 @@ public class QuizGenerationService {
         int noteId = quizGenerationRequest.getDocId();
 
         NoteResponse selectedNote = noteService.getNote(noteId);
-        QuizDTO quizDTO = generateQuizFromNote(selectedNote.getContent(), prompt);
+        QuizUpsertDTO quizUpsertDTO = generateQuizFromNote(selectedNote.getContent(), prompt);
 
-        quizDTO.setSourceDocumentId(noteId);
-        return quizService.createQuiz(quizDTO);
+        quizUpsertDTO.setSourceDocumentId(noteId);
+        return quizService.createQuiz(quizUpsertDTO);
     }
 
     public QuizSetResponse generateQuizSet(QuizGenerationRequest quizGenerationRequest) {
@@ -120,28 +120,28 @@ public class QuizGenerationService {
 
         // Save quizzes from list of notes (generate one by one)
         List<Document> noteList = noteService.getAllNotesByIds(noteIds);
-        List<QuizDTO> quizDTOList = new ArrayList<>();
+        List<QuizUpsertDTO> quizUpsertDTOList = new ArrayList<>();
         for (Document note : noteList) {
             try {
                 authorizationService.validateOwnership(note.getUserId());
 
-                QuizDTO quizDTO = generateQuizFromNote(note.getContent(), prompt);
-                quizDTO.setSourceDocumentId(note.getId());
-                quizDTOList.add(quizDTO);
+                QuizUpsertDTO quizUpsertDTO = generateQuizFromNote(note.getContent(), prompt);
+                quizUpsertDTO.setSourceDocumentId(note.getId());
+                quizUpsertDTOList.add(quizUpsertDTO);
             } catch (Exception e) {
                 System.out.println("Error in generating quiz: " + e.getMessage());
             }
         }
 
-        if (quizDTOList.isEmpty()) {
+        if (quizUpsertDTOList.isEmpty()) {
             log.error("Quiz set was not created because no quizzes are generated.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
-        return quizSetService.createQuizSet(AppConstants.DEFAULT_QUIZ_SET_TITLE, quizDTOList, OriginType.AI);
+        return quizSetService.createQuizSet(AppConstants.DEFAULT_QUIZ_SET_TITLE, quizUpsertDTOList, OriginType.AI);
     }
 
     // ------ Internal methods ------ //
-    private QuizDTO generateQuizFromNote(String noteContent, String prompt) {
+    private QuizUpsertDTO generateQuizFromNote(String noteContent, String prompt) {
         String generatedContent = aiService.generateContent(
                 prompt,
                 noteContent,
@@ -154,17 +154,17 @@ public class QuizGenerationService {
 
         // Map generated content (JSON String) to Object
         ObjectMapper objectMapper = new ObjectMapper();
-        QuizDTO quizDTO = null;
+        QuizUpsertDTO quizUpsertDTO = null;
         try {
-            quizDTO = objectMapper.readValue(generatedContent, QuizDTO.class);
+            quizUpsertDTO = objectMapper.readValue(generatedContent, QuizUpsertDTO.class);
         } catch (Exception e) {
-            log.error("Could not map generated content to QuizDTO.");
+            log.error("Could not map generated content to QuizUpsertDTO.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
-        if (quizDTO == null) {
+        if (quizUpsertDTO == null) {
             log.error("Could not generate quiz because of invalid object mapping result.");
             throw new AppException(ErrorCode.FAILED_INFERENCE_REQUEST);
         }
-        return quizDTO;
+        return quizUpsertDTO;
     }
 }

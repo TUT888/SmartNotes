@@ -1,6 +1,6 @@
 package com.be08.smart_notes.controller;
 
-import com.be08.smart_notes.dto.QuizDTO;
+import com.be08.smart_notes.dto.QuizUpsertDTO;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.view.Level;
@@ -25,7 +25,7 @@ public class QuizController {
 
     @PostMapping
     @JsonView(Level.Detail.class)
-    public ResponseEntity<Object> createQuiz(@RequestBody @Validated(OnCreate.class) QuizDTO request) {
+    public ResponseEntity<Object> createQuiz(@RequestBody @Validated(OnCreate.class) QuizUpsertDTO request) {
         QuizResponse quizResponse = quizService.createQuiz(request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz created successfully in default set")
@@ -47,7 +47,7 @@ public class QuizController {
 
     @PutMapping("/{id}")
     @JsonView(Level.Detail.class)
-    public ResponseEntity<Object> updateQuiz(@PathVariable int id, @Validated(OnUpdate.class) @RequestBody QuizDTO request) {
+    public ResponseEntity<Object> updateQuiz(@PathVariable int id, @Validated(OnUpdate.class) @RequestBody QuizUpsertDTO request) {
         QuizResponse quizResponse = quizService.updateQuiz(id, request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz updated successfully")

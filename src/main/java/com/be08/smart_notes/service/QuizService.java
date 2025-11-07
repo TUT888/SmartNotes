@@ -1,6 +1,6 @@
 package com.be08.smart_notes.service;
 
-import com.be08.smart_notes.dto.QuizDTO;
+import com.be08.smart_notes.dto.QuizUpsertDTO;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
@@ -24,11 +24,11 @@ public class QuizService {
     QuizRepository quizRepository;
     QuizMapper quizMapper;
 
-    public QuizResponse createQuiz(QuizDTO quizDTO) {
+    public QuizResponse createQuiz(QuizUpsertDTO quizUpsertDTO) {
         int currentUserId = authorizationService.getCurrentUserId();
 
         QuizSet defaultSet = quizSetService.getOrCreateDefaultSet(currentUserId);
-        Quiz newQuiz = quizMapper.toQuiz(quizDTO);
+        Quiz newQuiz = quizMapper.toQuiz(quizUpsertDTO);
         newQuiz.setQuizSet(defaultSet);
 
         Quiz savedQuiz = quizRepository.save(newQuiz);
@@ -46,7 +46,7 @@ public class QuizService {
         return quizMapper.toQuizResponse(quiz);
     }
 
-    public QuizResponse updateQuiz(int quizId, QuizDTO quizDTO) {
+    public QuizResponse updateQuiz(int quizId, QuizUpsertDTO quizUpsertDTO) {
         int currentUserId = authorizationService.getCurrentUserId();
 
         Quiz existingQuiz = quizRepository.findByIdAndQuizSetUserId(quizId, currentUserId).orElseThrow(() -> {
@@ -54,12 +54,12 @@ public class QuizService {
             return new AppException(ErrorCode.QUIZ_NOT_FOUND);
         });
 
-        if (quizDTO.getQuizSetId() != null) {
-            QuizSet quizSet = quizSetService.getQuizSetEntityById(quizDTO.getQuizSetId());
+        if (quizUpsertDTO.getQuizSetId() != null) {
+            QuizSet quizSet = quizSetService.getQuizSetEntityById(quizUpsertDTO.getQuizSetId());
             existingQuiz.setQuizSet(quizSet);
         }
 
-        quizMapper.updateQuiz(existingQuiz, quizDTO);
+        quizMapper.updateQuiz(existingQuiz, quizUpsertDTO);
         existingQuiz = quizRepository.save(existingQuiz);
         return quizMapper.toQuizResponse(existingQuiz);
     }
@@ -74,14 +74,4 @@ public class QuizService {
 
         quizRepository.deleteById(quizId);
     }
-
-    // ------ Methods that returns entities ------ //
-//    public Quiz saveAsNewQuizEntity(int userId, QuizDTO quizDTO) {
-//        QuizSet defaultSet = quizSetService.getOrCreateDefaultSet(userId);
-//
-//        Quiz newQuiz = quizMapper.toQuiz(quizDTO);
-//        newQuiz.setQuizSet(defaultSet);
-//
-//        return quizRepository.save(newQuiz);
-//    }
 }

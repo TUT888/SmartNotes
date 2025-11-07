@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizDTO {
+public class QuizUpsertDTO {
     private Integer sourceDocumentId;
 
     // If null in creation request, new quiz will be categorised in default set
