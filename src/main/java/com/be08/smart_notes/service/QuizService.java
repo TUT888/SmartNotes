@@ -24,17 +24,31 @@ public class QuizService {
     QuizRepository quizRepository;
     QuizMapper quizMapper;
 
+    /**
+     * Create new quiz based on given information.
+     * If the request does not include quiz set id, new quiz will be added to DEFAULT set
+     * @param quizUpsertDTO a dto with quiz information and its questions
+     * @return quiz response dto
+     */
     public QuizResponse createQuiz(QuizUpsertDTO quizUpsertDTO) {
-        int currentUserId = authorizationService.getCurrentUserId();
+        int quizSetId = quizUpsertDTO.getQuizSetId();
+        QuizSet existingQuizSet = quizSetService.getQuizSetEntityById(quizSetId);
+        if (existingQuizSet == null) {
+            existingQuizSet = quizSetService.getOrCreateDefaultSet();
+        }
 
-        QuizSet defaultSet = quizSetService.getOrCreateDefaultSet(currentUserId);
         Quiz newQuiz = quizMapper.toQuiz(quizUpsertDTO);
-        newQuiz.setQuizSet(defaultSet);
+        newQuiz.setQuizSet(existingQuizSet);
 
         Quiz savedQuiz = quizRepository.save(newQuiz);
         return quizMapper.toQuizResponse(savedQuiz);
     }
 
+    /**
+     * Get quiz and its questions based on given id
+     * @param quizId id of target quiz
+     * @return quiz response dto
+     */
     public QuizResponse getQuizById(int quizId) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -46,6 +60,12 @@ public class QuizService {
         return quizMapper.toQuizResponse(quiz);
     }
 
+    /**
+     * Update quiz information
+     * @param quizId id of target quiz
+     * @param quizUpsertDTO dto that contains required data
+     * @return quiz response dto
+     */
     public QuizResponse updateQuiz(int quizId, QuizUpsertDTO quizUpsertDTO) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -64,6 +84,10 @@ public class QuizService {
         return quizMapper.toQuizResponse(existingQuiz);
     }
 
+    /**
+     * Delete quiz based on given id
+     * @param quizId id of target quiz
+     */
     public void deleteQuizById(int quizId) {
         int currentUserId = authorizationService.getCurrentUserId();
 

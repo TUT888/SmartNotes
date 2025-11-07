@@ -140,20 +140,26 @@ public class QuizSetService {
 
     // ------ Methods that returns entities ------ //
     /**
-     * Get or create a default set if not exist for current user. Default set should only unique for each user
-     * @param userId id of current user
-     * @return default quiz set
+     * Get or create a default set if not exist for current user. Default set is unique for each user
+     * @return default QuizSet entity
      */
-    public QuizSet getOrCreateDefaultSet(int userId) {
-        return quizSetRepository.findByUserIdAndOriginType(userId, OriginType.DEFAULT).orElseGet(() -> {
+    public QuizSet getOrCreateDefaultSet() {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        return quizSetRepository.findByUserIdAndOriginType(currentUserId, OriginType.DEFAULT).orElseGet(() -> {
             QuizSet defaultSet = QuizSet.builder()
-                    .userId(userId)
+                    .userId(currentUserId)
                     .title(AppConstants.DEFAULT_QUIZ_SET_TITLE)
                     .originType(OriginType.DEFAULT).build();
             return quizSetRepository.save(defaultSet);
         });
     }
 
+    /**
+     * Get quiz set entity by quiz set id
+     * @param quizSetId id of quiz set
+     * @return found QuizSet entity
+     */
     public QuizSet getQuizSetEntityById(int quizSetId) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -164,55 +170,4 @@ public class QuizSetService {
 
         return quizSet;
     }
-
-    /**
-     * Save new quiz to default quiz set (uncategorized)
-     * @param userId id of current user
-     * @param quiz new quiz to be added
-     * @return default quiz set with new quiz added
-     */
-//    public QuizSet saveNewQuizToDefaultSet(int userId, Quiz quiz) {
-//        QuizSet defaultSet = getOrCreateDefaultSet(userId);
-//
-//        defaultSet.addQuiz(quiz);
-//        return quizSetRepository.save(defaultSet);
-//    }
-
-    /**
-     * Create and save new QuizSet from a quiz with associated questions
-     * @param userId id of current user
-     * @param quizSetTitle title for new quiz set, use quiz title as alternative when null
-     * @param quizQuestion the quiz with questions to be added in new quiz set
-     * @return the saved QuizSet
-     */
-//    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, QuizUpsertDTO quizQuestion, OriginType originType) {
-//        Quiz quiz = quizMapper.toQuiz(quizQuestion);
-//
-//        QuizSet quizSet = QuizSet.builder()
-//                .userId(userId)
-//                .title(quizSetTitle != null ? quizSetTitle : quizQuestion.getTitle())
-//                .originType(originType).build();
-//        quizSet.addQuiz(quiz);
-//
-//        return quizSetRepository.save(quizSet);
-//    }
-
-    /**
-     * Create and save new QuizSet from a list of quizzes with their associated questions
-     * @param userId id of current user
-     * @param quizSetTitle title for new quiz set, use default title as alternative when null
-     * @param quizQuestionList list of quizzes with questions to be added in new quiz set
-     * @return the saved QuizSet
-     */
-//    public QuizSet saveAsNewQuizSetEntity(int userId, String quizSetTitle, List<QuizUpsertDTO> quizQuestionList, OriginType originType) {
-//        List<Quiz> newQuizzes = quizMapper.toQuizList(quizQuestionList);
-//
-//        QuizSet quizSet = QuizSet.builder()
-//                .userId(userId)
-//                .title(quizSetTitle != null ? quizSetTitle : AppConstants.DEFAULT_QUIZ_SET_TITLE)
-//                .originType(originType).build();
-//        quizSet.addQuizzes(newQuizzes);
-//
-//        return quizSetRepository.save(quizSet);
-//    }
 }

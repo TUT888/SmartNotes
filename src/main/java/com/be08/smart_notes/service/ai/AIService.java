@@ -23,6 +23,13 @@ public class AIService {
         this.restClient = restClient;
     }
 
+    /**
+     * Generate content using REST API from an AI Inference Provider, using chat completion model
+     * @param systemPrompt system prompt to guide AI model how to generate data
+     * @param noteContent content of a given note
+     * @param guidedSchema expected JSON response schema from inference API
+     * @return response message from AI assistant, should be a JSON string that follows the given schema structure
+     */
     public String generateContent(String systemPrompt, String noteContent, String guidedSchema) {
         if (properties.isMissingCredentials() || properties.isMissingModelConfig()) {
             log.error("AI Inference Configuration is missing or invalid. Please check your .env file and try again");
@@ -46,6 +53,11 @@ public class AIService {
         return inferenceResponse.getChoices()[0].getMessage().getContent();
     }
 
+    /**
+     * Send request inference request to provider using RestClient
+     * @param info the inference request dto to be included as body
+     * @return inference response from the provider
+     */
 	private AIInferenceResponse fetchResponseFromInferenceProvider(AIInferenceRequest info) {
         AIInferenceResponse response = restClient.post()
                 .body(info)
@@ -54,7 +66,7 @@ public class AIService {
         return response;
 	}
 
-    // Unused methods, will debug later
+    // Unused method that cause incorrect response due to incompatible JSON string format, will debug later
 //    private String generateGuidedSchema(Class<?> ClassType) {
 //        SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON);
 //
