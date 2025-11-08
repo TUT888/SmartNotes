@@ -89,4 +89,13 @@ public class AttemptController {
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    @DeleteMapping("/{quizId}/attempts/{attemptId}")
+    public ResponseEntity<Object> deleteAttempt(@PathVariable int quizId, @PathVariable int attemptId) {
+        attemptService.deleteAttemptByIdAndQuizId(quizId, attemptId);
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Attempt deleted successfully")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

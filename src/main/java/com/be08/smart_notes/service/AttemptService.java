@@ -108,6 +108,14 @@ public class AttemptService {
         return attemptMapper.toAttemptResponse(existingAttempt);
     }
 
+    public void deleteAttemptByIdAndQuizId(int quizId, int attemptId) {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        Attempt attempt = getAttemptEntityByIdAndQuizId(quizId, attemptId, currentUserId);
+
+        attemptRepository.delete(attempt);
+    }
+
     // ------ Methods that returns entity ------ //
     public Attempt getAttemptEntityByIdAndQuizId(int quizId, int attemptId, int userId) {
         Attempt attempt = attemptRepository.findByIdAndQuiz_QuizSet_UserId(attemptId, userId).orElseThrow(() -> {
