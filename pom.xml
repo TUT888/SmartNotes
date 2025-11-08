@@ -81,14 +81,6 @@
 		    <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
 		</dependency>
-		
-		<!-- Handle validation -->
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-validation</artifactId>
-		    <version>3.5.6</version>
-		</dependency>
 
         <!-- Object Mapping -->
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
@@ -204,5 +196,29 @@
             </plugin>
 		</plugins>
 	</build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
