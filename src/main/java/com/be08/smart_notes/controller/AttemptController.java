@@ -1,10 +1,12 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.dto.request.AttemptDetailUpdateRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.AttemptResponse;
 import com.be08.smart_notes.dto.view.AttemptView;
 import com.be08.smart_notes.service.AttemptService;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -60,20 +62,31 @@ public class AttemptController {
     public ResponseEntity<Object> getAttemptResult(@PathVariable int quizId, @PathVariable int attemptId) {
         AttemptResponse attemptResponseList = attemptService.getAttemptByIdAndQuizId(quizId, attemptId);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
-                .message("Attempt fetched successfully")
+                .message("Attempt result fetched successfully")
                 .data(attemptResponseList)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-//    @PatchMapping("/{quizId}/attempts/{attemptId}")
-//    @JsonView(AttemptView.Answer.class)
-//    public ResponseEntity<Object> updateAttemptDetail(@PathVariable int quizId, @PathVariable int attemptId, @Valid @RequestBody AttemptDetailUpdateRequest request) {
-//        AttemptResponse attemptResponseList = attemptService.updateAttempt(quizId, attemptId, request);
-//        ApiResponse<Object> apiResponse = ApiResponse.builder()
-//                .message("Attempt updated successfully")
-//                .data(attemptResponseList)
-//                .build();
-//        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-//    }
+    @PostMapping("/{quizId}/attempts/{attemptId}/answer")
+    @JsonView(AttemptView.Answer.class)
+    public ResponseEntity<Object> finishAttempt(@PathVariable int quizId, @PathVariable int attemptId) {
+        AttemptResponse attemptResponseList = attemptService.calculateAttemptResult(quizId, attemptId);
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Attempt result calculated successfully")
+                .data(attemptResponseList)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{quizId}/attempts/{attemptId}")
+    @JsonView(AttemptView.Answer.class)
+    public ResponseEntity<Object> updateAttemptDetail(@PathVariable int quizId, @PathVariable int attemptId, @Valid @RequestBody AttemptDetailUpdateRequest request) {
+        AttemptResponse.Detail attemptDetailResponse = attemptService.updateAttemptDetail(quizId, attemptId, request);
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Attempt detail updated successfully")
+                .data(attemptDetailResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

@@ -74,21 +74,39 @@ public class AttemptService {
         return attemptMapper.toAttemptResponseList(attempts);
     }
 
-//    public AttemptResponse updateAttempt(int quizId, int attemptId, AttemptDetailUpdateRequest request) {
-//        int currentUserId = authorizationService.getCurrentUserId();
-//
-//        // Get quiz to validate user id (owner)
-//        Quiz quiz = quizService.getQuizById(quizId, currentUserId);
-//
-//        AttemptDetail existingAttemptDetail = attemptDetailRepository.findByIdAndAttemptId(request.getId(), attemptId).orElseThrow(() -> {
-//            log.error("Attempt detail with id {} not found in attempt {}", request.getId(), attemptId);
-//            return new AppException(ErrorCode.ATTEMPT_DETAIL_NOT_FOUND);
-//        });
-//
-//        attemptDetailMapper.updateAttemptDetail(existingAttempt, request);
-//        existingAttempt = attemptRepository.save(existingAttempt);
-//        return attemptMapper.toAttemptResponse(existingAttempt);
-//    }
+    public AttemptResponse.Detail updateAttemptDetail(int quizId, int attemptId, AttemptDetailUpdateRequest request) {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        // Re-use method to check if the information is valid
+        getAttemptEntityByIdAndQuizId(quizId, attemptId, currentUserId);
+
+        AttemptDetail existingAttemptDetail = attemptDetailRepository.findByIdAndAttemptId(request.getId(), attemptId).orElseThrow(() -> {
+            log.error("Attempt detail with id {} not found in attempt {}", request.getId(), attemptId);
+            return new AppException(ErrorCode.ATTEMPT_DETAIL_NOT_FOUND);
+        });
+
+        attemptDetailMapper.updateAttemptDetail(existingAttemptDetail, request);
+        existingAttemptDetail = attemptDetailRepository.save(existingAttemptDetail);
+        return attemptDetailMapper.toAttemptResponseDetail(existingAttemptDetail);
+    }
+
+    public AttemptResponse calculateAttemptResult(int quizId, int attemptId) {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        Attempt existingAttempt = getAttemptEntityByIdAndQuizId(quizId, attemptId, currentUserId);
+        int score = 0;
+        for (AttemptDetail detail : existingAttempt.getAttemptDetails()) {
+            if (detail.getIsCorrect() == null || !detail.getIsCorrect()) {
+                continue;
+            }
+            score += 1;
+        }
+        existingAttempt.setScore(score);
+
+        existingAttempt = attemptRepository.save(existingAttempt);
+
+        return attemptMapper.toAttemptResponse(existingAttempt);
+    }
 
     // ------ Methods that returns entity ------ //
     public Attempt getAttemptEntityByIdAndQuizId(int quizId, int attemptId, int userId) {
