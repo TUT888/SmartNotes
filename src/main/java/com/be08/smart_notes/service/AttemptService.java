@@ -33,6 +33,11 @@ public class AttemptService {
     AttemptMapper attemptMapper;
     AttemptDetailMapper attemptDetailMapper;
 
+    /**
+     * Create new attempt for a given quiz. This also map associated questions to attempts details.
+     * @param quizId id of target quiz
+     * @return attempt response dto
+     */
     public AttemptResponse createNewAttempt(int quizId) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -58,6 +63,12 @@ public class AttemptService {
         return attemptMapper.toAttemptResponse(savedAttempt);
     }
 
+    /**
+     * Get attempt and its detail by id and its quiz id
+     * @param quizId id of target quiz
+     * @param attemptId id of target attempt
+     * @return attempt response dto
+     */
     public AttemptResponse getAttemptByIdAndQuizId(int quizId, int attemptId) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -66,6 +77,11 @@ public class AttemptService {
         return attemptMapper.toAttemptResponse(attempt);
     }
 
+    /**
+     * Get list of attempts by quiz id
+     * @param quizId id of target quiz
+     * @return list of attempt response dto
+     */
     public List<AttemptResponse> getAllAttemptsByQuizId(int quizId) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -74,6 +90,14 @@ public class AttemptService {
         return attemptMapper.toAttemptResponseList(attempts);
     }
 
+    /**
+     * Update single attempt detail (user answer) of given attempt id and quiz id.
+     * The method compare user answer and correct answer to set the correctness of the attempt detail.
+     * @param quizId id of target quiz
+     * @param attemptId id of target attempt
+     * @param request request dto with attempt detail id and user answer
+     * @return attempt detail response dto
+     */
     public AttemptResponse.Detail updateAttemptDetail(int quizId, int attemptId, AttemptDetailUpdateRequest request) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -90,6 +114,13 @@ public class AttemptService {
         return attemptDetailMapper.toAttemptResponseDetail(existingAttemptDetail);
     }
 
+    /**
+     * Calculate attempt result (score) of given attempt id and quiz id.
+     * The score is calculated based on the number of correct answer, ignoring unknown (null answer)
+     * @param quizId id of target quiz
+     * @param attemptId id of target attempt
+     * @return attempt response dto
+     */
     public AttemptResponse calculateAttemptResult(int quizId, int attemptId) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -108,6 +139,11 @@ public class AttemptService {
         return attemptMapper.toAttemptResponse(existingAttempt);
     }
 
+    /**
+     * Delete attempt based on given quiz id and attempt id
+     * @param quizId id of target quiz
+     * @param attemptId id of target attempt
+     */
     public void deleteAttemptByIdAndQuizId(int quizId, int attemptId) {
         int currentUserId = authorizationService.getCurrentUserId();
 
@@ -117,6 +153,13 @@ public class AttemptService {
     }
 
     // ------ Methods that returns entity ------ //
+    /**
+     * Get user's attempt and its detail from database based on given information
+     * @param quizId id of target quiz
+     * @param attemptId id of target attempt
+     * @param userId id of current user
+     * @return attempt entity
+     */
     public Attempt getAttemptEntityByIdAndQuizId(int quizId, int attemptId, int userId) {
         Attempt attempt = attemptRepository.findByIdAndQuiz_QuizSet_UserId(attemptId, userId).orElseThrow(() -> {
             log.error("Attempt with id {} not found in user's account", attemptId);
