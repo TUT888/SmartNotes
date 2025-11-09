@@ -1,12 +1,8 @@
 package com.be08.smart_notes.mapper;
 
 import com.be08.smart_notes.dto.QuizUpsertDTO;
-import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
 import com.be08.smart_notes.dto.response.QuizResponse;
-import com.be08.smart_notes.dto.response.QuizSetResponse;
-import com.be08.smart_notes.model.Question;
 import com.be08.smart_notes.model.Quiz;
-import com.be08.smart_notes.model.QuizSet;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -16,7 +12,6 @@ public interface QuizMapper {
     // For update requests
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "title", source = "title")
-    @Mapping(target = "sourceDocumentId", source = "sourceDocumentId")
     void updateQuiz(@MappingTarget Quiz quiz, QuizUpsertDTO request);
 
     // Quiz Entity <--> QuizResponse dto
