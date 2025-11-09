@@ -70,6 +70,14 @@ public enum ErrorCode {
     QUIZ_SET_NOT_FOUND(2701, "Quiz set not found", HttpStatus.NOT_FOUND),
     QUIZ_SET_ID_REQUIRED(2702, "Quiz set ID required", HttpStatus.BAD_REQUEST),
     QUIZ_SET_TITLE_REQUIRED(2703, "Quiz set title required", HttpStatus.BAD_REQUEST),
+
+    // 28xx - Quiz attempt-related features
+    ATTEMPT_NOT_FOUND(2801, "Quiz attempt not found", HttpStatus.NOT_FOUND),
+    ATTEMPT_DETAIL_NOT_FOUND(2802, "Quiz attempt detail not found", HttpStatus.NOT_FOUND),
+    ATTEMPT_ID_REQUIRED(2803, "Quiz attempt id required", HttpStatus.BAD_REQUEST),
+    ATTEMPT_DETAIL_NOT_EMPTY(2804, "Quiz attempt detail cannot be empty", HttpStatus.BAD_REQUEST),
+    ATTEMPT_DETAIL_ID_REQUIRED(2805, "Quiz attempt detail must have id", HttpStatus.BAD_REQUEST),
+    ATTEMPT_DETAIL_ANSWER_REQUIRED(2806, "Quiz attempt detail must include user's answer", HttpStatus.BAD_REQUEST),
     ;
 
     int code;

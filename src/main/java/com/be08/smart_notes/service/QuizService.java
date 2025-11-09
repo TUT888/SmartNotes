@@ -57,10 +57,7 @@ public class QuizService {
     public QuizResponse getQuizById(int quizId) {
         int currentUserId = authorizationService.getCurrentUserId();
 
-        Quiz quiz = quizRepository.findByIdAndQuizSetUserId(quizId, currentUserId).orElseThrow(() -> {
-            log.error("Quiz with id {} not found in user's account", quizId);
-            return new AppException(ErrorCode.QUIZ_NOT_FOUND);
-        });
+        Quiz quiz = getQuizById(quizId, currentUserId);
 
         return quizMapper.toQuizResponse(quiz);
     }
@@ -102,5 +99,13 @@ public class QuizService {
         });
 
         quizRepository.deleteById(quizId);
+    }
+
+    // ------ Methods that returns entity ------ //
+    public Quiz getQuizById(int quizId, int userId) {
+        return quizRepository.findByIdAndQuizSetUserId(quizId, userId).orElseThrow(() -> {
+            log.error("Quiz with id {} not found in user's account", quizId);
+            return new AppException(ErrorCode.QUIZ_NOT_FOUND);
+        });
     }
 }

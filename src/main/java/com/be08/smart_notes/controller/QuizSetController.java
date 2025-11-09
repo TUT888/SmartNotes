@@ -3,7 +3,7 @@ package com.be08.smart_notes.controller;
 import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
-import com.be08.smart_notes.dto.view.Level;
+import com.be08.smart_notes.dto.view.QuizView;
 import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.service.QuizSetService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -25,18 +25,18 @@ public class QuizSetController {
     QuizSetService quizSetService;
 
     @PostMapping
-    @JsonView(Level.Detail.class)
+    @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> createQuizSet(@RequestBody @Valid QuizSetUpsertRequest request) {
         QuizSetResponse quizSetResponse = quizSetService.createQuizSet(request, OriginType.USER);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz set created successfully")
                 .data(quizSetResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @GetMapping
-    @JsonView(Level.Basic.class)
+    @JsonView(QuizView.Basic.class)
     public ResponseEntity<Object> getAllQuizSets() {
         List<QuizSetResponse> quizSetResponseList = quizSetService.getAllQuizSets();
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -47,7 +47,7 @@ public class QuizSetController {
     }
 
     @GetMapping("/{id}")
-    @JsonView(Level.Detail.class)
+    @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> getQuizSet(@PathVariable int id) {
         QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -58,7 +58,7 @@ public class QuizSetController {
     }
 
     @PutMapping("/{id}")
-    @JsonView(Level.Detail.class)
+    @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> updateQuizSet(@PathVariable int id, @RequestBody QuizSetUpsertRequest request) {
         QuizSetResponse quizSetResponse = quizSetService.updateQuizSet(id, request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()

@@ -1,6 +1,6 @@
 package com.be08.smart_notes.dto.response;
 
-import com.be08.smart_notes.dto.view.Level;
+import com.be08.smart_notes.dto.view.QuizView;
 import com.be08.smart_notes.enums.OriginType;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
@@ -17,21 +17,21 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuizSetResponse {
-    @JsonView(Level.Basic.class)
+    @JsonView(QuizView.Basic.class)
     Integer id;
 
-    @JsonView(Level.Basic.class)
+    @JsonView(QuizView.Basic.class)
     String title;
 
-    @JsonView(Level.Basic.class)
+    @JsonView(QuizView.Basic.class)
     OriginType originType;
 
-    @JsonView(Level.Basic.class)
+    @JsonView(QuizView.Basic.class)
     LocalDateTime createdAt;
 
-    @JsonView(Level.Basic.class)
+    @JsonView(QuizView.Basic.class)
     LocalDateTime updatedAt;
 
-    @JsonView(Level.Detail.class)
+    @JsonView(QuizView.Detail.class)
     List<QuizResponse> quizzes;
 }

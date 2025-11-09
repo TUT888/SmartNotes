@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -41,6 +42,10 @@ public class Quiz {
     // Relationship: quiz - question
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Question> questions;
+
+    // Relationship: quiz - attempt
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    List<Attempt> attempts;
 
     @PrePersist
     protected void onCreate() {

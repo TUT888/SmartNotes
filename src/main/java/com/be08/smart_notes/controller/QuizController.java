@@ -3,7 +3,7 @@ package com.be08.smart_notes.controller;
 import com.be08.smart_notes.dto.QuizUpsertDTO;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.QuizResponse;
-import com.be08.smart_notes.dto.view.Level;
+import com.be08.smart_notes.dto.view.QuizView;
 import com.be08.smart_notes.service.QuizService;
 import com.be08.smart_notes.validation.group.OnCreate;
 import com.be08.smart_notes.validation.group.OnUpdate;
@@ -24,18 +24,18 @@ public class QuizController {
     QuizService quizService;
 
     @PostMapping
-    @JsonView(Level.Detail.class)
+    @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> createQuiz(@RequestBody @Validated(OnCreate.class) QuizUpsertDTO request) {
         QuizResponse quizResponse = quizService.createQuiz(request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz created successfully in default set")
                 .data(quizResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @GetMapping("/{id}")
-    @JsonView(Level.Detail.class)
+    @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> getQuiz(@PathVariable int id) {
         QuizResponse quizResponse = quizService.getQuizById(id);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -46,7 +46,7 @@ public class QuizController {
     }
 
     @PutMapping("/{id}")
-    @JsonView(Level.Detail.class)
+    @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> updateQuiz(@PathVariable int id, @Validated(OnUpdate.class) @RequestBody QuizUpsertDTO request) {
         QuizResponse quizResponse = quizService.updateQuiz(id, request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
