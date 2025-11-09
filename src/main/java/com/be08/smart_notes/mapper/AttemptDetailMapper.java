@@ -12,7 +12,7 @@ public interface AttemptDetailMapper {
     @Mapping(target = "entity.userAnswer", source = "request.userAnswer")
     void updateAttemptDetail(@MappingTarget AttemptDetail entity, AttemptDetailUpdateRequest request);
 
-    //
+    // AttemptDetail entity <--> AttemptResponse.Detail dto
     @Mapping(target = "questionText", source = "entity.question.questionText")
     @Mapping(target = "optionA", source = "entity.question.optionA")
     @Mapping(target = "optionB", source = "entity.question.optionB")

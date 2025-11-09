@@ -14,13 +14,9 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = QuestionMapper.class)
 public interface QuizMapper {
     // For update requests
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "title", source = "title")
     @Mapping(target = "sourceDocumentId", source = "sourceDocumentId")
-    @Mapping(target = "quizSet", ignore = true)
-    @Mapping(target = "questions", ignore = true)
     void updateQuiz(@MappingTarget Quiz quiz, QuizUpsertDTO request);
 
     // Quiz Entity <--> QuizResponse dto
