@@ -40,7 +40,7 @@ public class AIGenerationController {
                 .message("Quiz successfully generated and added to default set")
                 .data(quizSetResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @PostMapping("/quiz-sets")
@@ -50,6 +50,6 @@ public class AIGenerationController {
                 .message("Quiz set successfully generated")
                 .data(quizSetResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 }
