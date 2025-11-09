@@ -2,6 +2,7 @@ package com.be08.smart_notes.dto.request;
 
 import com.be08.smart_notes.validation.group.MultipleDocument;
 import com.be08.smart_notes.validation.group.SingleDocument;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class QuizGenerationRequest {
     @NotNull(groups = SingleDocument.class, message = "DOCUMENT_ID_REQUIRED")
     Integer docId;
