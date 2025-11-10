@@ -2,7 +2,6 @@ package com.be08.smart_notes.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.exception.AppException;
@@ -59,7 +58,17 @@ public class NoteService {
 		return documentMapper.toNoteResponse(newNote);
 	}
 
-	public NoteResponse updateNote(int noteId, NoteUpsertRequest updateData) {
+    public List<NoteResponse> getAllNotes() {
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        // Get note
+        List<Document> noteList = documentRepository.findAllByUserId(currentUserId);
+
+        return documentMapper.toNoteResponseList(noteList);
+    }
+
+    public NoteResponse updateNote(int noteId, NoteUpsertRequest updateData) {
         // Get current user id
         int currentUserId = authorizationService.getCurrentUserId();
 
