@@ -47,7 +47,7 @@ public class Document {
 	private LocalDateTime updatedAt;
 	
 	// Information for note document
-	@Column
+	@Column(columnDefinition = "TEXT")
 	private String content;
 
 	// Information for pdf document

@@ -98,6 +98,17 @@ public class QuizSetService {
     }
 
     /**
+     * Get default QuizSet with associated quizzes
+     * @return response dto for default quiz set
+     */
+    public QuizSetResponse getDefaultSet() {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        QuizSet quizSet = getOrCreateDefaultSet(currentUserId);
+        return quizSetMapper.toQuizSetResponse(quizSet);
+    }
+
+    /**
      * Update existing QuizSet based on given request from client
      * @param request data packed in client's request
      * @return response dto for saved quiz set

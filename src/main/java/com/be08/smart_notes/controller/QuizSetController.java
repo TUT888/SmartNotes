@@ -46,6 +46,17 @@ public class QuizSetController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/default")
+    @JsonView(QuizView.Detail.class)
+    public ResponseEntity<Object> getDefaultQuizSet() {
+        QuizSetResponse quizSetResponse = quizSetService.getDefaultSet();
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Quiz set fetched successfully")
+                .data(quizSetResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @GetMapping("/{id}")
     @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> getQuizSet(@PathVariable int id) {
