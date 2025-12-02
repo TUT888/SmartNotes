@@ -52,7 +52,6 @@ public class NoteController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    // @PutMapping("/{id}")
     @PatchMapping("/{id}")
 	public ResponseEntity<Object> updateNote(@PathVariable int id, @RequestBody @Valid NoteUpsertRequest noteUpdateRequest) {
         NoteResponse note = noteService.updateNote(id, noteUpdateRequest);
