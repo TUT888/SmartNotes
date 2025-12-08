@@ -1,5 +1,6 @@
 package com.be08.smart_notes.service;
 
+import com.be08.smart_notes.helper.DocumentDataBuilder;
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
 import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.enums.DocumentType;
@@ -46,11 +47,12 @@ public class NoteServiceTest {
 
     @BeforeEach
     void setUp() {
-        existingUser = User.builder().id(100).build();
-        existingNote = Document.builder().id(1).userId(100).build();
-        anotherExistingNote = Document.builder().id(2).userId(100).build();
-        existingNoteResponse = NoteResponse.builder().id(1).build();
-        anotherExistingNoteResponse = NoteResponse.builder().id(2).build();
+        int userId = 100;
+        existingUser = DocumentDataBuilder.createUser(userId).build();
+        existingNote = DocumentDataBuilder.createSampleNote(userId).id(1).userId(100).build();
+        anotherExistingNote = DocumentDataBuilder.createSampleNote(userId).id(2).userId(100).build();
+        existingNoteResponse = DocumentDataBuilder.createNoteResponse(existingNote).build();
+        anotherExistingNoteResponse = DocumentDataBuilder.createNoteResponse(anotherExistingNote).build();
 
         when(authorizationService.getCurrentUserId()).thenReturn(existingUser.getId());
     }
