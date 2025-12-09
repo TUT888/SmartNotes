@@ -265,10 +265,10 @@
                 <configuration>
                     <skipTests>${skip.unit.tests}</skipTests>
                     <includes>
-                        <include>**/*Test.java</include>
+                        <include>**/unit/**/*Test.java</include>
                     </includes>
                     <excludes>
-                        <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>**/integration/**</exclude>
                     </excludes>
 
                     <reportFormat>plain</reportFormat>
@@ -298,8 +298,11 @@
                 <configuration>
                     <skipTests>${skip.integration.tests}</skipTests>
                     <includes>
-                        <include>**/*IntegrationTest.java</include>
+                        <include>**/integration/**/*Test.java</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/unit/**</exclude>
+                    </excludes>
 
                     <reportFormat>plain</reportFormat>
                     <consoleOutputReporter>
@@ -351,7 +354,8 @@
         <profile>
             <id>unit-test</id>
             <properties>
-                <spring.profiles.active>test</spring.profiles.active>
+                <skip.unit.tests>false</skip.unit.tests>
+                <skip.integration.tests>true</skip.integration.tests>
             </properties>
         </profile>
         <profile>

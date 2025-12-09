@@ -1,7 +1,8 @@
-package com.be08.smart_notes.repository;
+package com.be08.smart_notes.integration.repository;
 
 import com.be08.smart_notes.helper.DocumentDataBuilder;
 import com.be08.smart_notes.model.Document;
+import com.be08.smart_notes.repository.DocumentRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

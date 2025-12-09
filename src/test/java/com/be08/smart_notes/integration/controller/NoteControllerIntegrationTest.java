@@ -1,4 +1,4 @@
-package com.be08.smart_notes.controller;
+package com.be08.smart_notes.integration.controller;
 
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
 import com.be08.smart_notes.helper.DocumentDataBuilder;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("Note Controller Integration Test")
-public class NoteControllerIntegrationTest extends Base {
+public class NoteControllerIntegrationTest extends BaseIntegration {
     @Autowired
     MockMvc mockMvc;
     @Autowired

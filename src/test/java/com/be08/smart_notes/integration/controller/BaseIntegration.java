@@ -1,4 +1,4 @@
-package com.be08.smart_notes.controller;
+package com.be08.smart_notes.integration.controller;
 
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,7 +9,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @Getter
-public class Base {
+public class BaseIntegration {
     private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0.36")
             .withDatabaseName("testdb")
             .withUsername("test")

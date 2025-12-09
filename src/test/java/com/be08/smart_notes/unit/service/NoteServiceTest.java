@@ -1,4 +1,4 @@
-package com.be08.smart_notes.service;
+package com.be08.smart_notes.unit.service;
 
 import com.be08.smart_notes.helper.DocumentDataBuilder;
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
@@ -10,6 +10,8 @@ import com.be08.smart_notes.mapper.DocumentMapper;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.model.User;
 import com.be08.smart_notes.repository.DocumentRepository;
+import com.be08.smart_notes.service.AuthorizationService;
+import com.be08.smart_notes.service.NoteService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
