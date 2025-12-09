@@ -48,3 +48,20 @@ DB_NAME=<YOUR-DATABASE-NAME>
 DB_USERNAME=<YOUR-DATABASE-DB_USERNAME>
 DB_PASSWORD=<YOUR-DATABASE-DB_PASSWORD>
 ```
+
+## How to test
+For Windows, run one of below commands
+
+```bash
+# Run all tests
+./mvnw.cmd test
+
+# Run specific test
+./mvnw.cmd test -Dtest=NoteServiceTest
+
+# Run unit test only
+./mvnw.cmd test -Punit-test
+
+# Run integration test only
+./mvnw.cmd verify -Pintegration-test
+```
