@@ -1,8 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `testdb`;
 USE `testdb`;
 
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user`
+CREATE TABLE IF NOT EXISTS `user`
 (
     `id`         int          NOT NULL AUTO_INCREMENT,
     `email`      varchar(255) NOT NULL,
@@ -15,8 +14,7 @@ CREATE TABLE `user`
     UNIQUE KEY `email` (`email`)
 );
 
-DROP TABLE IF EXISTS `tag`;
-CREATE TABLE `tag`
+CREATE TABLE IF NOT EXISTS `tag`
 (
     `id`      int         NOT NULL AUTO_INCREMENT,
     `user_id` int         NOT NULL,
@@ -26,8 +24,7 @@ CREATE TABLE `tag`
     CONSTRAINT `fk_tags_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 );
 
-DROP TABLE IF EXISTS `document`;
-CREATE TABLE `document`
+CREATE TABLE IF NOT EXISTS `document`
 (
     `id`         int                 NOT NULL AUTO_INCREMENT,
     `user_id`    int                 NOT NULL,
@@ -46,8 +43,7 @@ CREATE TABLE `document`
                                                          (`file_size` is not null))))
 );
 
-DROP TABLE IF EXISTS `document_tag`;
-CREATE TABLE `document_tag`
+CREATE TABLE IF NOT EXISTS `document_tag`
 (
     `id`          int NOT NULL AUTO_INCREMENT,
     `document_id` int NOT NULL,
@@ -59,8 +55,7 @@ CREATE TABLE `document_tag`
     CONSTRAINT `fk_document_tags_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tag` (`id`)
 );
 
-DROP TABLE IF EXISTS `flashcard_set`;
-CREATE TABLE `flashcard_set`
+CREATE TABLE IF NOT EXISTS `flashcard_set`
 (
     `id`          int                          NOT NULL AUTO_INCREMENT,
     `user_id`     int                          NOT NULL,
@@ -73,8 +68,7 @@ CREATE TABLE `flashcard_set`
     CONSTRAINT `fk_flashcard_sets_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 );
 
-DROP TABLE IF EXISTS `flashcard`;
-CREATE TABLE `flashcard`
+CREATE TABLE IF NOT EXISTS `flashcard`
 (
     `id`                 int  NOT NULL AUTO_INCREMENT,
     `flashcard_set_id`   int  NOT NULL,
@@ -90,8 +84,7 @@ CREATE TABLE `flashcard`
     CONSTRAINT `fk_flashcards_source_document_id` FOREIGN KEY (`source_document_id`) REFERENCES `document` (`id`)
 );
 
-DROP TABLE IF EXISTS `quiz_set`;
-CREATE TABLE `quiz_set`
+CREATE TABLE IF NOT EXISTS `quiz_set`
 (
     `id`          int                          NOT NULL AUTO_INCREMENT,
     `user_id`     int                          NOT NULL,
@@ -104,8 +97,7 @@ CREATE TABLE `quiz_set`
     CONSTRAINT `fk_quiz_set_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 );
 
-DROP TABLE IF EXISTS `quiz`;
-CREATE TABLE `quiz`
+CREATE TABLE IF NOT EXISTS `quiz`
 (
     `id`                 int          NOT NULL AUTO_INCREMENT,
     `quiz_set_id`        int          NOT NULL,
@@ -120,8 +112,7 @@ CREATE TABLE `quiz`
     CONSTRAINT `fk_quiz_src_document_id` FOREIGN KEY (`source_document_id`) REFERENCES `document` (`id`)
 );
 
-DROP TABLE IF EXISTS `question`;
-CREATE TABLE `question`
+CREATE TABLE IF NOT EXISTS `question`
 (
     `id`             int          NOT NULL AUTO_INCREMENT,
     `quiz_id`        int          NOT NULL,
@@ -136,10 +127,7 @@ CREATE TABLE `question`
     CONSTRAINT `fk_questions_quiz_id` FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`id`)
 );
 
-
-
-DROP TABLE IF EXISTS `attempt`;
-CREATE TABLE `attempt`
+CREATE TABLE IF NOT EXISTS `attempt`
 (
     `id`             int      NOT NULL AUTO_INCREMENT,
     `quiz_id`        int      NOT NULL,
@@ -151,8 +139,7 @@ CREATE TABLE `attempt`
     CONSTRAINT `fk_attempts_quiz_id` FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`id`)
 );
 
-DROP TABLE IF EXISTS `attempt_detail`;
-CREATE TABLE `attempt_detail`
+CREATE TABLE IF NOT EXISTS `attempt_detail`
 (
     `id`          int NOT NULL AUTO_INCREMENT,
     `attempt_id`  int NOT NULL,
