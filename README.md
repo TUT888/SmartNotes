@@ -50,18 +50,20 @@ DB_PASSWORD=<YOUR-DATABASE-DB_PASSWORD>
 ```
 
 ## How to test
-For Windows, run one of below commands
+For Windows, run one of below commands. 
+
+Replace `test` with `clean test` to rebuild if there are changes in test code, similar with `verify`.
 
 ```bash
-# Run all tests
-./mvnw.cmd test
-
 # Run specific test
 ./mvnw.cmd test -Dtest=NoteServiceTest
 
-# Run unit test only
+# Run all unit tests
 ./mvnw.cmd test -Punit-test
 
-# Run integration test only
+# Run all integration tests
 ./mvnw.cmd verify -Pintegration-test
+
+# Run all tests (unit and integration)
+./mvnw.cmd verify -Ptest
 ```

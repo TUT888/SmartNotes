@@ -6,6 +6,7 @@ import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.enums.DocumentType;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
+import com.be08.smart_notes.helper.UserDataBuilder;
 import com.be08.smart_notes.mapper.DocumentMapper;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.model.User;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@DisplayNameGeneration(DisplayNameGenerator.Standard.class)
 @DisplayName("Note Service Test")
 public class NoteServiceTest {
     @Mock
@@ -51,11 +52,11 @@ public class NoteServiceTest {
     @BeforeEach
     void setUp() {
         int userId = 100;
-        existingUser = DocumentDataBuilder.createUser(userId).build();
-        existingNote = DocumentDataBuilder.createSampleNote(userId).id(1).userId(100).build();
-        anotherExistingNote = DocumentDataBuilder.createSampleNote(userId).id(2).userId(100).build();
-        existingNoteResponse = DocumentDataBuilder.createNoteResponse(existingNote).build();
-        anotherExistingNoteResponse = DocumentDataBuilder.createNoteResponse(anotherExistingNote).build();
+        existingUser = UserDataBuilder.createMockUser(userId).build();
+        existingNote = DocumentDataBuilder.createMockNote(userId).id(1).userId(100).build();
+        anotherExistingNote = DocumentDataBuilder.createMockNote(userId).id(2).userId(100).build();
+        existingNoteResponse = DocumentDataBuilder.createMockNoteResponse(existingNote).build();
+        anotherExistingNoteResponse = DocumentDataBuilder.createMockNoteResponse(anotherExistingNote).build();
 
         when(authorizationService.getCurrentUserId()).thenReturn(existingUser.getId());
     }
@@ -65,7 +66,7 @@ public class NoteServiceTest {
     @DisplayName("getNote(): NoteResponse")
     class GetNoteTest {
         @Test
-        void getNote_withNonExistentId_shouldThrowException() {
+        void shouldThrowExceptionWhenGivenNonExistentId() {
             // Arrange
             int nonExistentId = 999;
             int userId = existingUser.getId();
@@ -83,7 +84,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void getNote_whenNoteExists_shouldReturnNoteResponse() {
+        void shouldReturnNoteResponseWhenNoteExists() {
             // Arrange
             int noteId = existingNote.getId();
             int userId = existingUser.getId();
@@ -108,7 +109,7 @@ public class NoteServiceTest {
     @DisplayName("getAllNotes(): List<NoteResponse>")
     class GetAllNotesTest {
         @Test
-        void getAllNotes_whenEmpty_shouldReturnEmptyNoteResponseList() {
+        void shouldReturnEmptyNoteResponseListWhenListIsEmpty() {
             // Arrange
             int userId = existingUser.getId();
             List<Document> emptyList = Collections.emptyList();
@@ -129,7 +130,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void getAllNotes_whenNotEmpty_shouldReturnNoteResponseList() {
+        void shouldReturnNoteResponseListWhenListIsNotEmpty() {
             // Arrange
             int userId = existingUser.getId();
             List<Document> noteList = List.of(existingNote, anotherExistingNote);
@@ -152,7 +153,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void getAllNotes_withSingleNote_shouldReturnSingleNoteResponseList() {
+        void shouldReturnSingleNoteResponseListWhenGivenSingleNote() {
             // Arrange
             int userId = existingUser.getId();
             List<Document> noteList = List.of(existingNote);
@@ -179,7 +180,7 @@ public class NoteServiceTest {
     @DisplayName("createNote(): NoteResponse")
     class CreateNoteTest {
         @Test
-        void createNote_withValidInput_shouldCreateSuccessfully() {
+        void shouldCreateSuccessfullyWhenGivenValidInput() {
             // Arrange
             int newId = 2;
             String newTitle = "Test New Note";
@@ -212,7 +213,7 @@ public class NoteServiceTest {
     @DisplayName("updateNote(): NoteResponse")
     class UpdateNoteTest {
         @Test
-        void updateNote_whenNoteExists_shouldUpdateSuccessfully() {
+        void shouldUpdateSuccessfullyWhenNoteExists() {
             // Arrange
             int noteId = existingNote.getId();
             int userId = existingUser.getId();
@@ -243,7 +244,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void updateNote_whenNoteNotFound_shouldThrowException() {
+        void shouldThrowExceptionWhenNoteNotFound() {
             // Arrange
             int noteId = 999;
             int userId = existingUser.getId();
@@ -272,7 +273,7 @@ public class NoteServiceTest {
     @DisplayName("deleteNote(): void")
     class DeleteNoteTest {
         @Test
-        void deleteNote_whenNoteExists_shouldDeleteSuccessfully() {
+        void shouldDeleteSuccessfullyWhenNoteExists() {
             // Arrange
             int noteId = existingNote.getId();
             int userId = existingUser.getId();
@@ -289,7 +290,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void deleteNote_whenNoteNotFound_shouldThrowException() {
+        void shouldThrowExceptionWhenNoteNotFound() {
             // Arrange
             int noteId = 999;
             int userId = existingUser.getId();
@@ -313,7 +314,7 @@ public class NoteServiceTest {
     @DisplayName("getAllNotesByUserIdAndIds(): List<Document>")
     class GetAllNotesByUserIdAndIdsTest {
         @Test
-        void getAllNotesByUserIdAndIds_whenNotesExist_shouldReturnMatchingNotes() {
+        void shouldReturnMatchingNotesWhenNotesExist() {
             // Arrange
             int userId = existingUser.getId();
             List<Integer> noteIds = List.of(existingNote.getId(), anotherExistingNote.getId());
@@ -333,7 +334,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void getAllNotesByUserIdAndIds_whenNoMatches_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenNoMatches() {
             // Arrange
             int userId = existingUser.getId();
             List<Integer> noteIds = List.of(998, 999);
@@ -351,7 +352,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void getAllNotesByUserIdAndIds_withEmptyIdList_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenGivenEmptyIdList() {
             // Arrange
             int userId = existingUser.getId();
             List<Integer> emptyIds = Collections.emptyList();
@@ -369,7 +370,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void getAllNotesByUserIdAndIds_withSingleId_shouldReturnSingleNote() {
+        void shouldReturnSingleNoteWhenGivenSingleId() {
             // Arrange
             int userId = existingUser.getId();
             List<Integer> noteIds = List.of(existingNote.getId());
@@ -389,7 +390,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void getAllNotesByUserIdAndIds_withPartialMatches_shouldReturnOnlyMatchingNotes() {
+        void shouldReturnOnlyMatchingNotesWhenGivenPartialMatchedInputs() {
             // Arrange
             int userId = existingUser.getId();
             List<Integer> noteIds = List.of(existingNote.getId(), 999);  // Only ID 1 exists

@@ -2,6 +2,7 @@ package com.be08.smart_notes.integration.controller;
 
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
 import com.be08.smart_notes.helper.DocumentDataBuilder;
+import com.be08.smart_notes.helper.UserDataBuilder;
 import com.be08.smart_notes.model.Document;
 import com.be08.smart_notes.model.User;
 import com.be08.smart_notes.repository.DocumentRepository;
@@ -21,7 +22,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.KeyPair;
-import java.time.LocalDateTime;
 
 import static com.be08.smart_notes.helper.JwtBuilder.jwtWithUserId;
 import static org.hamcrest.Matchers.hasSize;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@DisplayNameGeneration(DisplayNameGenerator.Standard.class)
 @DisplayName("Note Controller Integration Test")
 public class NoteControllerIntegrationTest extends BaseIntegration {
     @Autowired
@@ -52,7 +52,7 @@ public class NoteControllerIntegrationTest extends BaseIntegration {
     @MockitoBean
     KeyPair signingKeyPair;
 
-    static final String BASE_URI = "/api/documents/notes";
+    final String BASE_URI = "/api/documents/notes";
     int TEST_USER_ID;
     int OTHER_USER_ID;
     Document existingNote;
@@ -63,14 +63,14 @@ public class NoteControllerIntegrationTest extends BaseIntegration {
         userRepository.deleteAll();
         documentRepository.deleteAll();
 
-        User testUser1 = userRepository.save(User.builder().name("Test User").email("example-user@gmail.com").password("123456").createdAt(LocalDateTime.now()).build());
-        User testUser2 = userRepository.save(User.builder().name("Test User").email("another-user@gmail.com").password("123456").createdAt(LocalDateTime.now()).build());
+        User testUser1 = userRepository.save(UserDataBuilder.createUser("example-user@gmail.com").build());
+        User testUser2 = userRepository.save(UserDataBuilder.createUser("another-user@gmail.com").build());
 
         TEST_USER_ID = testUser1.getId();
         OTHER_USER_ID = testUser2.getId();
 
-        existingNote = documentRepository.save(DocumentDataBuilder.createSampleNote(TEST_USER_ID).build());
-        anotherNote = documentRepository.save(DocumentDataBuilder.createSampleNote(OTHER_USER_ID).build());
+        existingNote = documentRepository.save(DocumentDataBuilder.createMockNote(TEST_USER_ID).build());
+        anotherNote = documentRepository.save(DocumentDataBuilder.createMockNote(OTHER_USER_ID).build());
     }
 
     @Nested

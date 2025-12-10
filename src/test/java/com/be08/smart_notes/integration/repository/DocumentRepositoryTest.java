@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@DisplayNameGeneration(DisplayNameGenerator.Standard.class)
 @DisplayName("Document Repository Test")
 public class DocumentRepositoryTest {
     @Autowired
@@ -33,10 +33,10 @@ public class DocumentRepositoryTest {
     void setUp() {
         documentRepository.deleteAll();
 
-        document1 = documentRepository.save(DocumentDataBuilder.createSampleNote(FIRST_USER_ID).build());
-        document2 = documentRepository.save(DocumentDataBuilder.createSampleNote(FIRST_USER_ID).build());
-        document3 = documentRepository.save(DocumentDataBuilder.createSampleNote(FIRST_USER_ID).build());
-        documentAnotherUser = documentRepository.save(DocumentDataBuilder.createSampleNote(SECOND_USER_ID).build());
+        document1 = documentRepository.save(DocumentDataBuilder.createMockNote(FIRST_USER_ID).build());
+        document2 = documentRepository.save(DocumentDataBuilder.createMockNote(FIRST_USER_ID).build());
+        document3 = documentRepository.save(DocumentDataBuilder.createMockNote(FIRST_USER_ID).build());
+        documentAnotherUser = documentRepository.save(DocumentDataBuilder.createMockNote(SECOND_USER_ID).build());
     }
 
     // --- findAllByUserId --- //
@@ -44,7 +44,7 @@ public class DocumentRepositoryTest {
     @DisplayName("findAllByUserId(): List<Document>")
     class FindAllByUserIdTest {
         @Test
-        void findAllByUserId_whenUserHasDocuments_shouldReturnAllDocuments() {
+        void shouldReturnAllDocumentsWhenUserHasDocuments() {
             // Act
             List<Document> result = documentRepository.findAllByUserId(FIRST_USER_ID);
 
@@ -55,7 +55,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserId_whenUserHasNoDocuments_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenUserHasNoDocuments() {
             // Arrange
             int nonExistentUserId = 999;
 
@@ -68,7 +68,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserId_shouldNotReturnOtherUsersDocuments() {
+        void shouldNotReturnOtherUsersDocuments() {
             // Act
             List<Document> result = documentRepository.findAllByUserId(FIRST_USER_ID);
 
@@ -83,7 +83,7 @@ public class DocumentRepositoryTest {
     @DisplayName("findByIdAndUserId(): Optional<Document>")
     class FindByIdAndUserIdTest {
         @Test
-        void findByIdAndUserId_whenDocumentExists_shouldReturnDocument() {
+        void shouldReturnDocumentWhenDocumentExists() {
             // Act
             Optional<Document> result = documentRepository.findByIdAndUserId(document1.getId(), FIRST_USER_ID);
 
@@ -94,7 +94,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findByIdAndUserId_whenDocumentNotExists_shouldReturnEmpty() {
+        void shouldReturnEmptyWhenDocumentNotExists() {
             // Arrange
             int nonExistentId = 999;
 
@@ -106,7 +106,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findByIdAndUserId_whenDocumentExistsButWrongUser_shouldReturnEmpty() {
+        void shouldReturnEmptyWhenDocumentExistsButWrongUser() {
             // Act
             Optional<Document> result = documentRepository.findByIdAndUserId(document1.getId(), SECOND_USER_ID);
 
@@ -115,7 +115,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findByIdAndUserId_whenUserNotExists_shouldReturnEmpty() {
+        void shouldReturnEmptyWhenUserNotExists() {
             // Arrange
             int nonExistentUserId = 999;
 
@@ -132,7 +132,7 @@ public class DocumentRepositoryTest {
     @DisplayName("findFirstByTitleAndUserId(): Optional<Document>")
     class FindFirstByTitleAndUserIdTest {
         @Test
-        void findFirstByTitleAndUserId_whenDocumentExists_shouldReturnDocument() {
+        void shouldReturnDocumentWhenDocumentExists() {
             // Arrange
             String existingTitle = document1.getTitle();
 
@@ -146,7 +146,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findFirstByTitleAndUserId_whenTitleNotExists_shouldReturnEmpty() {
+        void shouldReturnEmptyWhenTitleNotExists() {
             // Arrange
             String nonExistentTitle = "Non Existent Title";
 
@@ -158,14 +158,14 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findFirstByTitleAndUserId_whenMultipleUsersHaveSameTitle_shouldReturnOnlyRequestedUser() {
+        void shouldReturnOnlyRequestedUserWhenMultipleUsersHaveSameTitle() {
             // Arrange
             String sharedTitle = "Shared Title";
             Document doc1 = documentRepository.save(
-                    DocumentDataBuilder.createSampleNote(FIRST_USER_ID).title(sharedTitle).build()
+                    DocumentDataBuilder.createMockNote(FIRST_USER_ID).title(sharedTitle).build()
             );
             Document doc2 = documentRepository.save(
-                    DocumentDataBuilder.createSampleNote(SECOND_USER_ID).title(sharedTitle).build()
+                    DocumentDataBuilder.createMockNote(SECOND_USER_ID).title(sharedTitle).build()
             );
 
             // Act
@@ -183,7 +183,7 @@ public class DocumentRepositoryTest {
     @DisplayName("findAllByIdIn(): List<Document>")
     class FindAllByIdInTest {
         @Test
-        void findAllByIdIn_whenAllIdsExist_shouldReturnAllDocuments() {
+        void shouldReturnAllDocumentsWhenAllIdsExist() {
             // Arrange
             List<Integer> ids = Arrays.asList(document1.getId(), document2.getId());
 
@@ -198,7 +198,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByIdIn_whenSomeIdsNotExist_shouldReturnOnlyExistingDocuments() {
+        void shouldReturnOnlyExistingDocumentsWhenSomeIdsNotExist() {
             // Arrange
             List<Integer> ids = Arrays.asList(document1.getId(), 999, 998);
 
@@ -212,7 +212,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByIdIn_whenNoIdsExist_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenNoIdsExist() {
             // Arrange
             List<Integer> ids = Arrays.asList(999, 998, 997);
 
@@ -225,7 +225,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByIdIn_withEmptyIdList_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenGivenEmptyIdList() {
             // Arrange
             List<Integer> emptyIds = Collections.emptyList();
 
@@ -238,7 +238,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByIdIn_shouldReturnDocumentsFromMultipleUsers() {
+        void shouldReturnDocumentsFromMultipleUsers() {
             // Arrange
             List<Integer> ids = Arrays.asList(document1.getId(), documentAnotherUser.getId());
 
@@ -253,7 +253,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByIdIn_withSingleId_shouldReturnSingleDocument() {
+        void shouldReturnSingleDocumentWhenGivenSingleId() {
             // Arrange
             List<Integer> ids = Collections.singletonList(document1.getId());
 
@@ -272,7 +272,7 @@ public class DocumentRepositoryTest {
     @DisplayName("findAllByUserAndIdIn(): List<Document>")
     class FindAllByUserIdAndIdIn {
         @Test
-        void findAllByUserIdAndIdIn_whenAllIdsExistForUser_shouldReturnAllDocuments() {
+        void shouldReturnAllDocumentsWhenAllIdsExistForUser() {
             // Arrange
             List<Integer> ids = Arrays.asList(document1.getId(), document2.getId());
 
@@ -286,7 +286,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserIdAndIdIn_whenSomeIdsNotExistForUser_shouldReturnOnlyExisting() {
+        void shouldReturnOnlyExistingWhenSomeIdsNotExistForUser() {
             // Arrange
             List<Integer> ids = Arrays.asList(document1.getId(), 999);
 
@@ -300,7 +300,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserIdAndIdIn_whenNoIdsExistForUser_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenNoIdsExistForUser() {
             // Arrange
             List<Integer> ids = Arrays.asList(999, 998);
 
@@ -313,7 +313,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserIdAndIdIn_withEmptyIdList_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenGivenEmptyIdList() {
             // Arrange
             List<Integer> emptyIds = Collections.emptyList();
 
@@ -326,7 +326,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserIdAndIdIn_whenDocumentsBelongToAnotherUser_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenDocumentsBelongToAnotherUser() {
             // Arrange - trying to get user 1's documents with user 2's ID
             List<Integer> ids = Arrays.asList(document1.getId(), document2.getId());
 
@@ -339,7 +339,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserIdAndIdIn_withMixedUserDocuments_shouldReturnOnlyRequestedUserDocuments() {
+        void shouldReturnOnlyRequestedUserDocumentsWhenGivenMixedUserDocuments() {
             // Arrange - mixing documents from different users
             List<Integer> ids = Arrays.asList(document1.getId(), documentAnotherUser.getId());
 
@@ -354,7 +354,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserIdAndIdIn_withSingleId_shouldReturnSingleDocument() {
+        void shouldReturnSingleDocumentWhenGivenSingleId() {
             // Arrange
             List<Integer> ids = Collections.singletonList(document1.getId());
 
@@ -368,7 +368,7 @@ public class DocumentRepositoryTest {
         }
 
         @Test
-        void findAllByUserIdAndIdIn_whenUserNotExists_shouldReturnEmptyList() {
+        void shouldReturnEmptyListWhenUserNotExists() {
             // Arrange
             int nonExistentUserId = 999;
             List<Integer> ids = Arrays.asList(document1.getId(), document2.getId());
