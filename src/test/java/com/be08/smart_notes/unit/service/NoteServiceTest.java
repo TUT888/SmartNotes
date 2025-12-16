@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayNameGeneration(DisplayNameGenerator.Standard.class)
 @DisplayName("Note Service Test")
+@Tag("note")
 public class NoteServiceTest {
     @Mock
     DocumentRepository documentRepository;

@@ -120,19 +120,34 @@ REDIS_PORT=<YOUR-PORT>
 
 ## How to test
 ### Test commands (Windows)
-
+Run all tests
 ```bash
-# Run specific test
+# Run all tests (unit + integration)
+./mvnw.cmd verify
+```
+
+Run specific type of test
+```bash
+# Run specific test file
 ./mvnw.cmd test -Dtest=NoteServiceTest
 
 # Run all unit tests (service tests with mocks)
-./mvnw.cmd test -Punit-tests
+./mvnw.cmd test -Punit-test
 
 # Run all integration tests (repository + controller with containers)
-./mvnw.cmd verify -Pintegration-tests
+./mvnw.cmd verify -Pintegration-test
+```
 
-# Run all tests (unit + integration)
-./mvnw.cmd verify
+Run specific test group with tag, use **boolean expression** for tags combination
+```bash
+# Run test with "note" tag
+./mvnw.cmd test -Dgroups="note"
+
+# Run tests with "note" or "document" tags
+./mvnw.cmd test -Dgroups="note | document"
+
+# Combine with test type: run all unit tests with "note" tag
+./mvnw.cmd test -Punit-test -Dgroups="note | document"
 ```
 
 ### Test Structure

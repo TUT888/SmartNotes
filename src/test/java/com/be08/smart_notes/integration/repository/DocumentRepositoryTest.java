@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @DisplayNameGeneration(DisplayNameGenerator.Standard.class)
 @DisplayName("Document Repository Test")
+@Tag("document")
+@Tag("note")
 public class DocumentRepositoryTest {
     @Autowired
     DocumentRepository documentRepository;

@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @DisplayNameGeneration(DisplayNameGenerator.Standard.class)
 @DisplayName("Note Controller Integration Test")
+@Tag("note")
 public class NoteControllerIntegrationTest extends BaseIntegration {
     @Autowired
     MockMvc mockMvc;
