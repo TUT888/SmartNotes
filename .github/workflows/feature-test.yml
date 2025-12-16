@@ -15,6 +15,9 @@ jobs:
     outputs:
       test_tag: ${{ steps.detect.outputs.test_tag }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Detect Changes
         id: detect
         env:
