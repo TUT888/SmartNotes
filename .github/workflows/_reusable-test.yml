@@ -4,7 +4,7 @@ on:
   # Workflow only runs when being called by others
   workflow_call:
     inputs:
-      level: # select between [unit, integration, all]
+      test-level: # select between [unit, integration, all]
         required: true
         type: string
       test-tag: # not required, but will automatically run all tests if left empty
@@ -38,7 +38,7 @@ jobs:
           fi
 
       - name: Run All Integration Tests
-        if: inputs.level != 'unit'
+        if: inputs.test-level != 'unit'
         run: |
           if [ -n "${{ inputs.test-tag }}" ]; then
             mvn verify -Pintegration-test -Dgroups="${{ inputs.test-tag }}"

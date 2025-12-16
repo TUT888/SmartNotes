@@ -1,11 +1,13 @@
 name: Feature Branch Test
 
 on:
-  # Workflow runs on any changes on the target feature branch
+  # Workflow runs whenever the source code changes on the target feature branch
   push:
     branches:
       - "feature/*note*"
       - "fix/*note*"
+    paths:
+      - "src/**"
 
 jobs:
   # Detect feature changes based on branch name
@@ -33,5 +35,5 @@ jobs:
     uses: ./.github/workflows/_reusable-test.yml
     secrets: inherit
     with:
-      level: 'unit'
+      test-level: 'unit'
       test-tag: ${{ needs.detect-changes.outputs.test_tag }}
