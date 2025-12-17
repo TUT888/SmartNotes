@@ -1,4 +1,6 @@
 # SmartNotes Backend
+> **Active development** happens on [develop](https://github.com/TUT888/SmartNotes/tree/develop) branch. 
+> The [main](https://github.com/TUT888/SmartNotes/tree/main) branch contains **stable release code**.
 
 Backend service for **SmartNotes**, a personal project that enables smart note-taking with AI integration to 
 help individuals have a better experience in note-taking, organizing, and revising knowledge.
@@ -8,8 +10,8 @@ help individuals have a better experience in note-taking, organizing, and revisi
 ## Table of Contents
 
 - [Project Info](#project-info)
-    - [Branching Strategy](#branching-strategy)
     - [Tech Stack](#tech-stack)
+    - [Branching Strategy with CI/CD](#branching-strategy-with-cicd)
 - [Supported Features](#supported-features)
     - [User Authentication](#1-user-authentication)
     - [AI-Powered Quiz Generation](#2-ai-powered-quiz-generation)
@@ -25,11 +27,6 @@ help individuals have a better experience in note-taking, organizing, and revisi
 - [Contributors](#contributors)
 
 ## Project Info
-### Branching Strategy
-- **main**: stable, production‑ready code
-- **develop**: integration branch with the latest completed features
-- **feature/***: branches for individual features or fixes, merged into `develop` via pull requests
-
 ### Tech Stack
 - **Java 17** + **Spring Boot 3.5.5** for backend services
 - **Maven** for build and dependency management
@@ -38,6 +35,14 @@ help individuals have a better experience in note-taking, organizing, and revisi
 - **Redis** for caching and session management
 - **Docker** for containerization
 - **Cloud and Deployment**: AWS (planned)
+- **CI/CD**: GitHub Actions
+
+### Branching Strategy with CI/CD
+> For detail documentation about CI/CD process, please refer to another [dedicated README](./.github/workflows/README.md)
+
+- **main**: stable, production‑ready code
+- **develop**: integration branch with the latest completed features
+- **feature/***: branches for individual features or fixes, merged into `develop` via pull requests
 
 [Back to top](#smartnotes-backend)
 
