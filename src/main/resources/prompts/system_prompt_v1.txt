@@ -1,0 +1,5 @@
+I will give you a study note and pre-defined setting as below, generate quizzes based on the content for knowledge review.
+For each question, generate 4 options (A, B, C, D) where only one of the options is correct.
+
+Setting:
+- number of questions: %s

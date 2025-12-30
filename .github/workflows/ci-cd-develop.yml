@@ -1,0 +1,30 @@
+name: CI/CD on Develop Branch
+
+on:
+  # Workflow runs whenever a new PR to develop is created
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  # Build and run test based on the branch detection result
+  build-and-test:
+    name: Build and Run All Tests
+    uses: ./.github/workflows/_reusable-test.yml
+    secrets: inherit
+    with:
+      test-level: 'all'
+
+  # Build and push image (placeholder only since the app is not completed yet)
+  build-images:
+    name: Build Images and Deploy to Docker Hub
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and push
+        run: |
+          echo "Building images..."
+          echo "Published to Docker Hub!"

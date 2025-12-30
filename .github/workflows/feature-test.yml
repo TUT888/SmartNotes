@@ -1,0 +1,39 @@
+name: Feature Branch Test
+
+on:
+  # Workflow runs whenever the source code changes on the target feature branch
+  push:
+    branches:
+      - "feature/**"
+      - "fix/**"
+    paths:
+      - "src/**"
+
+jobs:
+  # Detect feature changes based on branch name
+  detect-changes:
+    name: Detect Feature Changes
+    runs-on: ubuntu-latest
+    outputs:
+      test_tag: ${{ steps.detect.outputs.test_tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect Changes
+        id: detect
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          chmod +x .github/scripts/detect-branch-name.sh
+          ./.github/scripts/detect-branch-name.sh
+
+  # Build and run test based on the branch detection result
+  build-and-test:
+    name: Build and Run Tests
+    needs: detect-changes
+    uses: ./.github/workflows/_reusable-test.yml
+    secrets: inherit
+    with:
+      test-level: 'unit'
+      test-tag: ${{ needs.detect-changes.outputs.test_tag }}
