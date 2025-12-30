@@ -30,6 +30,9 @@
 		<java.version>17</java.version>
         <lombok.version>1.18.30</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
+        <testcontainers.version>1.16.2</testcontainers.version>
+        <skip.unit.tests>false</skip.unit.tests>
+        <skip.integration.tests>false</skip.integration.tests>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -144,6 +147,45 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
+        <!-- Use H2 Database for testing -->
+        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-test -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>6.5.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Test containers -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Handle JSON Schema parsing -->
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jsonSchema -->
         <dependency>
@@ -167,7 +209,19 @@
             <artifactId>jsonschema-module-jakarta-validation</artifactId>
             <version>4.31.1</version>
         </dependency>
-	</dependencies>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 	<build>
 		<plugins>
@@ -194,6 +248,79 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
+            <!-- Maven Surefire Plugin - For Running Unit Tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>me.fabriciorby</groupId>
+                        <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+                        <version>1.5.1</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <skipTests>${skip.unit.tests}</skipTests>
+                    <includes>
+                        <include>**/unit/**/*Test.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/integration/**</exclude>
+                    </excludes>
+
+                    <reportFormat>plain</reportFormat>
+                    <consoleOutputReporter>
+                        <disable>true</disable>
+                    </consoleOutputReporter>
+                    <statelessTestsetInfoReporter
+                            implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+                    </statelessTestsetInfoReporter>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Failsafe Plugin - For Running Integration Tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>me.fabriciorby</groupId>
+                        <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+                        <version>1.5.1</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <skipTests>${skip.integration.tests}</skipTests>
+                    <includes>
+                        <include>**/integration/**/*Test.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/unit/**</exclude>
+                    </excludes>
+
+                    <reportFormat>plain</reportFormat>
+                    <consoleOutputReporter>
+                        <disable>true</disable>
+                    </consoleOutputReporter>
+                    <statelessTestsetInfoReporter
+                            implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+                    </statelessTestsetInfoReporter>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -211,12 +338,31 @@
             <id>test</id>
             <properties>
                 <spring.profiles.active>test</spring.profiles.active>
+                <!-- Include all tests -->
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>false</skip.unit.tests>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
                 <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+
+        <!-- Separate test types -->
+        <profile>
+            <id>unit-test</id>
+            <properties>
+                <skip.unit.tests>false</skip.unit.tests>
+                <skip.integration.tests>true</skip.integration.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>integration-test</id>
+            <properties>
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
             </properties>
         </profile>
     </profiles>

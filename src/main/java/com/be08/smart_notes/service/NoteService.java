@@ -50,12 +50,10 @@ public class NoteService {
 				.title(newData.getTitle())
 				.content(newData.getContent())
 				.type(DocumentType.NOTE)
-				.createdAt(LocalDateTime.now())
-				.updatedAt(LocalDateTime.now())
 				.build();
 		
-		documentRepository.save(newNote);
-		return documentMapper.toNoteResponse(newNote);
+		Document savedNote = documentRepository.save(newNote);
+		return documentMapper.toNoteResponse(savedNote);
 	}
 
     public List<NoteResponse> getAllNotes() {
@@ -100,10 +98,7 @@ public class NoteService {
 
     // ------ Methods that returns entities ------ //
     public List<Document> getAllNotesByUserIdAndIds(int userId, List<Integer> noteIds) {
-        // Get current user id
-        int currentUserId = authorizationService.getCurrentUserId();
-
-        return documentRepository.findAllByUserIdAndIdIn(currentUserId, noteIds);
+        return documentRepository.findAllByUserIdAndIdIn(userId, noteIds);
     }
 
     public List<Document> getAllNotesByIds(List<Integer> noteIds) {

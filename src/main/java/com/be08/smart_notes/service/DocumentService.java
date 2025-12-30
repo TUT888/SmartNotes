@@ -67,7 +67,7 @@ public class DocumentService {
      * @throws AppException if system source document not found
      */
     public Document getSystemSourceDocument(int userId){
-        return documentRepository.findByTitleAndUserId(SYSTEM_SOURCE_TITLE, userId)
+        return documentRepository.findFirstByTitleAndUserId(SYSTEM_SOURCE_TITLE, userId)
                 .orElseThrow(() -> new AppException(ErrorCode.SYSTEM_SOURCE_DOCUMENT_NOT_FOUND));
     }
 }
