@@ -103,19 +103,6 @@ public class AttemptService {
     }
 
     /**
-     * Get list of attempts by quiz id
-     * @param quizId id of target quiz
-     * @return list of attempt response dto
-     */
-//    public List<AttemptResponse> getAllAttemptsByQuizId(int quizId) {
-//        int currentUserId = authorizationService.getCurrentUserId();
-//
-//        List<Attempt> attempts = attemptRepository.findByQuizIdAndQuiz_QuizSet_UserId(quizId, currentUserId);
-//
-//        return attemptMapper.toAttemptResponseList(attempts);
-//    }
-
-    /**
      * Update single attempt detail (user answer) of given attempt id and quiz id.
      * The method compare user answer and correct answer to set the correctness of the attempt detail.
      * @param quizId id of target quiz

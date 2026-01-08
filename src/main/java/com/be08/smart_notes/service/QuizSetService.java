@@ -111,17 +111,6 @@ public class QuizSetService {
     }
 
     /**
-     * Get a QuizSet with associated quizzes using given id
-     * @return response dto for all quiz set
-     */
-//    public List<QuizSetResponse> getAllQuizSets() {
-//        int currentUserId = authorizationService.getCurrentUserId();
-//
-//        List<QuizSet> quizSets = quizSetRepository.findAllByUserId(currentUserId);
-//        return quizSetMapper.toQuizSetResponseList(quizSets);
-//    }
-
-    /**
      * Get default QuizSet with associated quizzes
      * @return response dto for default quiz set
      */

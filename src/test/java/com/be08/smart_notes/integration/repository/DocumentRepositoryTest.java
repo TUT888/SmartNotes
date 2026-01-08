@@ -6,6 +6,9 @@ import com.be08.smart_notes.repository.DocumentRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -77,6 +80,91 @@ public class DocumentRepositoryTest {
             // Assert
             assertNotNull(result);
             assertFalse(result.stream().anyMatch(doc -> doc.getUserId() == SECOND_USER_ID));
+        }
+    }
+
+    @Nested
+    @DisplayName("findAllByUserId(): Page<Document>")
+    class FindAllByUserIdPaginatedTest {
+        @Test
+        void shouldReturnFirstPageWithCorrectSize() {
+            // Arrange
+            Pageable pageable = PageRequest.of(0, 2);
+
+            // Act
+            Page<Document> result = documentRepository.findAllByUserId(FIRST_USER_ID, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertEquals(2, result.getContent().size());
+            assertEquals(3, result.getTotalElements());
+            assertEquals(2, result.getTotalPages());
+            assertEquals(0, result.getNumber());
+            assertTrue(result.getContent().stream().allMatch(doc -> doc.getUserId() == FIRST_USER_ID));
+        }
+
+        @Test
+        void shouldReturnSecondPageWithRemainingDocuments() {
+            // Arrange
+            Pageable pageable = PageRequest.of(1, 2);
+
+            // Act
+            Page<Document> result = documentRepository.findAllByUserId(FIRST_USER_ID, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertEquals(1, result.getContent().size());
+            assertEquals(3, result.getTotalElements());
+            assertEquals(2, result.getTotalPages());
+            assertEquals(1, result.getNumber());
+            assertTrue(result.getContent().stream().allMatch(doc -> doc.getUserId() == FIRST_USER_ID));
+        }
+
+        @Test
+        void shouldReturnEmptyPageWhenUserHasNoDocuments() {
+            // Arrange
+            int nonExistentUserId = 999;
+            Pageable pageable = PageRequest.of(0, 10);
+
+            // Act
+            Page<Document> result = documentRepository.findAllByUserId(nonExistentUserId, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertTrue(result.getContent().isEmpty());
+            assertEquals(0, result.getTotalElements());
+            assertEquals(0, result.getTotalPages());
+            assertEquals(0, result.getNumber());
+        }
+
+        @Test
+        void shouldReturnEmptyPageWhenPageNumberExceedsTotalPages() {
+            // Arrange
+            Pageable pageable = PageRequest.of(10, 10);
+
+            // Act
+            Page<Document> result = documentRepository.findAllByUserId(FIRST_USER_ID, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertTrue(result.getContent().isEmpty());
+            assertEquals(3, result.getTotalElements());
+            assertEquals(1, result.getTotalPages());
+            assertEquals(10, result.getNumber());
+        }
+
+        @Test
+        void shouldNotReturnOtherUsersDocuments() {
+            // Arrange
+            Pageable pageable = PageRequest.of(0, 10);
+
+            // Act
+            Page<Document> result = documentRepository.findAllByUserId(FIRST_USER_ID, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertFalse(result.getContent().stream().anyMatch(doc -> doc.getUserId() == SECOND_USER_ID));
+            assertTrue(result.getContent().stream().allMatch(doc -> doc.getUserId() == FIRST_USER_ID));
         }
     }
 

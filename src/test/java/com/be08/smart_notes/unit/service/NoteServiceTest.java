@@ -1,5 +1,6 @@
 package com.be08.smart_notes.unit.service;
 
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.helper.DocumentDataBuilder;
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
 import com.be08.smart_notes.dto.response.NoteResponse;
@@ -20,6 +21,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -173,6 +178,100 @@ public class NoteServiceTest {
             verify(authorizationService).getCurrentUserId();
             verify(documentRepository).findAllByUserId(userId);
             verify(documentMapper).toNoteResponseList(noteList);
+        }
+    }
+
+    @Nested
+    @DisplayName("getAllNotes(): PageResponse<NoteResponse>")
+    class GetAllNotesPaginatedTest {
+        @Test
+        void shouldReturnEmptyPageResponseWhenNoNotesExist() {
+            // Arrange
+            int userId = existingUser.getId();
+            int pageNumber = 1;
+            int pageSize = 10;
+            Pageable pageable = PageRequest.of(0, pageSize);
+            Page<Document> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+            when(documentRepository.findAllByUserId(userId, pageable)).thenReturn(emptyPage);
+
+            // Act
+            PageResponse<NoteResponse> actualResponse = noteService.getAllNotes(pageNumber, pageSize);
+
+            // Assert
+            assertNotNull(actualResponse);
+            assertEquals(pageNumber, actualResponse.getCurrentPage());
+            assertEquals(pageSize, actualResponse.getPageSize());
+            assertEquals(0, actualResponse.getTotalPages());
+            assertEquals(0, actualResponse.getTotalElements());
+            assertTrue(actualResponse.getPageData().isEmpty());
+
+            verify(authorizationService).getCurrentUserId();
+            verify(documentRepository).findAllByUserId(userId, pageable);
+            verify(documentMapper, never()).toNoteResponse(any());
+        }
+
+        @Test
+        void shouldReturnFirstPageCorrectly() {
+            // Arrange
+            int userId = existingUser.getId();
+            int pageNumber = 1;
+            int pageSize = 10;
+            Pageable pageable = PageRequest.of(0, pageSize);
+            List<Document> noteList = List.of(existingNote, anotherExistingNote);
+            Page<Document> page = new PageImpl<>(noteList, pageable, 2);
+
+            when(documentRepository.findAllByUserId(userId, pageable)).thenReturn(page);
+            when(documentMapper.toNoteResponse(existingNote)).thenReturn(existingNoteResponse);
+            when(documentMapper.toNoteResponse(anotherExistingNote)).thenReturn(anotherExistingNoteResponse);
+
+            // Act
+            PageResponse<NoteResponse> actualResponse = noteService.getAllNotes(pageNumber, pageSize);
+
+            // Assert
+            assertNotNull(actualResponse);
+            assertEquals(pageNumber, actualResponse.getCurrentPage());
+            assertEquals(pageSize, actualResponse.getPageSize());
+            assertEquals(1, actualResponse.getTotalPages());
+            assertEquals(2, actualResponse.getTotalElements());
+            assertEquals(2, actualResponse.getPageData().size());
+            assertEquals(existingNoteResponse, actualResponse.getPageData().get(0));
+            assertEquals(anotherExistingNoteResponse, actualResponse.getPageData().get(1));
+
+            verify(authorizationService).getCurrentUserId();
+            verify(documentRepository).findAllByUserId(userId, pageable);
+            verify(documentMapper).toNoteResponse(existingNote);
+            verify(documentMapper).toNoteResponse(anotherExistingNote);
+        }
+
+        @Test
+        void shouldReturnSecondPageCorrectly() {
+            // Arrange
+            int userId = existingUser.getId();
+            int pageNumber = 2;
+            int pageSize = 5;
+            Pageable pageable = PageRequest.of(1, pageSize);
+            List<Document> noteList = List.of(existingNote);
+            Page<Document> page = new PageImpl<>(noteList, pageable, 6);
+
+            when(documentRepository.findAllByUserId(userId, pageable)).thenReturn(page);
+            when(documentMapper.toNoteResponse(existingNote)).thenReturn(existingNoteResponse);
+
+            // Act
+            PageResponse<NoteResponse> actualResponse = noteService.getAllNotes(pageNumber, pageSize);
+
+            // Assert
+            assertNotNull(actualResponse);
+            assertEquals(pageNumber, actualResponse.getCurrentPage());
+            assertEquals(pageSize, actualResponse.getPageSize());
+            assertEquals(2, actualResponse.getTotalPages());
+            assertEquals(6, actualResponse.getTotalElements());
+            assertEquals(1, actualResponse.getPageData().size());
+            assertEquals(existingNoteResponse, actualResponse.getPageData().get(0));
+
+            verify(authorizationService).getCurrentUserId();
+            verify(documentRepository).findAllByUserId(userId, pageable);
+            verify(documentMapper).toNoteResponse(existingNote);
         }
     }
 
