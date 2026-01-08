@@ -1,6 +1,7 @@
 package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.dto.response.NoteResponse;
+import com.be08.smart_notes.dto.response.PageResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.service.NoteService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/documents/notes")
@@ -43,11 +42,13 @@ public class NoteController {
 	}
 
     @GetMapping
-    public ResponseEntity<Object> getAllNotes() {
-        List<NoteResponse> noteList = noteService.getAllNotes();
+    public ResponseEntity<Object> getAllNotes(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "6") int size) {
+        PageResponse<NoteResponse> pageResponse = noteService.getAllNotes(page, size);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
-                .message("Notes fetched successfully")
-                .data(noteList)
+                .message("Note fetched successfully")
+                .data(pageResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

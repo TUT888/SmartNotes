@@ -2,16 +2,13 @@ package com.be08.smart_notes.controller;
 
 import java.util.List;
 
+import com.be08.smart_notes.dto.response.PageResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.model.Document;
@@ -25,8 +22,10 @@ public class DocumentController {
 	DocumentService documentService;
 
 	@GetMapping
-	public ResponseEntity<Object> getAllDocuments() {
-		List<Document> documentList = documentService.getAllDocuments();
+	public ResponseEntity<Object> getAllDocuments(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "6") int size) {
+        PageResponse<Document> documentList = documentService.getAllDocuments(page, size);
 		ApiResponse<Object> apiResponse = ApiResponse.builder()
 				.message("All document fetched successfully")
 				.data(documentList)

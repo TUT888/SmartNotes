@@ -1,6 +1,7 @@
 package com.be08.smart_notes.service;
 
 import com.be08.smart_notes.dto.request.AttemptDetailUpdateRequest;
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.dto.response.AttemptResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
@@ -16,6 +17,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -78,17 +82,38 @@ public class AttemptService {
     }
 
     /**
+     * Get list of attempts (by pages) based on given quiz id
+     * @param quizId id of target quiz
+     * @return list of attempt response dto
+     */
+    public PageResponse<AttemptResponse> getAllAttemptsByQuizId(int quizId, int pageNumber, int pageSize) {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<Attempt> page = attemptRepository.findByQuizIdAndQuiz_QuizSet_UserId(quizId, currentUserId, pageable);
+
+        List<AttemptResponse> attempts = page.getContent().stream().map(attemptMapper::toAttemptResponse).toList();
+
+        return PageResponse.<AttemptResponse>builder()
+                .currentPage(pageNumber)
+                .pageSize(pageSize)
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .pageData(attempts).build();
+    }
+
+    /**
      * Get list of attempts by quiz id
      * @param quizId id of target quiz
      * @return list of attempt response dto
      */
-    public List<AttemptResponse> getAllAttemptsByQuizId(int quizId) {
-        int currentUserId = authorizationService.getCurrentUserId();
-
-        List<Attempt> attempts = attemptRepository.findByQuizIdAndQuiz_QuizSet_UserId(quizId, currentUserId);
-
-        return attemptMapper.toAttemptResponseList(attempts);
-    }
+//    public List<AttemptResponse> getAllAttemptsByQuizId(int quizId) {
+//        int currentUserId = authorizationService.getCurrentUserId();
+//
+//        List<Attempt> attempts = attemptRepository.findByQuizIdAndQuiz_QuizSet_UserId(quizId, currentUserId);
+//
+//        return attemptMapper.toAttemptResponseList(attempts);
+//    }
 
     /**
      * Update single attempt detail (user answer) of given attempt id and quiz id.

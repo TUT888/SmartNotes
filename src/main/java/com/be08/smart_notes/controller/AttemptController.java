@@ -3,6 +3,7 @@ package com.be08.smart_notes.controller;
 import com.be08.smart_notes.dto.request.AttemptDetailUpdateRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.AttemptResponse;
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.dto.view.AttemptView;
 import com.be08.smart_notes.service.AttemptService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -14,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/quizzes")
@@ -37,8 +36,10 @@ public class AttemptController {
 
     @GetMapping("/{quizId}/attempts")
     @JsonView(AttemptView.Basic.class)
-    public ResponseEntity<Object> getAllAttemptsForQuiz(@PathVariable int quizId) {
-        List<AttemptResponse> attemptResponseList = attemptService.getAllAttemptsByQuizId(quizId);
+    public ResponseEntity<Object> getAllAttemptsForQuiz(@PathVariable int quizId,
+                                                        @RequestParam(required = false, defaultValue = "1") int page,
+                                                        @RequestParam(required = false, defaultValue = "6") int size) {
+        PageResponse<AttemptResponse> attemptResponseList = attemptService.getAllAttemptsByQuizId(quizId, page, size);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("All attempts for quiz fetched successfully")
                 .data(attemptResponseList)

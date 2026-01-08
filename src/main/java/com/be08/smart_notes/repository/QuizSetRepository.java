@@ -2,6 +2,8 @@ package com.be08.smart_notes.repository;
 
 import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.model.QuizSet;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,5 +14,6 @@ public interface QuizSetRepository extends JpaRepository<QuizSet,Integer> {
     Optional<QuizSet> findByIdAndUserId(int quizSetId, int userId);
 
     List<QuizSet> findAllByUserId(int userId);
+    Page<QuizSet> findAllByUserId(int userId, Pageable pageable);
     void deleteAllByUserId(int userId);
 }

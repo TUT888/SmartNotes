@@ -3,6 +3,7 @@ package com.be08.smart_notes.service;
 import com.be08.smart_notes.common.AppConstants;
 import com.be08.smart_notes.dto.QuizUpsertDTO;
 import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
 import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.exception.AppException;
@@ -16,6 +17,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,12 +94,32 @@ public class QuizSetService {
      * Get a QuizSet with associated quizzes using given id
      * @return response dto for all quiz set
      */
-    public List<QuizSetResponse> getAllQuizSets() {
+    public PageResponse<QuizSetResponse> getAllQuizSets(int pageNumber, int pageSize) {
         int currentUserId = authorizationService.getCurrentUserId();
 
-        List<QuizSet> quizSets = quizSetRepository.findAllByUserId(currentUserId);
-        return quizSetMapper.toQuizSetResponseList(quizSets);
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<QuizSet> page = quizSetRepository.findAllByUserId(currentUserId, pageable);
+
+        List<QuizSetResponse> quizSetResponses = page.stream().map(quizSetMapper::toQuizSetResponse).toList();
+
+        return PageResponse.<QuizSetResponse>builder()
+                .currentPage(pageNumber)
+                .pageSize(pageSize)
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .pageData(quizSetResponses).build();
     }
+
+    /**
+     * Get a QuizSet with associated quizzes using given id
+     * @return response dto for all quiz set
+     */
+//    public List<QuizSetResponse> getAllQuizSets() {
+//        int currentUserId = authorizationService.getCurrentUserId();
+//
+//        List<QuizSet> quizSets = quizSetRepository.findAllByUserId(currentUserId);
+//        return quizSetMapper.toQuizSetResponseList(quizSets);
+//    }
 
     /**
      * Get default QuizSet with associated quizzes

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.be08.smart_notes.dto.response.NoteResponse;
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
 import com.be08.smart_notes.mapper.DocumentMapper;
@@ -11,6 +12,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
@@ -55,6 +59,25 @@ public class NoteService {
 		Document savedNote = documentRepository.save(newNote);
 		return documentMapper.toNoteResponse(savedNote);
 	}
+
+    public PageResponse<NoteResponse> getAllNotes(int pageNumber, int pageSize) {
+        // Get current user id
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        // Get page data
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<Document> page = documentRepository.findAllByUserId(currentUserId, pageable);
+
+        // Get note
+        List<NoteResponse> noteResponses = page.getContent().stream().map(documentMapper::toNoteResponse).toList();
+
+        return PageResponse.<NoteResponse>builder()
+                .currentPage(pageNumber)
+                .pageSize(pageSize)
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .pageData(noteResponses).build();
+    }
 
     public List<NoteResponse> getAllNotes() {
         // Get current user id
