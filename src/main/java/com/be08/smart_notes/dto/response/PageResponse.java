@@ -14,11 +14,19 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageResponse<T> {
-    int pageSize;
-    int currentPage;
-    int totalPages;
-    long totalElements;
-
     @Builder.Default
     List<T> pageData = Collections.emptyList();
+
+    PageInfo pageInfo;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PageInfo {
+        int pageSize;
+        int currentPage;
+        int totalPages;
+        long totalElements;
+    }
 }

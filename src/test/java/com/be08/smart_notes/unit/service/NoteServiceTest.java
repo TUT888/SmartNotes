@@ -200,10 +200,10 @@ public class NoteServiceTest {
 
             // Assert
             assertNotNull(actualResponse);
-            assertEquals(pageNumber, actualResponse.getCurrentPage());
-            assertEquals(pageSize, actualResponse.getPageSize());
-            assertEquals(0, actualResponse.getTotalPages());
-            assertEquals(0, actualResponse.getTotalElements());
+            assertEquals(pageNumber, actualResponse.getPageInfo().getCurrentPage());
+            assertEquals(pageSize, actualResponse.getPageInfo().getPageSize());
+            assertEquals(0, actualResponse.getPageInfo().getTotalPages());
+            assertEquals(0, actualResponse.getPageInfo().getTotalElements());
             assertTrue(actualResponse.getPageData().isEmpty());
 
             verify(authorizationService).getCurrentUserId();
@@ -230,10 +230,10 @@ public class NoteServiceTest {
 
             // Assert
             assertNotNull(actualResponse);
-            assertEquals(pageNumber, actualResponse.getCurrentPage());
-            assertEquals(pageSize, actualResponse.getPageSize());
-            assertEquals(1, actualResponse.getTotalPages());
-            assertEquals(2, actualResponse.getTotalElements());
+            assertEquals(pageNumber, actualResponse.getPageInfo().getCurrentPage());
+            assertEquals(pageSize, actualResponse.getPageInfo().getPageSize());
+            assertEquals(1, actualResponse.getPageInfo().getTotalPages());
+            assertEquals(2, actualResponse.getPageInfo().getTotalElements());
             assertEquals(2, actualResponse.getPageData().size());
             assertEquals(existingNoteResponse, actualResponse.getPageData().get(0));
             assertEquals(anotherExistingNoteResponse, actualResponse.getPageData().get(1));
@@ -262,10 +262,10 @@ public class NoteServiceTest {
 
             // Assert
             assertNotNull(actualResponse);
-            assertEquals(pageNumber, actualResponse.getCurrentPage());
-            assertEquals(pageSize, actualResponse.getPageSize());
-            assertEquals(2, actualResponse.getTotalPages());
-            assertEquals(6, actualResponse.getTotalElements());
+            assertEquals(pageNumber, actualResponse.getPageInfo().getCurrentPage());
+            assertEquals(pageSize, actualResponse.getPageInfo().getPageSize());
+            assertEquals(2, actualResponse.getPageInfo().getTotalPages());
+            assertEquals(6, actualResponse.getPageInfo().getTotalElements());
             assertEquals(1, actualResponse.getPageData().size());
             assertEquals(existingNoteResponse, actualResponse.getPageData().get(0));
 

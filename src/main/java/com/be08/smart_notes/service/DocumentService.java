@@ -37,10 +37,11 @@ public class DocumentService {
         List<Document> documents = page.stream().toList();
 
         return PageResponse.<Document>builder()
-                .currentPage(pageNumber)
-                .pageSize(pageSize)
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
+                .pageInfo(PageResponse.PageInfo.builder()
+                        .currentPage(pageNumber)
+                        .pageSize(pageSize)
+                        .totalPages(page.getTotalPages())
+                        .totalElements(page.getTotalElements()).build())
                 .pageData(documents).build();
 	}
 

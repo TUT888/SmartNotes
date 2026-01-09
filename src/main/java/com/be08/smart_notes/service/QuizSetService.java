@@ -103,10 +103,11 @@ public class QuizSetService {
         List<QuizSetResponse> quizSetResponses = page.stream().map(quizSetMapper::toQuizSetResponse).toList();
 
         return PageResponse.<QuizSetResponse>builder()
-                .currentPage(pageNumber)
-                .pageSize(pageSize)
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
+                .pageInfo(PageResponse.PageInfo.builder()
+                        .currentPage(pageNumber)
+                        .pageSize(pageSize)
+                        .totalPages(page.getTotalPages())
+                        .totalElements(page.getTotalElements()).build())
                 .pageData(quizSetResponses).build();
     }
 

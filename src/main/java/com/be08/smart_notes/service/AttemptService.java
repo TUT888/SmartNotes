@@ -95,10 +95,11 @@ public class AttemptService {
         List<AttemptResponse> attempts = page.getContent().stream().map(attemptMapper::toAttemptResponse).toList();
 
         return PageResponse.<AttemptResponse>builder()
-                .currentPage(pageNumber)
-                .pageSize(pageSize)
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
+                .pageInfo(PageResponse.PageInfo.builder()
+                        .currentPage(pageNumber)
+                        .pageSize(pageSize)
+                        .totalPages(page.getTotalPages())
+                        .totalElements(page.getTotalElements()).build())
                 .pageData(attempts).build();
     }
 

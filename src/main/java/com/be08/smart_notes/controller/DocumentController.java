@@ -1,7 +1,5 @@
 package com.be08.smart_notes.controller;
 
-import java.util.List;
-
 import com.be08.smart_notes.dto.response.PageResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

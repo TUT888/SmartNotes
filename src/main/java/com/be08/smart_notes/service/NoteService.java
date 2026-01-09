@@ -72,10 +72,11 @@ public class NoteService {
         List<NoteResponse> noteResponses = page.getContent().stream().map(documentMapper::toNoteResponse).toList();
 
         return PageResponse.<NoteResponse>builder()
-                .currentPage(pageNumber)
-                .pageSize(pageSize)
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
+                .pageInfo(PageResponse.PageInfo.builder()
+                        .currentPage(pageNumber)
+                        .pageSize(pageSize)
+                        .totalPages(page.getTotalPages())
+                        .totalElements(page.getTotalElements()).build())
                 .pageData(noteResponses).build();
     }
 
