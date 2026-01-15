@@ -4,6 +4,7 @@ import com.be08.smart_notes.dto.QuizUpsertDTO;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.view.QuizView;
+import com.be08.smart_notes.dto.view.View;
 import com.be08.smart_notes.service.QuizService;
 import com.be08.smart_notes.validation.group.OnCreate;
 import com.be08.smart_notes.validation.group.OnUpdate;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/quizzes")
@@ -34,6 +37,17 @@ public class QuizController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
+    @GetMapping
+    @JsonView(QuizView.Basic.class)
+    public ResponseEntity<Object> getAllQuizzes() {
+        List<QuizResponse> quizResponseList = quizService.getAllQuizzes();
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Quizzes fetched successfully")
+                .data(quizResponseList)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @GetMapping("/{id}")
     @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> getQuiz(@PathVariable int id) {
@@ -45,7 +59,7 @@ public class QuizController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> updateQuiz(@PathVariable int id, @Validated(OnUpdate.class) @RequestBody QuizUpsertDTO request) {
         QuizResponse quizResponse = quizService.updateQuiz(id, request);
