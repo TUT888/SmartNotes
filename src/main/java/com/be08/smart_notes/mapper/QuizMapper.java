@@ -17,6 +17,7 @@ public interface QuizMapper {
     // Quiz Entity <--> QuizResponse dto
     @Mapping(target = "quizSetId", source = "entity.quizSet.id")
     QuizResponse toQuizResponse(Quiz entity);
+    List<QuizResponse> toQuizResponseList(List<Quiz> entity);
     Quiz toQuiz(QuizResponse dto);
 
     // Quiz Entity <--> QuizUpsertDTO
