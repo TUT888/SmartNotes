@@ -72,7 +72,7 @@ public class QuizSetController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> updateQuizSet(@PathVariable int id, @RequestBody QuizSetUpsertRequest request) {
         QuizSetResponse quizSetResponse = quizSetService.updateQuizSet(id, request);

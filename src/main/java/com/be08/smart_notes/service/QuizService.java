@@ -14,6 +14,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -60,6 +62,18 @@ public class QuizService {
         Quiz quiz = getQuizById(quizId, currentUserId);
 
         return quizMapper.toQuizResponse(quiz);
+    }
+
+    /**
+     * Get all quiz and its questions based on given id
+     * @return quiz response list dto
+     */
+    public List<QuizResponse> getAllQuizzes() {
+        int currentUserId = authorizationService.getCurrentUserId();
+
+        List<Quiz> quizzes = quizRepository.findAllByQuizSetUserId(currentUserId);
+
+        return quizMapper.toQuizResponseList(quizzes);
     }
 
     /**
