@@ -1,6 +1,8 @@
 package com.be08.smart_notes.service;
 
 import com.be08.smart_notes.dto.QuizUpsertDTO;
+import com.be08.smart_notes.dto.response.NoteResponse;
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
@@ -12,6 +14,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,12 +73,21 @@ public class QuizService {
      * Get all quiz and its questions based on given id
      * @return quiz response list dto
      */
-    public List<QuizResponse> getAllQuizzes() {
+    public PageResponse<QuizResponse> getAllQuizzes(int pageNumber, int pageSize) {
         int currentUserId = authorizationService.getCurrentUserId();
 
-        List<Quiz> quizzes = quizRepository.findAllByQuizSetUserId(currentUserId);
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<Quiz> page = quizRepository.findAllByQuizSetUserId(currentUserId, pageable);
 
-        return quizMapper.toQuizResponseList(quizzes);
+        List<QuizResponse> quizzesResponse = page.getContent().stream().map(quizMapper::toQuizResponse).toList();
+
+        return PageResponse.<QuizResponse>builder()
+                .pageInfo(PageResponse.PageInfo.builder()
+                        .currentPage(pageNumber)
+                        .pageSize(pageSize)
+                        .totalPages(page.getTotalPages())
+                        .totalElements(page.getTotalElements()).build())
+                .pageData(quizzesResponse).build();
     }
 
     /**

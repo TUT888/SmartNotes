@@ -1,5 +1,6 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.common.DefaultConstants;
 import com.be08.smart_notes.dto.response.PageResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,8 @@ public class DocumentController {
 
 	@GetMapping
 	public ResponseEntity<Object> getAllDocuments(
-            @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "6") int size) {
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size) {
         PageResponse<Document> documentList = documentService.getAllDocuments(page, size);
 		ApiResponse<Object> apiResponse = ApiResponse.builder()
 				.message("All document fetched successfully")

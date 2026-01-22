@@ -1,5 +1,6 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.common.DefaultConstants;
 import com.be08.smart_notes.dto.request.AttemptDetailUpdateRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.AttemptResponse;
@@ -37,8 +38,8 @@ public class AttemptController {
     @GetMapping("/{quizId}/attempts")
     @JsonView(AttemptView.Basic.class)
     public ResponseEntity<Object> getAllAttemptsForQuiz(@PathVariable int quizId,
-                                                        @RequestParam(required = false, defaultValue = "1") int page,
-                                                        @RequestParam(required = false, defaultValue = "6") int size) {
+                                                        @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
+                                                        @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size) {
         PageResponse<AttemptResponse> attemptResponseList = attemptService.getAllAttemptsByQuizId(quizId, page, size);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("All attempts for quiz fetched successfully")

@@ -1,5 +1,7 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.common.DefaultConstants;
+import com.be08.smart_notes.dto.filter.NoteFilterDTO;
 import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.dto.response.PageResponse;
 import jakarta.validation.Valid;
@@ -43,9 +45,12 @@ public class NoteController {
 
     @GetMapping
     public ResponseEntity<Object> getAllNotes(
-            @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "6") int size) {
-        PageResponse<NoteResponse> pageResponse = noteService.getAllNotes(page, size);
+            @ModelAttribute NoteFilterDTO filterDTO,
+            @RequestParam(required = false, defaultValue = DefaultConstants.SORT_BY) String sortBy,
+            @RequestParam(required = false, defaultValue = DefaultConstants.SORT_ORDER) String sortOrder,
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size) {
+        PageResponse<NoteResponse> pageResponse = noteService.getAllNotes(filterDTO, sortBy, sortOrder, page, size);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Note fetched successfully")
                 .data(pageResponse)

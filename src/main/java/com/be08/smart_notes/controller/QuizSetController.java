@@ -1,5 +1,6 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.common.DefaultConstants;
 import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.PageResponse;
@@ -39,8 +40,8 @@ public class QuizSetController {
     @GetMapping
     @JsonView(QuizView.Basic.class)
     public ResponseEntity<Object> getAllQuizSets(
-            @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "6") int size
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size
     ) {
         PageResponse<QuizSetResponse> quizSetResponseList = quizSetService.getAllQuizSets(page, size);
         ApiResponse<Object> apiResponse = ApiResponse.builder()

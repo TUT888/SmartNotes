@@ -1,7 +1,9 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.common.DefaultConstants;
 import com.be08.smart_notes.dto.QuizUpsertDTO;
 import com.be08.smart_notes.dto.response.ApiResponse;
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.view.QuizView;
 import com.be08.smart_notes.dto.view.View;
@@ -39,8 +41,11 @@ public class QuizController {
 
     @GetMapping
     @JsonView(QuizView.Basic.class)
-    public ResponseEntity<Object> getAllQuizzes() {
-        List<QuizResponse> quizResponseList = quizService.getAllQuizzes();
+    public ResponseEntity<Object> getAllQuizzes(
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size
+    ) {
+        PageResponse<QuizResponse> quizResponseList = quizService.getAllQuizzes(page, size);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quizzes fetched successfully")
                 .data(quizResponseList)
