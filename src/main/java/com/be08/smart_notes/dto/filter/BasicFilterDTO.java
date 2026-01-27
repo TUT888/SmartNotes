@@ -7,16 +7,15 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NoteFilterDTO {
+public class BasicFilterDTO {
     String keyword;
     LocalDate createdFrom;
-    LocalDateTime createdTo;
-    LocalDateTime updatedFrom;
-    LocalDateTime updatedTo;
+    LocalDate createdTo;
+    LocalDate updatedFrom;
+    LocalDate updatedTo;
 }

@@ -1,6 +1,7 @@
 package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.common.DefaultConstants;
+import com.be08.smart_notes.dto.filter.BasicFilterDTO;
 import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
 import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.PageResponse;
@@ -16,8 +17,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/quiz-sets")
@@ -40,10 +39,12 @@ public class QuizSetController {
     @GetMapping
     @JsonView(QuizView.Basic.class)
     public ResponseEntity<Object> getAllQuizSets(
+            @ModelAttribute BasicFilterDTO filterDTO,
+            @RequestParam(required = false, defaultValue = DefaultConstants.SORT_BY) String sortBy,
+            @RequestParam(required = false, defaultValue = DefaultConstants.SORT_ORDER) String sortOrder,
             @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
-            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size
-    ) {
-        PageResponse<QuizSetResponse> quizSetResponseList = quizSetService.getAllQuizSets(page, size);
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size) {
+        PageResponse<QuizSetResponse> quizSetResponseList = quizSetService.getAllQuizSets(filterDTO, sortBy, sortOrder, page, size);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz set fetched successfully")
                 .data(quizSetResponseList)
@@ -65,7 +66,18 @@ public class QuizSetController {
     @GetMapping("/{id}")
     @JsonView(QuizView.Detail.class)
     public ResponseEntity<Object> getQuizSet(@PathVariable int id) {
-        QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id);
+        QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id, false);
+        ApiResponse<Object> apiResponse = ApiResponse.builder()
+                .message("Quiz set fetched successfully")
+                .data(quizSetResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/{id}/quizzes")
+    @JsonView(QuizView.Detail.class)
+    public ResponseEntity<Object> getQuizSetWithQuizzes(@PathVariable int id) {
+        QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id, true);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quiz set fetched successfully")
                 .data(quizSetResponse)

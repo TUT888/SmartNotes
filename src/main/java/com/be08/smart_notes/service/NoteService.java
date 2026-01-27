@@ -3,7 +3,7 @@ package com.be08.smart_notes.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.be08.smart_notes.dto.filter.NoteFilterDTO;
+import com.be08.smart_notes.dto.filter.BasicFilterDTO;
 import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.exception.AppException;
@@ -64,7 +64,7 @@ public class NoteService {
 		return documentMapper.toNoteResponse(savedNote);
 	}
 
-    public PageResponse<NoteResponse> getAllNotes(NoteFilterDTO filterDTO, String sortBy, String sortOrder, int pageNumber, int pageSize) {
+    public PageResponse<NoteResponse> getAllNotes(BasicFilterDTO filterDTO, String sortBy, String sortOrder, int pageNumber, int pageSize) {
         // Get current user id
         int currentUserId = authorizationService.getCurrentUserId();
 

@@ -2,6 +2,7 @@ package com.be08.smart_notes.service;
 
 import com.be08.smart_notes.common.AppConstants;
 import com.be08.smart_notes.dto.QuizUpsertDTO;
+import com.be08.smart_notes.dto.filter.BasicFilterDTO;
 import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
 import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
@@ -13,6 +14,7 @@ import com.be08.smart_notes.mapper.QuizSetMapper;
 import com.be08.smart_notes.model.Quiz;
 import com.be08.smart_notes.model.QuizSet;
 import com.be08.smart_notes.repository.QuizSetRepository;
+import com.be08.smart_notes.specification.QuizSetSpecificationBuilder;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,11 +79,12 @@ public class QuizSetService {
     }
 
     /**
-     * Get a QuizSet with associated quizzes using given id
+     * Get a QuizSet using given id
      * @param quizSetId id of target quiz set
+     * @param includeQuizzes choices to include or not include quizzes
      * @return response dto for quiz set
      */
-    public QuizSetResponse getQuizSetById(int quizSetId) {
+    public QuizSetResponse getQuizSetById(int quizSetId, boolean includeQuizzes) {
         int currentUserId = authorizationService.getCurrentUserId();
 
         QuizSet quiz = quizSetRepository.findByIdAndUserId(quizSetId, currentUserId).orElseThrow(() -> {
@@ -87,19 +92,23 @@ public class QuizSetService {
             return new AppException(ErrorCode.QUIZ_SET_NOT_FOUND);
         });
 
-        return quizSetMapper.toQuizSetResponse(quiz);
+        return includeQuizzes ? quizSetMapper.toQuizSetResponseWithQuizzes(quiz) : quizSetMapper.toQuizSetResponse(quiz);
     }
 
     /**
      * Get a QuizSet with associated quizzes using given id
      * @return response dto for all quiz set
      */
-    public PageResponse<QuizSetResponse> getAllQuizSets(int pageNumber, int pageSize) {
+    public PageResponse<QuizSetResponse> getAllQuizSets(BasicFilterDTO filterDTO, String sortBy, String sortOrder, int pageNumber, int pageSize) {
         int currentUserId = authorizationService.getCurrentUserId();
 
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-        Page<QuizSet> page = quizSetRepository.findAllByUserId(currentUserId, pageable);
+        // Filtering and Sorting
+        Specification<QuizSet> spec = QuizSetSpecificationBuilder.getSpecification(currentUserId, filterDTO);
+        Sort sortOption = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortOption);
 
+        // Get quiz set
+        Page<QuizSet> page = quizSetRepository.findAll(spec, pageable);
         List<QuizSetResponse> quizSetResponses = page.stream().map(quizSetMapper::toQuizSetResponse).toList();
 
         return PageResponse.<QuizSetResponse>builder()

@@ -1,7 +1,7 @@
 package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.common.DefaultConstants;
-import com.be08.smart_notes.dto.filter.NoteFilterDTO;
+import com.be08.smart_notes.dto.filter.BasicFilterDTO;
 import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.dto.response.PageResponse;
 import jakarta.validation.Valid;
@@ -45,7 +45,7 @@ public class NoteController {
 
     @GetMapping
     public ResponseEntity<Object> getAllNotes(
-            @ModelAttribute NoteFilterDTO filterDTO,
+            @ModelAttribute BasicFilterDTO filterDTO,
             @RequestParam(required = false, defaultValue = DefaultConstants.SORT_BY) String sortBy,
             @RequestParam(required = false, defaultValue = DefaultConstants.SORT_ORDER) String sortOrder,
             @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
