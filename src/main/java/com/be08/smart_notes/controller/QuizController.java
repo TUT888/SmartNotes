@@ -1,10 +1,12 @@
 package com.be08.smart_notes.controller;
 
+import com.be08.smart_notes.common.DefaultConstants;
 import com.be08.smart_notes.dto.QuizUpsertDTO;
+import com.be08.smart_notes.dto.filter.QuizFilterDTO;
 import com.be08.smart_notes.dto.response.ApiResponse;
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.dto.response.QuizResponse;
 import com.be08.smart_notes.dto.view.QuizView;
-import com.be08.smart_notes.dto.view.View;
 import com.be08.smart_notes.service.QuizService;
 import com.be08.smart_notes.validation.group.OnCreate;
 import com.be08.smart_notes.validation.group.OnUpdate;
@@ -39,8 +41,14 @@ public class QuizController {
 
     @GetMapping
     @JsonView(QuizView.Basic.class)
-    public ResponseEntity<Object> getAllQuizzes() {
-        List<QuizResponse> quizResponseList = quizService.getAllQuizzes();
+    public ResponseEntity<Object> getAllQuizzes(
+            @ModelAttribute QuizFilterDTO filterDTO,
+            @RequestParam(required = false, defaultValue = DefaultConstants.SORT_BY) String sortBy,
+            @RequestParam(required = false, defaultValue = DefaultConstants.SORT_ORDER) String sortOrder,
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
+            @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size
+    ) {
+        PageResponse<QuizResponse> quizResponseList = quizService.getAllQuizzes(filterDTO, sortBy, sortOrder, page, size);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
                 .message("Quizzes fetched successfully")
                 .data(quizResponseList)

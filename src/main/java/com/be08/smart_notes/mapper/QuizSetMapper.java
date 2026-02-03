@@ -3,10 +3,7 @@ package com.be08.smart_notes.mapper;
 import com.be08.smart_notes.dto.request.QuizSetUpsertRequest;
 import com.be08.smart_notes.dto.response.QuizSetResponse;
 import com.be08.smart_notes.model.QuizSet;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -18,6 +15,14 @@ public interface QuizSetMapper {
     void updateQuizSet(@MappingTarget QuizSet quizSet, QuizSetUpsertRequest request);
 
     // QuizSet entity <--> QuizSetResponse dto
+    @Named("basic")
+    @Mapping(target = "quizzes", ignore = true)
     QuizSetResponse toQuizSetResponse(QuizSet quizSet);
+
+    @IterableMapping(qualifiedByName = "basic")
     List<QuizSetResponse> toQuizSetResponseList(List<QuizSet> quizSet);
+
+    // QuizSet with Quizzes
+    @Named("detail")
+    QuizSetResponse toQuizSetResponseWithQuizzes(QuizSet quizSet);
 }

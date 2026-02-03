@@ -173,7 +173,7 @@ public class NoteControllerIntegrationTest extends BaseIntegration {
                                 .with(jwtWithUserId(TEST_USER_ID))
                     )
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data", hasSize(1)));
+                    .andExpect(jsonPath("$.data.pageData", hasSize(1)));
         }
 
         @Test
@@ -187,7 +187,7 @@ public class NoteControllerIntegrationTest extends BaseIntegration {
                                 .with(jwtWithUserId(TEST_USER_ID))
                     )
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data", hasSize(0)));
+                    .andExpect(jsonPath("$.data.pageData", hasSize(0)));
         }
 
         @Test

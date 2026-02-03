@@ -2,12 +2,16 @@ package com.be08.smart_notes.service;
 
 import java.util.List;
 
+import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.exception.AppException;
 import com.be08.smart_notes.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.be08.smart_notes.model.Document;
@@ -23,11 +27,22 @@ public class DocumentService {
 
     private static final String SYSTEM_SOURCE_TITLE = "__SYSTEM_UNFILED_SOURCE__";
 
-	public List<Document> getAllDocuments() {
+	public PageResponse<Document> getAllDocuments(int pageNumber, int pageSize) {
         // Get current user
         int currentUserId = authorizationService.getCurrentUserId();
 
-        return documentRepository.findAllByUserId(currentUserId);
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<Document> page = documentRepository.findAllByUserId(currentUserId, pageable);
+
+        List<Document> documents = page.stream().toList();
+
+        return PageResponse.<Document>builder()
+                .pageInfo(PageResponse.PageInfo.builder()
+                        .currentPage(pageNumber)
+                        .pageSize(pageSize)
+                        .totalPages(page.getTotalPages())
+                        .totalElements(page.getTotalElements()).build())
+                .pageData(documents).build();
 	}
 
 	public void deleteDocument(int id) {
