@@ -5,7 +5,7 @@
 Backend service for **SmartNotes**, a personal project that enables smart note-taking with AI integration to 
 help individuals have a better experience in note-taking, organizing, and revising knowledge.
 
-**SmartNotes Frontend Repository:** [https://github.com/pvdev1805/SmartNotes](https://github.com/pvdev1805/SmartNotes)
+**SmartNotes Frontend Repository:** [https://github.com/TUT888/SmartNotes-FE](https://github.com/TUT888/SmartNotes-FE)
 
 ## Table of Contents
 
@@ -20,6 +20,7 @@ help individuals have a better experience in note-taking, organizing, and revisi
     - [Prerequisites](#prerequisites)
     - [HuggingFace API](#huggingface-api)
     - [Environment Variables](#environment-variables)
+- [How to Run](#how-to-run)
 - [How to Test](#how-to-test)
     - [Test Commands](#test-commands-windows)
     - [Test Structure](#test-structure)
@@ -123,6 +124,16 @@ REDIS_PORT=<YOUR-PORT>
 
 [Back to top](#smartnotes-backend)
 
+## How to run
+1. Start Redis server with Docker Desktop:
+    ```bash
+   docker run --name smart-notes-redis -p 6379:6379 redis:latest
+   ```
+2. Run the application (Windows)
+    ```bash
+   ./mvnw.cmd spring-boot:run
+   ```
+
 ## How to test
 ### Test commands (Windows)
 Run all tests
@@ -177,11 +188,11 @@ src/test/java/
 ## Contributors
 **Project Maintainers:** This project (both frontend and backend) is developed and maintained by:
 
-- **Alice Tat** ([@TUT888](https://github.com/TUT888))
-- **Phu Vo** ([@pvdev1805](https://github.com/pvdev1805))
+- Owner: **Alice Tat** ([@TUT888](https://github.com/TUT888))
+- Contributor: **Phu Vo** ([@pvdev1805](https://github.com/pvdev1805))
 
 **Project Repositories:**
 - Backend: [SmartNotes Backend](https://github.com/TUT888/SmartNotes)
-- Frontend: [SmartNotes Frontend](https://github.com/pvdev1805/SmartNotes)
+- Frontend: [SmartNotes Frontend](https://github.com/TUT888/SmartNotes-FE)
 
 [Back to top](#smartnotes-backend)

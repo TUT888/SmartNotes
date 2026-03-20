@@ -6,10 +6,14 @@ import com.be08.smart_notes.dto.response.FlashcardResponse;
 import com.be08.smart_notes.dto.response.FlashcardSetResponse;
 import com.be08.smart_notes.service.FlashcardService;
 import com.be08.smart_notes.service.FlashcardSetService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +22,8 @@ import java.util.List;
 @RequestMapping("/api/flashcard-sets")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Flashcard Sets", description = "Operation for flashcard sets")
+@SecurityRequirement(name = "Bearer Authentication")
 public class FlashcardSetController {
     FlashcardSetService flashcardSetService;
     FlashcardService flashcardService;
@@ -28,6 +34,8 @@ public class FlashcardSetController {
      * @return ApiResponse containing FlashcardSetResponse
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create flashcard set")
     public ApiResponse<FlashcardSetResponse> createFlashcardSet(@RequestBody @Valid FlashcardSetCreationRequest request){
         FlashcardSetResponse response = flashcardSetService.createFlashcardSet(request);
 
@@ -42,6 +50,7 @@ public class FlashcardSetController {
      * @return ApiResponse containing list of FlashcardSetResponse
      */
     @GetMapping
+    @Operation(summary = "Get all flashcard sets")
     public ApiResponse<List<FlashcardSetResponse>> getAllFlashcardSets(){
         List<FlashcardSetResponse> response = flashcardSetService.getAllFlashcardSets();
 
@@ -57,6 +66,7 @@ public class FlashcardSetController {
      * @return ApiResponse containing FlashcardSetResponse
      */
     @GetMapping("/{flashcardSetId}")
+    @Operation(summary = "Get flashcard set")
     public ApiResponse<FlashcardSetResponse> getFlashcardSet(@PathVariable int flashcardSetId){
         FlashcardSetResponse response = flashcardSetService.getFlashcardSet(flashcardSetId);
 
@@ -72,6 +82,7 @@ public class FlashcardSetController {
      * @return ApiResponse containing list of FlashcardResponse
      */
     @GetMapping("/{flashcardSetId}/flashcards")
+    @Operation(summary = "Get all flashcards from current set")
     public ApiResponse<List<FlashcardResponse>> getFlashcardsBySet(@PathVariable int flashcardSetId){
         List<FlashcardResponse> response = flashcardService.getFlashcardsBySetId(flashcardSetId);
 
@@ -88,6 +99,7 @@ public class FlashcardSetController {
      * @return ApiResponse containing updated FlashcardSetResponse
      */
     @PutMapping("/{flashcardSetId}")
+    @Operation(summary = "Update flashcard set")
     public ApiResponse<FlashcardSetResponse> updateFlashcardSet(@PathVariable int flashcardSetId, @RequestBody @Valid FlashcardSetCreationRequest request){
         FlashcardSetResponse response = flashcardSetService.updateFlashcardSet(flashcardSetId, request);
 
@@ -103,6 +115,7 @@ public class FlashcardSetController {
      * @return ApiResponse with deletion confirmation
      */
     @DeleteMapping("/{flashcardSetId}")
+    @Operation(summary = "Delete flashcard set")
     public ApiResponse<Void> deleteFlashcardSet(@PathVariable int flashcardSetId){
         flashcardSetService.deleteFlashcardSet(flashcardSetId);
 
