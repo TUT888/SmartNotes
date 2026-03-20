@@ -11,6 +11,8 @@ import com.be08.smart_notes.service.QuizService;
 import com.be08.smart_notes.validation.group.OnCreate;
 import com.be08.smart_notes.validation.group.OnUpdate;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,17 +21,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/quizzes")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Quizzes", description = "All operations for quizzes")
 public class QuizController {
     QuizService quizService;
 
     @PostMapping
     @JsonView(QuizView.Detail.class)
+    @Operation(summary = "Create new quiz with associated questions")
     public ResponseEntity<Object> createQuiz(@RequestBody @Validated(OnCreate.class) QuizUpsertDTO request) {
         QuizResponse quizResponse = quizService.createQuiz(request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -41,6 +43,7 @@ public class QuizController {
 
     @GetMapping
     @JsonView(QuizView.Basic.class)
+    @Operation(summary = "Get all quizzes by page")
     public ResponseEntity<Object> getAllQuizzes(
             @ModelAttribute QuizFilterDTO filterDTO,
             @RequestParam(required = false, defaultValue = DefaultConstants.SORT_BY) String sortBy,
@@ -58,6 +61,7 @@ public class QuizController {
 
     @GetMapping("/{id}")
     @JsonView(QuizView.Detail.class)
+    @Operation(summary = "Get quiz and all of its questions")
     public ResponseEntity<Object> getQuiz(@PathVariable int id) {
         QuizResponse quizResponse = quizService.getQuizById(id);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -68,7 +72,8 @@ public class QuizController {
     }
 
     @PatchMapping("/{id}")
-    @JsonView(QuizView.Detail.class)
+    @JsonView(QuizView.Basic.class)
+    @Operation(summary = "Update quiz information")
     public ResponseEntity<Object> updateQuiz(@PathVariable int id, @Validated(OnUpdate.class) @RequestBody QuizUpsertDTO request) {
         QuizResponse quizResponse = quizService.updateQuiz(id, request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -79,6 +84,7 @@ public class QuizController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete quiz")
     public ResponseEntity<Object> deleteQuiz(@PathVariable int id) {
         quizService.deleteQuizById(id);
         ApiResponse<Object> apiResponse = ApiResponse.builder()

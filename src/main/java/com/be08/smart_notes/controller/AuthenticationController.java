@@ -8,6 +8,8 @@ import com.be08.smart_notes.dto.response.AuthenticationResponse;
 import com.be08.smart_notes.dto.response.UserResponse;
 import com.be08.smart_notes.service.AuthenticationService;
 import com.be08.smart_notes.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Authentication", description = "Operation for authentication features")
 public class AuthenticationController {
     AuthenticationService authenticationService;
     UserService userService;
@@ -32,6 +35,7 @@ public class AuthenticationController {
      * @return ApiResponse containing UserResponse
      */
     @PostMapping("/register")
+    @Operation(summary = "Register new user")
     ApiResponse<UserResponse> register(@RequestBody @Valid UserCreationRequest request){
         UserResponse response = userService.createUser(request);
         return ApiResponse.<UserResponse>builder()
@@ -46,6 +50,7 @@ public class AuthenticationController {
      * @return ApiResponse containing AuthenticationResponse
      */
     @PostMapping("/login")
+    @Operation(summary = "Login with email and password")
     ApiResponse<AuthenticationResponse> login(@RequestBody @Valid LoginRequest request){
         AuthenticationResponse response = authenticationService.login(request);
         return ApiResponse.<AuthenticationResponse>builder()
@@ -60,6 +65,7 @@ public class AuthenticationController {
      * @return ApiResponse containing new AuthenticationResponse
      */
     @PostMapping("/refresh")
+    @Operation(summary = "Refresh JWT Token")
     ApiResponse<AuthenticationResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest request){
         AuthenticationResponse response = authenticationService.refreshToken(request);
         return ApiResponse.<AuthenticationResponse>builder()
@@ -75,6 +81,7 @@ public class AuthenticationController {
      * @return ApiResponse with logout confirmation
      */
     @PostMapping("/logout")
+    @Operation(summary = "Logout and blacklist current token")
     ApiResponse<Void> logout(Authentication authentication){
         authenticationService.logout(authentication);
 

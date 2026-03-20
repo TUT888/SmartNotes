@@ -10,6 +10,8 @@ import com.be08.smart_notes.dto.view.QuizView;
 import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.service.QuizSetService;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +24,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/quiz-sets")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Quiz Sets", description = "All operations for quiz sets")
 public class QuizSetController {
     QuizSetService quizSetService;
 
     @PostMapping
     @JsonView(QuizView.Detail.class)
+    @Operation(summary = "Create new quiz set")
     public ResponseEntity<Object> createQuizSet(@RequestBody @Valid QuizSetUpsertRequest request) {
         QuizSetResponse quizSetResponse = quizSetService.createQuizSet(request, OriginType.USER);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -38,6 +42,7 @@ public class QuizSetController {
 
     @GetMapping
     @JsonView(QuizView.Basic.class)
+    @Operation(summary = "Get all quiz sets")
     public ResponseEntity<Object> getAllQuizSets(
             @ModelAttribute BasicFilterDTO filterDTO,
             @RequestParam(required = false, defaultValue = DefaultConstants.SORT_BY) String sortBy,
@@ -54,6 +59,7 @@ public class QuizSetController {
 
     @GetMapping("/default")
     @JsonView(QuizView.Detail.class)
+    @Operation(summary = "Get default quiz set and its quizzes")
     public ResponseEntity<Object> getDefaultQuizSet() {
         QuizSetResponse quizSetResponse = quizSetService.getDefaultSet();
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -64,7 +70,8 @@ public class QuizSetController {
     }
 
     @GetMapping("/{id}")
-    @JsonView(QuizView.Detail.class)
+    @JsonView(QuizView.Basic.class)
+    @Operation(summary = "Get quiz set")
     public ResponseEntity<Object> getQuizSet(@PathVariable int id) {
         QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id, false);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -76,6 +83,7 @@ public class QuizSetController {
 
     @GetMapping("/{id}/quizzes")
     @JsonView(QuizView.Detail.class)
+    @Operation(summary = "Get quiz set and its quizzes")
     public ResponseEntity<Object> getQuizSetWithQuizzes(@PathVariable int id) {
         QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id, true);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -87,6 +95,7 @@ public class QuizSetController {
 
     @PatchMapping("/{id}")
     @JsonView(QuizView.Detail.class)
+    @Operation(summary = "Update quiz set information")
     public ResponseEntity<Object> updateQuizSet(@PathVariable int id, @RequestBody QuizSetUpsertRequest request) {
         QuizSetResponse quizSetResponse = quizSetService.updateQuizSet(id, request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -97,6 +106,7 @@ public class QuizSetController {
     }
 
     @DeleteMapping
+    @Operation(summary = "Delete all quiz sets")
     public ResponseEntity<Object> deleteAllQuizSet() {
         quizSetService.deleteAllQuizSet();
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -106,6 +116,7 @@ public class QuizSetController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete quiz set")
     public ResponseEntity<Object> deleteQuizSet(@PathVariable int id) {
         quizSetService.deleteQuizSetById(id);
         ApiResponse<Object> apiResponse = ApiResponse.builder()

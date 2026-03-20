@@ -4,6 +4,8 @@ import com.be08.smart_notes.common.DefaultConstants;
 import com.be08.smart_notes.dto.filter.BasicFilterDTO;
 import com.be08.smart_notes.dto.response.NoteResponse;
 import com.be08.smart_notes.dto.response.PageResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +22,12 @@ import com.be08.smart_notes.service.NoteService;
 @RequestMapping("/api/documents/notes")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Notes", description = "All operations for notes")
 public class NoteController {
 	NoteService noteService;
 
 	@PostMapping
+    @Operation(summary = "Create new note")
 	public ResponseEntity<Object> createNote(@RequestBody @Valid NoteUpsertRequest noteCreationRequest) {
         NoteResponse createdNote = noteService.createNote(noteCreationRequest);
 		ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -34,6 +38,7 @@ public class NoteController {
 	}
 
 	@GetMapping("/{id}")
+    @Operation(summary = "Get note")
 	public ResponseEntity<Object> getNote(@PathVariable int id) {
 		NoteResponse note = noteService.getNote(id);
 		ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -44,6 +49,7 @@ public class NoteController {
 	}
 
     @GetMapping
+    @Operation(summary = "Get all notes by page")
     public ResponseEntity<Object> getAllNotes(
             @ModelAttribute BasicFilterDTO filterDTO,
             @RequestParam(required = false, defaultValue = DefaultConstants.SORT_BY) String sortBy,
@@ -59,6 +65,7 @@ public class NoteController {
     }
 
     @PatchMapping("/{id}")
+    @Operation(summary = "Update note")
 	public ResponseEntity<Object> updateNote(@PathVariable int id, @RequestBody @Valid NoteUpsertRequest noteUpdateRequest) {
         NoteResponse note = noteService.updateNote(id, noteUpdateRequest);
 		ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -69,6 +76,7 @@ public class NoteController {
 	}
 
 	@DeleteMapping("/{id}")
+    @Operation(summary = "Delete note")
 	public ResponseEntity<Object> deleteNote(@PathVariable int id) {
 		noteService.deleteNote(id);
 		ApiResponse<Object> apiResponse = ApiResponse.builder()

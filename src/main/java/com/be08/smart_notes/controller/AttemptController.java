@@ -8,6 +8,8 @@ import com.be08.smart_notes.dto.response.PageResponse;
 import com.be08.smart_notes.dto.view.AttemptView;
 import com.be08.smart_notes.service.AttemptService;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/quizzes")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Attempts", description = "Operation for quiz attempts")
 public class AttemptController {
     AttemptService attemptService;
 
     @PostMapping("/{quizId}/attempts")
     @JsonView(AttemptView.Detail.class)
+    @Operation(summary = "Create new attempt for target quiz")
     public ResponseEntity<Object> createAttempt(@PathVariable int quizId) {
         AttemptResponse attemptResponse = attemptService.createNewAttempt(quizId);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -37,6 +41,7 @@ public class AttemptController {
 
     @GetMapping("/{quizId}/attempts")
     @JsonView(AttemptView.Basic.class)
+    @Operation(summary = "Get all attempts by page")
     public ResponseEntity<Object> getAllAttemptsForQuiz(@PathVariable int quizId,
                                                         @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
                                                         @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size) {
@@ -50,6 +55,7 @@ public class AttemptController {
 
     @GetMapping("/{quizId}/attempts/{attemptId}")
     @JsonView(AttemptView.Detail.class)
+    @Operation(summary = "Get attempt and its recorded answers")
     public ResponseEntity<Object> getAttempt(@PathVariable int quizId, @PathVariable int attemptId) {
         AttemptResponse attemptResponseList = attemptService.getAttemptByIdAndQuizId(quizId, attemptId);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -61,6 +67,7 @@ public class AttemptController {
 
     @GetMapping("/{quizId}/attempts/{attemptId}/answer")
     @JsonView(AttemptView.Answer.class)
+    @Operation(summary = "Get attempt with its recorded answers and correct answers")
     public ResponseEntity<Object> getAttemptResult(@PathVariable int quizId, @PathVariable int attemptId) {
         AttemptResponse attemptResponseList = attemptService.getAttemptByIdAndQuizId(quizId, attemptId);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -72,6 +79,7 @@ public class AttemptController {
 
     @PostMapping("/{quizId}/attempts/{attemptId}/answer")
     @JsonView(AttemptView.Answer.class)
+    @Operation(summary = "Finish attempt and calculate result")
     public ResponseEntity<Object> finishAttempt(@PathVariable int quizId, @PathVariable int attemptId) {
         AttemptResponse attemptResponseList = attemptService.calculateAttemptResult(quizId, attemptId);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -83,6 +91,7 @@ public class AttemptController {
 
     @PatchMapping("/{quizId}/attempts/{attemptId}")
     @JsonView(AttemptView.Answer.class)
+    @Operation(summary = "Update attempt detail and/or record answer")
     public ResponseEntity<Object> updateAttemptDetail(@PathVariable int quizId, @PathVariable int attemptId, @Valid @RequestBody AttemptDetailUpdateRequest request) {
         AttemptResponse.Detail attemptDetailResponse = attemptService.updateAttemptDetail(quizId, attemptId, request);
         ApiResponse<Object> apiResponse = ApiResponse.builder()
@@ -93,6 +102,7 @@ public class AttemptController {
     }
 
     @DeleteMapping("/{quizId}/attempts/{attemptId}")
+    @Operation(summary = "Delete attempt")
     public ResponseEntity<Object> deleteAttempt(@PathVariable int quizId, @PathVariable int attemptId) {
         attemptService.deleteAttemptByIdAndQuizId(quizId, attemptId);
         ApiResponse<Object> apiResponse = ApiResponse.builder()

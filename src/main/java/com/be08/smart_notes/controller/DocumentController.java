@@ -2,6 +2,8 @@ package com.be08.smart_notes.controller;
 
 import com.be08.smart_notes.common.DefaultConstants;
 import com.be08.smart_notes.dto.response.PageResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -17,10 +19,12 @@ import com.be08.smart_notes.service.DocumentService;
 @RequestMapping("/api/documents")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Documents", description = "Operation for documents (notes and PDFs)")
 public class DocumentController {
 	DocumentService documentService;
 
 	@GetMapping
+    @Operation(summary = "Get all documents by page")
 	public ResponseEntity<Object> getAllDocuments(
             @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
             @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size) {
@@ -33,6 +37,7 @@ public class DocumentController {
 	}
 
 	@DeleteMapping("/{id}")
+    @Operation(summary = "Delete document")
 	public ResponseEntity<Object> deleteDocument(@PathVariable int id) {
 		documentService.deleteDocument(id);
 		ApiResponse<Object> apiResponse = ApiResponse.builder()
