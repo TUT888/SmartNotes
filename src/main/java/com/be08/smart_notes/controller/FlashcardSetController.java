@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class FlashcardSetController {
      * @return ApiResponse containing FlashcardSetResponse
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create flashcard set")
     public ApiResponse<FlashcardSetResponse> createFlashcardSet(@RequestBody @Valid FlashcardSetCreationRequest request){
         FlashcardSetResponse response = flashcardSetService.createFlashcardSet(request);

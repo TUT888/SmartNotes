@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,6 +35,7 @@ public class FlashcardController {
     }
 
     @GetMapping("/{flashcardId}")
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create flashcard")
     public ApiResponse<FlashcardResponse> getFlashcard(@PathVariable int flashcardId){
         FlashcardResponse response = flashcardService.getFlashcardById(flashcardId);

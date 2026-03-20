@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import com.be08.smart_notes.dto.request.NoteUpsertRequest;
@@ -27,6 +28,7 @@ public class NoteController {
 	NoteService noteService;
 
 	@PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new note")
 	public ApiResponse<NoteResponse> createNote(@RequestBody @Valid NoteUpsertRequest noteCreationRequest) {
         NoteResponse createdNote = noteService.createNote(noteCreationRequest);

@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class QuizController {
     QuizService quizService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @JsonView(QuizView.Detail.class)
     @Operation(summary = "Create new quiz with associated questions")
     public ApiResponse<QuizResponse> createQuiz(@RequestBody @Validated(OnCreate.class) QuizUpsertDTO request) {

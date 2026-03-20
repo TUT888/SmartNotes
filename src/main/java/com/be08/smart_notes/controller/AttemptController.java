@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class AttemptController {
     AttemptService attemptService;
 
     @PostMapping("/{quizId}/attempts")
+    @ResponseStatus(HttpStatus.CREATED)
     @JsonView(AttemptView.Detail.class)
     @Operation(summary = "Create new attempt for target quiz")
     public ApiResponse<AttemptResponse> createAttempt(@PathVariable int quizId) {

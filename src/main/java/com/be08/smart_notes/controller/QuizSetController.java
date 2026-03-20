@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,6 +30,7 @@ public class QuizSetController {
     QuizSetService quizSetService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @JsonView(QuizView.Detail.class)
     @Operation(summary = "Create new quiz set")
     public ApiResponse<QuizSetResponse> createQuizSet(@RequestBody @Valid QuizSetUpsertRequest request) {
