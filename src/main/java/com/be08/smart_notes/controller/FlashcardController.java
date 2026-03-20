@@ -5,6 +5,7 @@ import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.FlashcardResponse;
 import com.be08.smart_notes.service.FlashcardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Flashcards", description = "Operation for flashcards")
+@SecurityRequirement(name = "Bearer Authentication")
 public class FlashcardController {
     FlashcardService flashcardService;
 

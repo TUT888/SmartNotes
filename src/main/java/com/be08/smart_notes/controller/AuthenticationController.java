@@ -9,6 +9,7 @@ import com.be08.smart_notes.dto.response.UserResponse;
 import com.be08.smart_notes.service.AuthenticationService;
 import com.be08.smart_notes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -82,6 +83,7 @@ public class AuthenticationController {
      */
     @PostMapping("/logout")
     @Operation(summary = "Logout and blacklist current token")
+    @SecurityRequirement(name = "Bearer Authentication")
     ApiResponse<Void> logout(Authentication authentication){
         authenticationService.logout(authentication);
 

@@ -4,6 +4,7 @@ import com.be08.smart_notes.dto.response.ApiResponse;
 import com.be08.smart_notes.dto.response.UserResponse;
 import com.be08.smart_notes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "User", description = "All operations for user-related features")
+@SecurityRequirement(name = "Bearer Authentication")
 public class UserController {
     UserService userService;
 

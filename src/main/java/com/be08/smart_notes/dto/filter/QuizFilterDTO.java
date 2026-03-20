@@ -10,6 +10,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuizFilterDTO extends BasicFilterDTO{
+public class QuizFilterDTO extends BasicFilterDTO {
     Integer quizSetId;
 }

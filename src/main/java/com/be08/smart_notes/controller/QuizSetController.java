@@ -11,13 +11,12 @@ import com.be08.smart_notes.enums.OriginType;
 import com.be08.smart_notes.service.QuizSetService;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,103 +24,96 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Quiz Sets", description = "All operations for quiz sets")
+@SecurityRequirement(name = "Bearer Authentication")
 public class QuizSetController {
     QuizSetService quizSetService;
 
     @PostMapping
     @JsonView(QuizView.Detail.class)
     @Operation(summary = "Create new quiz set")
-    public ResponseEntity<Object> createQuizSet(@RequestBody @Valid QuizSetUpsertRequest request) {
+    public ApiResponse<QuizSetResponse> createQuizSet(@RequestBody @Valid QuizSetUpsertRequest request) {
         QuizSetResponse quizSetResponse = quizSetService.createQuizSet(request, OriginType.USER);
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+        return ApiResponse.<QuizSetResponse>builder()
                 .message("Quiz set created successfully")
                 .data(quizSetResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @GetMapping
     @JsonView(QuizView.Basic.class)
     @Operation(summary = "Get all quiz sets")
-    public ResponseEntity<Object> getAllQuizSets(
+    public ApiResponse<PageResponse<QuizSetResponse>> getAllQuizSets(
             @ModelAttribute BasicFilterDTO filterDTO,
             @RequestParam(required = false, defaultValue = DefaultConstants.SORT_BY) String sortBy,
             @RequestParam(required = false, defaultValue = DefaultConstants.SORT_ORDER) String sortOrder,
             @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_NUMBER) int page,
             @RequestParam(required = false, defaultValue = DefaultConstants.PAGE_SIZE) int size) {
         PageResponse<QuizSetResponse> quizSetResponseList = quizSetService.getAllQuizSets(filterDTO, sortBy, sortOrder, page, size);
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+        return ApiResponse.<PageResponse<QuizSetResponse>>builder()
                 .message("Quiz set fetched successfully")
                 .data(quizSetResponseList)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping("/default")
     @JsonView(QuizView.Detail.class)
     @Operation(summary = "Get default quiz set and its quizzes")
-    public ResponseEntity<Object> getDefaultQuizSet() {
+    public ApiResponse<QuizSetResponse> getDefaultQuizSet() {
         QuizSetResponse quizSetResponse = quizSetService.getDefaultSet();
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+        return ApiResponse.<QuizSetResponse>builder()
                 .message("Quiz set fetched successfully")
                 .data(quizSetResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping("/{id}")
     @JsonView(QuizView.Basic.class)
     @Operation(summary = "Get quiz set")
-    public ResponseEntity<Object> getQuizSet(@PathVariable int id) {
+    public ApiResponse<QuizSetResponse> getQuizSet(@PathVariable int id) {
         QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id, false);
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+        return ApiResponse.<QuizSetResponse>builder()
                 .message("Quiz set fetched successfully")
                 .data(quizSetResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping("/{id}/quizzes")
     @JsonView(QuizView.Detail.class)
     @Operation(summary = "Get quiz set and its quizzes")
-    public ResponseEntity<Object> getQuizSetWithQuizzes(@PathVariable int id) {
+    public ApiResponse<QuizSetResponse> getQuizSetWithQuizzes(@PathVariable int id) {
         QuizSetResponse quizSetResponse = quizSetService.getQuizSetById(id, true);
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+        return ApiResponse.<QuizSetResponse>builder()
                 .message("Quiz set fetched successfully")
                 .data(quizSetResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PatchMapping("/{id}")
     @JsonView(QuizView.Detail.class)
     @Operation(summary = "Update quiz set information")
-    public ResponseEntity<Object> updateQuizSet(@PathVariable int id, @RequestBody QuizSetUpsertRequest request) {
+    public ApiResponse<QuizSetResponse> updateQuizSet(@PathVariable int id, @RequestBody QuizSetUpsertRequest request) {
         QuizSetResponse quizSetResponse = quizSetService.updateQuizSet(id, request);
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+        return ApiResponse.<QuizSetResponse>builder()
                 .message("Quiz set updated successfully")
                 .data(quizSetResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @DeleteMapping
     @Operation(summary = "Delete all quiz sets")
-    public ResponseEntity<Object> deleteAllQuizSet() {
+    public ApiResponse<Void> deleteAllQuizSet() {
         quizSetService.deleteAllQuizSet();
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+        return ApiResponse.<Void>builder()
                 .message("All quiz set deleted successfully")
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete quiz set")
-    public ResponseEntity<Object> deleteQuizSet(@PathVariable int id) {
+    public ApiResponse<Void> deleteQuizSet(@PathVariable int id) {
         quizSetService.deleteQuizSetById(id);
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+        return ApiResponse.<Void>builder()
                 .message("Quiz set deleted successfully")
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

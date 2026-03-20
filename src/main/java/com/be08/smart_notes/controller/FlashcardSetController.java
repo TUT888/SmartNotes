@@ -7,6 +7,7 @@ import com.be08.smart_notes.dto.response.FlashcardSetResponse;
 import com.be08.smart_notes.service.FlashcardService;
 import com.be08.smart_notes.service.FlashcardSetService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Flashcard Sets", description = "Operation for flashcard sets")
+@SecurityRequirement(name = "Bearer Authentication")
 public class FlashcardSetController {
     FlashcardSetService flashcardSetService;
     FlashcardService flashcardService;
